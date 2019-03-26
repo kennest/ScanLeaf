@@ -42,11 +42,11 @@
         android:id="@+id/image_part"
         android:layout_width="50dp"
         android:layout_height="50dp"
-
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="9dp" />
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="3dp"
+        app:civ_border_color="#00695C" />
 
     <TextView
         android:id="@+id/name"

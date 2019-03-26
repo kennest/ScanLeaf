@@ -9,8 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -38,7 +36,6 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
     Activity context;
     List<CulturePart> cultureParts;
     HashMap<Integer, String> culturePart_image;
-    Animation downtoup;
 
     public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, HashMap<Integer, String> culturePart_image) {
         this.context = context;
@@ -51,7 +48,6 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
     public CultureHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.part_culture_item,
                 parent, false);
-        downtoup=AnimationUtils.loadAnimation(context, R.anim.toggledowntoup);
         return new CultureHolder(view);
     }
 

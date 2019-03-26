@@ -135,7 +135,6 @@ public class ChooseCulturePartActivity extends BaseActivity {
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.btn_analysis)
     public void doAnalysis() {
-
         for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
@@ -161,10 +160,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                     }
                 }
             });
-
-
         }
-
     }
 
     //Get Culture part downloadd infos for supply progressbar
@@ -192,7 +188,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         //finish();
     }
 
-    //Get Culture part downloadd infos for supply progressbar
+    //Get Culture part recognizing infos for supply progressbar
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void getBitmapRecognizeState(ImageRecognitionProcessEvent event) {
         for (CulturePart c : culturePartList) {

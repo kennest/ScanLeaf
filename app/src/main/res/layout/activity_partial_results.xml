@@ -15,12 +15,12 @@
             android:textColor="#ededed"
             android:textSize="19dp"
             android:textStyle="bold" />
-        <GridView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/analysed_img"
             android:layout_width="match_parent"
             android:layout_height="190dp">
 
-        </GridView>
+        </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/lin2"
