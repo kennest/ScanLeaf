@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -37,6 +39,7 @@ import wesicknessdect.example.org.wesicknessdetect.activities.ChooseCulturePartA
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
+import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 
 public class SystemTasks {
@@ -167,7 +170,8 @@ public class SystemTasks {
 
 
     //Recognized Symptoms on given bitmap
-    public List<Classifier.Recognition> recognizedSymptoms(AssetManager assetManager, Bitmap bitmap, String model,String label){
+    public List<Classifier.Recognition> recognizedSymptoms(AssetManager assetManager, Bitmap bitmap, String model,String label,long part_id){
+        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,false));
         List<Classifier.Recognition> recognitions=new ArrayList<>();
                 if (MODE == DetectorMode.TF_OD_API) {
                     try {
@@ -184,6 +188,7 @@ public class SystemTasks {
 
                         recognitions = detector.recognizeImage(bitmap);
                         Log.e("Recognitions", recognitions.toString());
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,true));
 
                     } catch (final IOException e) {
                         LOGGER.e("Exception initializing classifier!", e);

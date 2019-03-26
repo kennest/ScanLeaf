@@ -54,6 +54,7 @@
         <activity android:name=".activities.QuizActivity" />
         <activity android:name=".activities.ChooseCultureActivity" />
         <activity android:name=".activities.ChooseCulturePartActivity" />
+        <activity android:name=".activities.PartialResultActivity" />
 
         <service android:name=".utils.DownloadService"
             android:enabled="true"

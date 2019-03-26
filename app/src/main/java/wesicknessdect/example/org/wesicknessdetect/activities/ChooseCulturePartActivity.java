@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toolbar;
@@ -17,22 +16,11 @@ import com.fxn.pix.Pix;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -45,6 +33,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CulturePartAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
@@ -100,11 +89,11 @@ public class ChooseCulturePartActivity extends BaseActivity {
                     public void onChanged(List<Model> models) {
                         Log.e("Number of models", models.size() + "");
 //                        models_List = models;
-                        for(Model m:models){
-                            for(CulturePart c:culturePartList){
-                                if(m.getPart_id()==c.getId()){
-                                    File modelfile=new File(m.getPb());
-                                    if(modelfile.exists()){
+                        for (Model m : models) {
+                            for (CulturePart c : culturePartList) {
+                                if (m.getPart_id() == c.getId()) {
+                                    File modelfile = new File(m.getPb());
+                                    if (modelfile.exists()) {
                                         c.setModel_downloaded(true);
                                         c.setDownloaded(1000);
                                         c.setFilesize(1000);
@@ -141,6 +130,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
         }
     }
 
+
+    //Launch Analysis for each parts
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.btn_analysis)
     public void doAnalysis() {
@@ -149,19 +140,25 @@ public class ChooseCulturePartActivity extends BaseActivity {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
-                   // modele = model;
+                    // modele = model;
                     Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
-                    Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
-                    Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            List<Classifier.Recognition> recognitions = new ArrayList<>();
-                            recognitions = SystemTasks.getInstance().recognizedSymptoms(getAssets(), bitmap_cropped, model.getPb(), model.getLabel());
-                            Log.d(entry.getKey() + ":Recognitions->", recognitions.toString());
-                            return null;
-                        }
-                    }.execute();
+                    File modelfile=new File(model.getPb());
+                    File labelpath=new File(model.getLabel());
+                    if(modelfile.exists() && labelpath.exists()){
+                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                List<Classifier.Recognition> recognitions = new ArrayList<>();
+                                recognitions = SystemTasks.getInstance().recognizedSymptoms(getAssets(), bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
+                                Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
+                                return null;
+                            }
+                        }.execute();
+                    }else{
+                        Log.e("Recognize Error","Cannot find models and labels");
+                    }
                 }
             });
 
@@ -193,5 +190,23 @@ public class ChooseCulturePartActivity extends BaseActivity {
             }
         }
         //finish();
+    }
+
+    //Get Culture part downloadd infos for supply progressbar
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void getBitmapRecognizeState(ImageRecognitionProcessEvent event) {
+        for (CulturePart c : culturePartList) {
+            if ((c.getId() == event.part_id)) {
+                if (!event.finished) {
+                    c.setRecognizing(true);
+                }else{
+                    c.setRecognizing(false);
+                }
+            }
+            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, culturePart_image);
+            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+            parts_lv.setAdapter(culturePartAdapter);
+            culturePartAdapter.notifyDataSetChanged();
+        }
     }
 }

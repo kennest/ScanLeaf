@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.budiyev.android.circularprogressbar.CircularProgressBar;
@@ -35,6 +38,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
     Activity context;
     List<CulturePart> cultureParts;
     HashMap<Integer, String> culturePart_image;
+    Animation downtoup;
 
     public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, HashMap<Integer, String> culturePart_image) {
         this.context = context;
@@ -47,6 +51,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
     public CultureHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.part_culture_item,
                 parent, false);
+        downtoup=AnimationUtils.loadAnimation(context, R.anim.toggledowntoup);
         return new CultureHolder(view);
     }
 
@@ -68,6 +73,11 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
             holder.image_part.setImageBitmap(bitmap_cropped);
         }
 
+        if(cultureParts.get(position).isRecognizing()){
+            holder.progressBar_recognize.setVisibility(View.VISIBLE);
+        }else{
+            holder.progressBar_recognize.setVisibility(View.GONE);
+        }
 
         if (cultureParts.get(position).getDownloaded() == cultureParts.get(position).getFilesize()) {
             holder.progressBar.setVisibility(View.GONE);
@@ -83,7 +93,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.imageButton.setVisibility(View.INVISIBLE);
         }
-        
+
         for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
             Log.e("adapter entry", entry.getKey() + "/" + entry.getValue() + "//" + cultureParts.get(position).getId());
             if (entry.getKey() == cultureParts.get(position).getId()) {
@@ -110,6 +120,8 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
         CircularProgressBar progressBar;
         @BindView(R.id.name)
         TextView name;
+        @BindView(R.id.progressBar_recognize)
+        ProgressBar progressBar_recognize;
 
         public CultureHolder(View itemView) {
             super(itemView);

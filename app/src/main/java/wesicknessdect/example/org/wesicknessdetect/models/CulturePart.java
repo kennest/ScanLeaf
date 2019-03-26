@@ -31,6 +31,9 @@ public class CulturePart {
     private boolean model_downloaded=false;
 
     @Ignore
+    private boolean recognizing=false;
+
+    @Ignore
     private long downloaded=0;
 
     @Ignore
@@ -92,4 +95,11 @@ public class CulturePart {
         this.filesize = filesize;
     }
 
+    public boolean isRecognizing() {
+        return recognizing;
+    }
+
+    public void setRecognizing(boolean recognizing) {
+        this.recognizing = recognizing;
+    }
 }
