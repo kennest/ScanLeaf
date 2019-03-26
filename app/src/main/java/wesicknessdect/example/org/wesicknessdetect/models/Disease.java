@@ -2,25 +2,33 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Method.class,
+@Entity(foreignKeys = @ForeignKey(entity = Struggle.class,
         parentColumns = "id",
         childColumns = "method_id"),
         indices = {@Index("method_id")})
 public class Disease {
-
-    @PrimaryKey(autoGenerate = true)
+    @SerializedName(value = "id")
+    @PrimaryKey
     private int id;
 
-    @SerializedName(value = "id")
-    private long res_id;
+    @SerializedName(value = "name")
+    private String name;
+    @SerializedName(value = "description")
+    private String description;
+    @SerializedName(value = "link")
+    private String link;
+    @SerializedName(value = "struggle")
+    private long struggle_id;
+    @SerializedName(value = "symptom")
+    private List<Integer> symptoms;
 
-    private String nomMal;
-    private long method_id;
 
     public int getId() {
         return id;
@@ -30,27 +38,43 @@ public class Disease {
         this.id = id;
     }
 
-    public String getNomMal() {
-        return nomMal;
+    public String getName() {
+        return name;
     }
 
-    public void setNomMal(String nomMal) {
-        this.nomMal = nomMal;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public long getMethod_id() {
-        return method_id;
+    public String getDescription() {
+        return description;
     }
 
-    public void setMethod_id(long method_id) {
-        this.method_id = method_id;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public long getRes_id() {
-        return res_id;
+    public String getLink() {
+        return link;
     }
 
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public long getStruggle_id() {
+        return struggle_id;
+    }
+
+    public void setStruggle_id(long struggle_id) {
+        this.struggle_id = struggle_id;
+    }
+
+    public List<Integer> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<Integer> symptoms) {
+        this.symptoms = symptoms;
     }
 }

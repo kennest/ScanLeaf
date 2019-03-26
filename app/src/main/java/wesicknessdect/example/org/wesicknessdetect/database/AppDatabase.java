@@ -10,6 +10,8 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.CultureDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CulturePartsDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ModelDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ProfileDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserDao;
 import wesicknessdect.example.org.wesicknessdetect.models.Attack;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
@@ -24,7 +26,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.FavorableCondition;
 import wesicknessdect.example.org.wesicknessdetect.models.Message;
 import wesicknessdect.example.org.wesicknessdetect.models.MessagePicture;
-import wesicknessdect.example.org.wesicknessdetect.models.Method;
+import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Parcel;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
@@ -44,7 +46,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
         Culture.class,
         CulturePart.class,
         Disease.class,
-        Method.class,
+        Struggle.class,
         FavorableCondition.class,
         Attack.class,
         CultureParcel.class,
@@ -72,6 +74,8 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract CulturePartsDao culturePartsDao();
     public abstract ModelDao modelDao();
     public abstract CultureDao cultureDao();
+    public abstract SymptomDao symptomDao();
+    public abstract QuestionDao questionDao();
     private static AppDatabase INSTANCE;
     private static final String DATABASE_NAME = "wesickness.db";
     private Context context;

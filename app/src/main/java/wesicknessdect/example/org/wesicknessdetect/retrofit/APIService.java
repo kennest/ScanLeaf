@@ -17,7 +17,10 @@ import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
+import wesicknessdect.example.org.wesicknessdetect.models.Question;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 public interface APIService {
@@ -46,5 +49,14 @@ public interface APIService {
 
     @GET("api/models")
     Call<Model> getModels(@Header("Authorization") String token);
+
+    @GET("api/questions")
+    Call<List<Question>> getQuestion();
+
+    @GET("api/symptoms")
+    Call<List<Symptom>> getSymptoms();
+
+    @GET("api/diseases")
+    Call<List<Disease>> getDiseases();
 
 }

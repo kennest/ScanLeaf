@@ -48,6 +48,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
+import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
@@ -64,7 +65,7 @@ public class RemoteTasks {
     List<Culture> cultures = new ArrayList<>();
     Model model = new Model();
     List<CulturePart> cultureParts = new ArrayList<>();
-    List<Model> models = new ArrayList<>();
+    List<Question> questions = new ArrayList<>();
     User user = new User();
     boolean fileDownloaded;
     boolean writtenToDisk;
@@ -113,7 +114,7 @@ public class RemoteTasks {
                     Log.i("Country getError:", t.getMessage());
                 }
             });
-        }else{
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
@@ -161,7 +162,7 @@ public class RemoteTasks {
             });
             executor.execute(future);
             return future.get();
-        }else{
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return new User();
@@ -202,7 +203,7 @@ public class RemoteTasks {
             });
             executor.execute(future);
             return future.get();
-        }else{
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return null;
@@ -211,24 +212,30 @@ public class RemoteTasks {
 
     //Get Culture from Server
     public List<Culture> getCulture() {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            Call<List<Culture>> call = service.getCultures();
+            call.enqueue(new Callback<List<Culture>>() {
+                @Override
+                public void onResponse(Call<List<Culture>> call, Response<List<Culture>> response) {
+                    if (response.isSuccessful()) {
+                        cultures = response.body();
+                    } else {
 
-        APIService service = APIClient.getClient().create(APIService.class);
-        Call<List<Culture>> call = service.getCultures();
-        call.enqueue(new Callback<List<Culture>>() {
-            @Override
-            public void onResponse(Call<List<Culture>> call, Response<List<Culture>> response) {
-                if (response.isSuccessful()) {
-                    cultures = response.body();
-                } else {
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Culture>> call, Throwable t) {
 
                 }
-            }
+            });
 
-            @Override
-            public void onFailure(Call<List<Culture>> call, Throwable t) {
-
-            }
-        });
+        }else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //return new ArrayList<>();
+        }
         return cultures;
     }
 
@@ -271,20 +278,51 @@ public class RemoteTasks {
                 Log.e("Error Body", response.errorBody().toString());
             }
 
-        }else{
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            return new ArrayList<>();
+            //return new ArrayList<>();
         }
         return cultureParts;
     }
 
 
-    public Model getModel(int part_id) throws IOException{
+    //Get the Question from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Question> getQuestions() throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            Call<List<Question>> call = service.getQuestion();
+            Response<List<Question>> response = call.execute();
+            if (response.isSuccessful()) {
+                questions = response.body();
+                for(Question q:questions){
+                    Log.e("Question",q.getQuestion()+"//"+q.getPart_culture_id());
+                    new AsyncTask<Void,Void,Void>(){
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.questionDao().createQuestion(q);
+                            return null;
+                        }
+                    }.execute();
+                }
+            } else {
+                Log.e("Error Body", response.errorBody().toString());
+            }
+        } else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //return new ArrayList<>();
+        }
+        return questions;
+    }
+
+    //Get the model from the server
+    public Model getModel(int part_id) throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             Call<List<Model>> call = service.getModel(part_id);
-            Response<List<Model>> response=call.execute();
+            Response<List<Model>> response = call.execute();
             if (response.isSuccessful()) {
                 model = response.body().get(0);
                 //EventBus.getDefault().post(new ShowLoadingEvent("Please Wait","Data is being download",false));
@@ -315,7 +353,7 @@ public class RemoteTasks {
                 Log.e("Error Body", response.errorBody().toString());
             }
             return model;
-        }else{
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return model;
@@ -376,10 +414,10 @@ public class RemoteTasks {
             downloadID.add(downloadId);
 
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
-        }else{
-        //Dispatch show loading event
-        EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-    }
+        } else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+        }
 
     }
 

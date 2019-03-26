@@ -21,9 +21,6 @@ public class DiseaseSymptom {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    @SerializedName(value = "id")
-    private long res_id;
-
     private long disease_id;
     private long symptom_id;
 
@@ -51,11 +48,4 @@ public class DiseaseSymptom {
         this.symptom_id = symptom_id;
     }
 
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
-    }
 }

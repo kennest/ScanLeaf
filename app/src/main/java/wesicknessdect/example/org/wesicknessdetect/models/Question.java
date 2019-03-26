@@ -11,10 +11,13 @@ import androidx.room.PrimaryKey;
         indices = {@Index("part_culture_id")})
 public class Question  {
     @SerializedName(value = "id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     private int id;
 
-    private String content;
+    @SerializedName(value = "question")
+    private String question;
+
+    @SerializedName(value = "partCulture")
     private long part_culture_id;
 
     public int getId() {
@@ -25,12 +28,12 @@ public class Question  {
         this.id = id;
     }
 
-    public String getContent() {
-        return content;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setQuestion(String question) {
+        this.question = question;
     }
 
     public long getPart_culture_id() {

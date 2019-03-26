@@ -12,13 +12,15 @@ parentColumns = "id",
 childColumns = "question_id")},
         indices = {@Index("question_id")})
 public class Symptom {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
     @SerializedName(value = "id")
-    private long res_id;
-    private String answer;
-    private String description;
+    @PrimaryKey
+    private int id;
+
+    @SerializedName(value = "name")
+    private String name;
+    @SerializedName(value = "link")
     private String link;
+    @SerializedName(value = "question")
     private long question_id;
 
     public int getId() {
@@ -29,20 +31,12 @@ public class Symptom {
         this.id = id;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getName() {
+        return name;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLink() {
@@ -61,11 +55,4 @@ public class Symptom {
         this.question_id = question_id;
     }
 
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
-    }
 }

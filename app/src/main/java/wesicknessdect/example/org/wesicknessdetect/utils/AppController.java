@@ -69,6 +69,7 @@ public class AppController extends Application {
                 //Init all needed data
                 try {
                     RemoteTasks.getInstance(getApplicationContext()).getCulturePart(1);
+                    RemoteTasks.getInstance(getApplicationContext()).getQuestions();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
