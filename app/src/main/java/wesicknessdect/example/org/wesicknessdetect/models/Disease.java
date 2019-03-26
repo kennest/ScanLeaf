@@ -6,13 +6,14 @@ import java.util.List;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = @ForeignKey(entity = Struggle.class,
         parentColumns = "id",
-        childColumns = "method_id"),
-        indices = {@Index("method_id")})
+        childColumns = "struggle_id"),
+        indices = {@Index("struggle_id")})
 public class Disease {
     @SerializedName(value = "id")
     @PrimaryKey
@@ -26,6 +27,8 @@ public class Disease {
     private String link;
     @SerializedName(value = "struggle")
     private long struggle_id;
+
+    @Ignore
     @SerializedName(value = "symptom")
     private List<Integer> symptoms;
 

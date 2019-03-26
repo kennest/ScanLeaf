@@ -7,15 +7,13 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Struggle {
-
-    @PrimaryKey(autoGenerate = true)
-    private long id;
-
     @SerializedName(value = "id")
-    private long res_id;
-
-    private String contenu;
-    private String continent;
+    @PrimaryKey
+    private long id;
+    @SerializedName(value = "description")
+    private String description;
+@SerializedName(value = "link")
+    private String link;
 
     public long getId() {
         return id;
@@ -25,27 +23,19 @@ public class Struggle {
         this.id = id;
     }
 
-    public String getContenu() {
-        return contenu;
+    public String getDescription() {
+        return description;
     }
 
-    public void setContenu(String contenu) {
-        this.contenu = contenu;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String getContinent() {
-        return continent;
+    public String getLink() {
+        return link;
     }
 
-    public void setContinent(String continent) {
-        this.continent = continent;
-    }
-
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
+    public void setLink(String link) {
+        this.link = link;
     }
 }

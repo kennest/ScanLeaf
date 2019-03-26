@@ -16,7 +16,6 @@ import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
-import wesicknessdect.example.org.wesicknessdetect.models.Model;
 
 public class AppController extends Application {
     private static final String DATABASE_NAME = "wesickness.db";
@@ -50,11 +49,11 @@ public class AppController extends Application {
         appDatabase = AppDatabase.getInstance(getApplicationContext());
 
         //Create data
-        CreateData();
+        InitDBFromServer();
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void CreateData(){
+    private void InitDBFromServer(){
 
         new AsyncTask<Void, Void, Void>() {
             @Override
@@ -70,6 +69,9 @@ public class AppController extends Application {
                 try {
                     RemoteTasks.getInstance(getApplicationContext()).getCulturePart(1);
                     RemoteTasks.getInstance(getApplicationContext()).getQuestions();
+                    RemoteTasks.getInstance(getApplicationContext()).getSymptoms();
+                    RemoteTasks.getInstance(getApplicationContext()).getStruggles();
+                    RemoteTasks.getInstance(getApplicationContext()).getDiseases();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

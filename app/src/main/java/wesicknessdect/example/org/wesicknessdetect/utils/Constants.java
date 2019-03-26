@@ -3,8 +3,10 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Constants {
     public static final String base_url="http://";
@@ -22,10 +24,10 @@ public class Constants {
 
     //Check if internet is available
     public static boolean isOnline(Context ctx) {
-        ConnectivityManager connMgr = (ConnectivityManager)
-                ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isConnected());
+        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Log.e("NETWORK INFO", String.valueOf(Objects.requireNonNull(cm).getActiveNetworkInfo() != null));
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 

@@ -83,8 +83,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
             holder.progressBar.setVisibility(View.VISIBLE);
             holder.imageButton.setVisibility(View.INVISIBLE);
         }
-
-
+        
         for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
             Log.e("adapter entry", entry.getKey() + "/" + entry.getValue() + "//" + cultureParts.get(position).getId());
             if (entry.getKey() == cultureParts.get(position).getId()) {

@@ -47,8 +47,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
+import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
+import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
@@ -66,6 +70,9 @@ public class RemoteTasks {
     Model model = new Model();
     List<CulturePart> cultureParts = new ArrayList<>();
     List<Question> questions = new ArrayList<>();
+    List<Disease> diseases = new ArrayList<>();
+    List<Struggle> struggles = new ArrayList<>();
+    List<Symptom> symptoms = new ArrayList<>();
     User user = new User();
     boolean fileDownloaded;
     boolean writtenToDisk;
@@ -231,7 +238,7 @@ public class RemoteTasks {
                 }
             });
 
-        }else {
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
@@ -239,8 +246,68 @@ public class RemoteTasks {
         return cultures;
     }
 
+    //Get Struggles from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Struggle> getStruggles() throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            Call<StruggleResponse> call = service.getStruggles();
+            Response<StruggleResponse> response = call.execute();
+            if (response.isSuccessful()) {
+                struggles = response.body().getResult();
+                for(Struggle s:struggles){
+                    Log.e("Struggles",s.getLink()+"//"+s.getDescription());
+                    new AsyncTask<Void,Void,Void>(){
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.struggleDao().createStruggle(s);
+                            return null;
+                        }
+                    }.execute();
+                }
+            } else {
+                Log.e("Error Body", response.errorBody().toString());
+            }
+        } else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //return new ArrayList<>();
+        }
+        return struggles;
+    }
 
-    //Get Culture from Server
+    //Get Struggles from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Symptom> getSymptoms()throws IOException{
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            Call<List<Symptom>> call=service.getSymptoms();
+            Response<List<Symptom>> response=call.execute();
+            if (response.isSuccessful()) {
+                symptoms=response.body();
+                for(Symptom s:symptoms){
+                    Log.e("Symptom", s.getName() + "//" + s.getLink());
+                    new AsyncTask<Void,Void,Void>(){
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.symptomDao().createSymptom(s);
+                            return null;
+                        }
+                    }.execute();
+                }
+            }else{
+                Log.e("Error Body", response.errorBody().toString());
+            }
+
+        }else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //return new ArrayList<>();
+        }
+        return symptoms;
+    }
+
+    //Get Cultures from Server
     @SuppressLint("StaticFieldLeak")
     public List<CulturePart> getCulturePart(int id) throws IOException {
         if (Constants.isOnline(mContext)) {
@@ -286,8 +353,37 @@ public class RemoteTasks {
         return cultureParts;
     }
 
+    //Get the Disease from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Disease> getDiseases() throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            Call<List<Disease>> call = service.getDiseases();
+            Response<List<Disease>> response = call.execute();
+            if (response.isSuccessful()) {
+                diseases = response.body();
+                for (Disease d : diseases) {
+                    Log.e("Disease", d.getName() + "//" + d.getStruggle_id());
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.diseaseDao().createDisease(d);
+                            return null;
+                        }
+                    }.execute();
+                }
+            } else {
+                Log.e("Error Body", response.errorBody().toString());
+            }
+        } else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //return new ArrayList<>();
+        }
+        return diseases;
+    }
 
-    //Get the Question from Server
+    //Get the Questions from Server
     @SuppressLint("StaticFieldLeak")
     public List<Question> getQuestions() throws IOException {
         if (Constants.isOnline(mContext)) {
@@ -296,9 +392,9 @@ public class RemoteTasks {
             Response<List<Question>> response = call.execute();
             if (response.isSuccessful()) {
                 questions = response.body();
-                for(Question q:questions){
-                    Log.e("Question",q.getQuestion()+"//"+q.getPart_culture_id());
-                    new AsyncTask<Void,Void,Void>(){
+                for (Question q : questions) {
+                    Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             DB.questionDao().createQuestion(q);
