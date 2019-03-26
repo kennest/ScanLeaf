@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.ProfileActivity">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:background="@drawable/cacao" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Mon Profil"
+            android:layout_gravity="center_horizontal"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/profile"
+                android:layout_centerHorizontal="true"
+                android:elevation="1dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="30dp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="85dp"
+                    android:paddingTop="15dp"
+                    android:paddingHorizontal="15dp"
+                    android:paddingBottom="15dp"
+                    app:cardCornerRadius="10dp"
+                    android:elevation="5dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="30dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Adopo Jordan"
+                            android:textStyle="bold"
+                            android:textSize="25sp"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="60dp"
+                            android:layout_gravity="center_horizontal"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Agriculteur de cacao"
+                            android:textSize="17sp"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:layout_marginTop="20dp"
+                            android:layout_gravity="center_horizontal"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Ma particularité c'est de planter les racines et surveiller l'évolution des plantes jusqu'à la fructification"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="18sp"
+                            android:layout_marginTop="30dp"
+                            android:layout_gravity="center_horizontal"
+                            android:textStyle="italic"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Meagui, Côte d'Ivoire"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="40dp"
+                            android:layout_gravity="center_horizontal"/>
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginTop="20dp">
+                    <LinearLayout
+                        android:layout_width="62dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="25"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="35sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="analyses efectuées"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="62dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="16"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            android:textSize="35sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:text="maladies détectées"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"/>
+                    </LinearLayout>
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="30dp"
+                    android:weightSum="2">
+                    <Button
+                        android:layout_width="125dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:layout_marginHorizontal="70dp"
+                        android:textColor="@color/white"
+                        android:background="@drawable/element_outline"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:text="Mes analyses"
+                        android:drawableLeft="@drawable/ic_visibility_black_24dp"
+                        android:drawableTint="@color/white"
+                        tools:ignore="ButtonStyle" />
+                    <Butxton
+                        android:visibility="gone"
+                        android:layout_width="125dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="10dp"
+                        android:textColor="@color/white"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:background="@drawable/element_outline"
+                        android:text="Communauté"
+                        android:drawableRight="@drawable/ic_group_black_24dp"
+                        android:drawableTint="@color/white"
+                        tools:ignore="ButtonStyle" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

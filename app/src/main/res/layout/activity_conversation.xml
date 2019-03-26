@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="55dp"
+    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".activities.ConversationActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:text="Conversation avec VieuxKoukou"
+        android:textStyle="bold"
+        android:gravity="center_vertical|center_horizontal"
+        android:textSize="18dp"/>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/receiver"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/vieuxkouakou"
+            />
+        <TextView
+            android:id="@+id/msgReceiver"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:backgroundTint="#dddddd"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickRec"
+            android:text="11:00"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickSend"
+            android:text="11:05"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"
+            android:layout_marginStart="45dp"/>
+        <TextView
+            android:id="@+id/msgSender"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:layout_marginRight="0dp"
+            android:layout_gravity="right"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/sender"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="0dp"
+            android:src="@drawable/profile"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/receiver1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/vieuxkouakou"
+            />
+        <TextView
+            android:id="@+id/msgReceiver1"
+            android:textColor="@color/colorPrimaryDark"
+            android:backgroundTint="#dddddd"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickRec1"
+            android:text="11:00"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickSend1"
+            android:text="11:05"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"
+            android:layout_marginStart="45dp"/>
+        <TextView
+            android:id="@+id/msgSender1"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:layout_marginRight="0dp"
+            android:layout_gravity="right"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/sender1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="0dp"
+            android:src="@drawable/profile"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/receiver2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/vieuxkouakou"
+            />
+        <TextView
+            android:id="@+id/msgReceiver2"
+            android:textColor="@color/colorPrimaryDark"
+            android:backgroundTint="#dddddd"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickRec2"
+            android:text="11:00"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickSend2"
+            android:text="11:05"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"
+            android:layout_marginStart="45dp"/>
+        <TextView
+            android:id="@+id/msgSender2"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:layout_marginRight="0dp"
+            android:layout_gravity="right"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/sender2"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="0dp"
+            android:src="@drawable/profile"
+            />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/receiver3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/vieuxkouakou"
+            />
+        <TextView
+            android:id="@+id/msgReceiver3"
+            android:textColor="@color/colorPrimaryDark"
+            android:backgroundTint="#dddddd"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickRec3"
+            android:text="11:00"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right"
+        android:layout_marginTop="10dp"
+        >
+        <TextView
+            android:layout_gravity="bottom"
+            android:id="@+id/tickSend3"
+            android:text="11:05"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_height="18dp"
+            android:textStyle="bold"
+            android:layout_marginStart="45dp"/>
+        <TextView
+            android:id="@+id/msgSender3"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:layout_marginRight="0dp"
+            android:layout_gravity="right"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius"
+            android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/sender3"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="0dp"
+            android:src="@drawable/profile"
+            />
+
+    </LinearLayout>
+
+
+
+</LinearLayout>
+</ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:id="@+id/messaging"
+            android:layout_width="80dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:background="#dddddd"
+            android:textStyle="normal"
+            android:textColor="@color/colorPrimaryDark"
+            android:drawableLeft="@drawable/ic_mail"
+            android:drawableTint="@color/colorPrimaryDark"
+            />
+        <ImageButton
+            android:background="@color/colorPrimaryDark"
+            android:layout_width="60dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.05"
+            android:tint="@color/white"
+            android:src="@drawable/ic_menu_send"/>
+
+    </LinearLayout>
+</RelativeLayout>
