@@ -7,24 +7,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toolbar;
-
 import com.fxn.pix.Pix;
 import com.google.gson.Gson;
-
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -59,12 +53,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
     CulturePartAdapter culturePartAdapter;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_picture);
-        getIntent().putExtras(savedInstanceState);
 
         DB = AppDatabase.getInstance(this);
 
@@ -107,7 +99,6 @@ public class ChooseCulturePartActivity extends BaseActivity {
                         culturePartAdapter.notifyDataSetChanged();
                     }
                 });
-
             }
         });
 

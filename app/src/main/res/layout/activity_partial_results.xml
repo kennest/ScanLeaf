@@ -94,56 +94,7 @@
                     android:textColor="@color/white"
                     android:textSize="19dp"
                     android:textStyle="bold"  />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:text="Swollen shoot fortement détecté comme maladie."
-                    android:textColor="@color/colorPrimaryPix"
-                    android:textSize="17dp"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/cause"
-                    android:layout_marginTop="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/text_margin"
-                    android:textColor="@color/black"
-                    android:text="Cela est dû à "
-                    android:textStyle="bold"/>
-
-
-                <TextView
-                    android:id="@+id/propagation"
-                    android:layout_marginTop="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/text_margin"
-                    android:textColor="@color/black"
-                    android:text="Cette maladie risque de se propager dans la zone de "
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/solution"
-                    android:layout_marginTop="5dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:gravity="center"
-                    android:paddingVertical="@dimen/text_margin"
-                    android:textColor="@color/black"
-                    android:text="Pour soigner votre plante, il faut:
-    -blablablabla blablablablabal blablablablab alblablablanlanla"
-                    android:textStyle="bold"/>
 
             </LinearLayout>
 
