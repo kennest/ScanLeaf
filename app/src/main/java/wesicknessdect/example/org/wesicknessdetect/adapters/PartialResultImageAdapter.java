@@ -20,9 +20,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,7 +62,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
             public void run() {
                 @SuppressLint("UseSparseArrays")
                 Map<Integer, String> recognition_legend = new HashMap<>();
-                List<String> symptoms=new ArrayList<>();
+                Set<String> symptoms=new HashSet<>();
                     for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
                         Log.e("recognitions imgs", entry.getKey()+" ** " + images_by_part.get(position) + " ** "+entry.getValue()+" ** " + position);
                         if(entry.getKey().equals(position)){
@@ -73,12 +75,12 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         Canvas canvas = new Canvas(bitmap_cropped);
                                         recognitions = recognitions.subList(0, 2);
                                         for (Classifier.Recognition r : recognitions) {
-                                            symptoms.add(String.format("%s---%s", r.getTitle(), r.getConfidence()));
+                                            symptoms.add(r.getTitle()+"---"+(Math.round(r.getConfidence()*100))+"%");
                                             Paint paint = new Paint();
                                             paint.setStyle(Paint.Style.STROKE);
                                             paint.setStrokeWidth(4f);
                                             Random rnd = new Random();
-                                            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                                            int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
                                             recognition_legend.put(color, r.getTitle());
                                             paint.setColor(color);
                                             paint.setAntiAlias(true);
@@ -90,7 +92,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                             }
                         }
                     }
-                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, symptoms);
+                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, new ArrayList<>(symptoms));
                     holder.symptoms_txt.setAdapter(itemsAdapter);
                 }
         });

@@ -1,43 +1,117 @@
 package wesicknessdect.example.org.wesicknessdetect.utils;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Parcelable;
+import android.util.Log;
+
+import com.downloader.Error;
+import com.downloader.OnCancelListener;
+import com.downloader.OnDownloadListener;
+import com.downloader.OnPauseListener;
+import com.downloader.OnProgressListener;
+import com.downloader.OnStartOrResumeListener;
+import com.downloader.PRDownloader;
+import com.downloader.Progress;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 
 public class DownloadService extends IntentService {
-    private static final String DOWNLOAD_PATH = "wesicknessdect.example.org.wesicknessdetect_downloadpath";
-    private static final String DESTINATION_PATH = "wesicknessdect.example.org.wesicknessdetect_destinationpath";
+    private static final String DOWNLOAD_PATH = "downloadpath";
+    private static final String PART_ID = "part_id";
+    int downloadId = 0;
+    long currentBytes = 0;
+    long totalBytes = 0;
 
     public DownloadService() {
         super("DownloadSongService");
     }
 
-    public static Intent getDownloadService(final @NonNull Context callingClassContext, final @NonNull String downloadPath, final @NonNull String destinationPath) {
+    public static Intent getDownloadService(final @NonNull Context callingClassContext, final @NonNull String downloadPath, final @Nullable int part_id) {
         return new Intent(callingClassContext, DownloadService.class)
                 .putExtra(DOWNLOAD_PATH, downloadPath)
-                .putExtra(DESTINATION_PATH, destinationPath);
+                .putExtra(PART_ID, part_id);
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         String downloadPath = intent.getStringExtra(DOWNLOAD_PATH);
-        String destinationPath = intent.getStringExtra(DESTINATION_PATH);
-        startDownload(downloadPath, destinationPath);
+        int part_id = intent.getIntExtra(PART_ID,0);
+        startDownload(getApplicationContext(),downloadPath,part_id);
     }
 
-    private void startDownload(String downloadPath, String destinationPath) {
-        Uri uri = Uri.parse(downloadPath); // Path where you want to download file.
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);  // Tell on which network you want to download file.
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);  // This will show notification on top when downloading the file.
-        request.setTitle("Downloading: "+uri.getLastPathSegment()); // Title for notification.
-        request.setVisibleInDownloadsUi(true);
-        request.setDestinationInExternalPublicDir(destinationPath, uri.getLastPathSegment());// Storage directory path
-        ((DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE)).enqueue(request); // This will start downloading
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId){
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void startDownload(Context context,String url,@Nullable int part_id) {
+        if (Constants.isOnline(context)) {
+            Uri uri = Uri.parse(url);
+            String destination = Objects.requireNonNull(context.getExternalFilesDir(null)).getPath() + File.separator;
+            Log.e("PATHS X", destination + uri.getLastPathSegment());
+
+            downloadId = PRDownloader.download(url, destination, uri.getLastPathSegment())
+                    .build()
+                    .setOnStartOrResumeListener(new OnStartOrResumeListener() {
+                        @Override
+                        public void onStartOrResume() {
+
+                        }
+                    })
+                    .setOnPauseListener(new OnPauseListener() {
+                        @Override
+                        public void onPause() {
+
+                        }
+                    })
+                    .setOnCancelListener(new OnCancelListener() {
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    })
+                    .setOnProgressListener(new OnProgressListener() {
+                        @Override
+                        public void onProgress(Progress progress) {
+                            //Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
+                            currentBytes = progress.currentBytes;
+                            totalBytes = progress.totalBytes;
+                            EventBus.getDefault().post(new ModelDownloadEvent(progress.currentBytes, progress.totalBytes, part_id));
+                        }
+                    })
+                    .start(new OnDownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            Log.d(url, "Finished::" + uri.getLastPathSegment());
+                            EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, part_id));
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+
+                        }
+
+                    });
+
+//            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
+        } else {
+            //Dispatch show loading event
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+        }
     }
 }

@@ -64,6 +64,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_picture);
+        getIntent().putExtras(savedInstanceState);
 
         DB = AppDatabase.getInstance(this);
 
@@ -220,6 +221,12 @@ public class ChooseCulturePartActivity extends BaseActivity {
         Log.e(getLocalClassName()+" GoToresult:",images);
         partial.putExtra("recognitions_by_part",recognitions);
         partial.putExtra("images_by_part", images);
+
         startActivity(partial);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 }

@@ -57,6 +57,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
+import wesicknessdect.example.org.wesicknessdetect.utils.DownloadService;
 
 public class RemoteTasks {
 
@@ -436,12 +437,14 @@ public class RemoteTasks {
                 File flabel = new File(label_path);
 
                 if (!fmodel.exists()) {
-                    DownloadFile(model.getPb(), part_id);
+                    //DownloadFile(model.getPb(), part_id);
+                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(),model.getPb(),part_id));
                 }
                 model.setPb(fmodel.getAbsolutePath());
 
                 if (!flabel.exists()) {
-                    DownloadFile(model.getLabel(), part_id);
+                    //DownloadFile(model.getLabel(), part_id);
+                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(),model.getLabel(),part_id));
                 }
                 model.setLabel(flabel.getAbsolutePath());
 
