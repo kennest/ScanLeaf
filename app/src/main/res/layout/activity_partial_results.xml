@@ -5,7 +5,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/lin1"
             android:orientation="vertical" android:layout_width="match_parent"
@@ -19,12 +19,22 @@
                 android:textColor="#ededed"
                 android:textSize="19dp"
                 android:textStyle="bold" />
-            <androidx.recyclerview.widget.RecyclerView
+
+            <com.yuyakaido.android.cardstackview.CardStackView
+                android:id="@+id/analysed_img"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:layout_above="@+id/button_container"
+                android:padding="4dp"
+                android:clipToPadding="false">
+            </com.yuyakaido.android.cardstackview.CardStackView>
+
+            <!--androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/analysed_img"
                 android:layout_width="match_parent"
                 android:layout_height="300dp">
 
-            </androidx.recyclerview.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView-->
         </LinearLayout>
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/lin2"
@@ -32,42 +42,42 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             >
-            <LinearLayout
-                android:id="@+id/img_clicked"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="8dp">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/colorPrimary"
-                    android:gravity="center"
-                    android:text="▲ Cliquez une image pour voir son résultat ▼"
-                    android:textColor="#ededed"
-                    android:textSize="15dp"
-                    android:textStyle="bold" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:text="1- Symptôme xxx détecté à xx%"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="15dp"
-                    android:textStyle="normal" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:background="@color/white"
-                    android:gravity="center"
-                    android:text="2- Symptôme xxx détecté à xx%"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="15dp"
-                    android:textStyle="normal" />
+            <!--<LinearLayout-->
+                <!--android:id="@+id/img_clicked"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:layout_marginTop="3dp"-->
+                <!--android:layout_marginBottom="8dp">-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:background="@color/colorPrimary"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="▲ Cliquez une image pour voir son résultat ▼"-->
+                    <!--android:textColor="#ededed"-->
+                    <!--android:textSize="15dp"-->
+                    <!--android:textStyle="bold" />-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:background="@color/white"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="1- Symptôme xxx détecté à xx%"-->
+                    <!--android:textColor="@color/colorPrimaryDark"-->
+                    <!--android:textSize="15dp"-->
+                    <!--android:textStyle="normal" />-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="30dp"-->
+                    <!--android:background="@color/white"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="2- Symptôme xxx détecté à xx%"-->
+                    <!--android:textColor="@color/colorPrimaryDark"-->
+                    <!--android:textSize="15dp"-->
+                    <!--android:textStyle="normal" />-->
 
-            </LinearLayout>
+            <!--</LinearLayout>-->
             <LinearLayout
                 android:id="@+id/global_result"
                 android:layout_width="match_parent"

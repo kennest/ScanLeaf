@@ -68,4 +68,5 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
     implementation 'com.google.android.gms:play-services:12.0.1'
     implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
+    implementation "com.yuyakaido.android:card-stack-view:2.2.5"
 }

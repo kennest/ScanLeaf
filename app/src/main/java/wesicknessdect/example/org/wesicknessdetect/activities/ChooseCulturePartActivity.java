@@ -44,7 +44,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Model;
 
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> culturePartList = new ArrayList<>();
-    HashMap<Integer, String> images_by_part = new HashMap<>();
+    Map<Integer, String> images_by_part = new HashMap<>();
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part =new HashMap<>();
     private static AppDatabase DB;
 
@@ -121,6 +121,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
                 images_by_part.put((int) c.getId(), returnValue.get(0));
+                Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
                 parts_lv.setAdapter(culturePartAdapter);
@@ -205,6 +206,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
             culturePartAdapter.notifyDataSetChanged();
         }
         if(recognitions_by_part.size()==images_by_part.size()){
+            //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
             goToPartialResult();
         }
     }
@@ -214,6 +216,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
         Gson gson=new Gson();
         String recognitions=gson.toJson(recognitions_by_part);
         String images=gson.toJson(images_by_part);
+
+        Log.e(getLocalClassName()+" GoToresult:",images);
         partial.putExtra("recognitions_by_part",recognitions);
         partial.putExtra("images_by_part", images);
         startActivity(partial);

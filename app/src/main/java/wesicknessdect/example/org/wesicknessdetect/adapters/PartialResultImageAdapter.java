@@ -11,8 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +31,13 @@ import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 
-public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdapter.ImageHolder> {
+public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResultImageAdapter.ImageHolder> {
 
     private Activity context;
     private Map<Integer, List<Classifier.Recognition>> recognitions_by_part;
     private Map<Integer,Map<Integer, String>> images_by_part;
 
-    public PartialResultAdapter(Activity context, Map<Integer, List<Classifier.Recognition>> recognitions_by_part, Map<Integer,Map<Integer, String>> images_by_part) {
+    public PartialResultImageAdapter(Activity context, Map<Integer, List<Classifier.Recognition>> recognitions_by_part, Map<Integer,Map<Integer, String>> images_by_part) {
         this.context = context;
         this.recognitions_by_part = recognitions_by_part;
         this.images_by_part = images_by_part;
@@ -54,7 +60,7 @@ public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdap
             public void run() {
                 @SuppressLint("UseSparseArrays")
                 Map<Integer, String> recognition_legend = new HashMap<>();
-
+                List<String> symptoms=new ArrayList<>();
                     for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
                         Log.e("recognitions imgs", entry.getKey()+" ** " + images_by_part.get(position) + " ** "+entry.getValue()+" ** " + position);
                         if(entry.getKey().equals(position)){
@@ -67,6 +73,7 @@ public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdap
                                         Canvas canvas = new Canvas(bitmap_cropped);
                                         recognitions = recognitions.subList(0, 2);
                                         for (Classifier.Recognition r : recognitions) {
+                                            symptoms.add(String.format("%s---%s", r.getTitle(), r.getConfidence()));
                                             Paint paint = new Paint();
                                             paint.setStyle(Paint.Style.STROKE);
                                             paint.setStrokeWidth(4f);
@@ -83,6 +90,8 @@ public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdap
                             }
                         }
                     }
+                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, symptoms);
+                    holder.symptoms_txt.setAdapter(itemsAdapter);
                 }
         });
 
@@ -99,6 +108,8 @@ public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdap
 
         @BindView(R.id.iv)
         ImageView image;
+        @BindView(R.id.symptoms_txt)
+        ListView symptoms_txt;
 
         public ImageHolder(@NonNull View itemView) {
             super(itemView);

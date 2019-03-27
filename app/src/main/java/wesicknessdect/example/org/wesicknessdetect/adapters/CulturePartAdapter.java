@@ -35,9 +35,9 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
 
     private Activity context;
     private List<CulturePart> cultureParts;
-    private HashMap<Integer, String> culturePart_image;
+    private Map<Integer, String> culturePart_image;
 
-    public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, HashMap<Integer, String> culturePart_image) {
+    public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, Map<Integer, String> culturePart_image) {
         this.context = context;
         this.cultureParts = cultureParts;
         this.culturePart_image = culturePart_image;
