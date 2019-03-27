@@ -88,7 +88,7 @@ public class SystemTasks {
 
     //Recognized Symptoms on given bitmap
     public List<Classifier.Recognition> recognizedSymptoms(AssetManager assetManager, Bitmap bitmap, String model,String label,long part_id){
-        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,false));
+        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions=new ArrayList<>();
                 if (MODE == DetectorMode.TF_OD_API) {
                     try {
@@ -104,10 +104,10 @@ public class SystemTasks {
 
                         recognitions = detector.recognizeImage(bitmap);
                         Log.e("Recognitions", recognitions.toString());
-                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,true));
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,true, recognitions));
 
                     } catch (final IOException e) {
-                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,true));
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,true, recognitions));
                         LOGGER.e("Exception initializing classifier!", e);
                     }
 

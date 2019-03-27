@@ -33,9 +33,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 
 public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.CultureHolder> {
 
-    Activity context;
-    List<CulturePart> cultureParts;
-    HashMap<Integer, String> culturePart_image;
+    private Activity context;
+    private List<CulturePart> cultureParts;
+    private HashMap<Integer, String> culturePart_image;
 
     public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, HashMap<Integer, String> culturePart_image) {
         this.context = context;

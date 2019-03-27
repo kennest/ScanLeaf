@@ -1,60 +1,108 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 
 public class PartialResultAdapter extends RecyclerView.Adapter<PartialResultAdapter.ImageHolder> {
 
-    Activity context;
-    Map<Integer, Classifier.Recognition> recognitionMap=new HashMap<>();
-    HashMap<Integer, String> culturePart_image;
+    private Activity context;
+    private Map<Integer, List<Classifier.Recognition>> recognitions_by_part;
+    private Map<Integer,Map<Integer, String>> images_by_part;
 
-    public PartialResultAdapter(Activity context, Map<Integer, Classifier.Recognition> recognitionMap, HashMap<Integer, String> culturePart_image) {
+    public PartialResultAdapter(Activity context, Map<Integer, List<Classifier.Recognition>> recognitions_by_part, Map<Integer,Map<Integer, String>> images_by_part) {
         this.context = context;
-        this.recognitionMap = recognitionMap;
-        this.culturePart_image = culturePart_image;
+        this.recognitions_by_part = recognitions_by_part;
+        this.images_by_part = images_by_part;
     }
 
     @NonNull
     @Override
     public ImageHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_partial_results,
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image,
                 parent, false);
         return new ImageHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
-        for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
-            Log.e("adapter entry", entry.getKey() + "/" + entry.getValue() + "//" );
 
-        }
+        //Log.e("recognitions imgs 0", "/" + images_by_part.get(position) + "//" + position);
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                @SuppressLint("UseSparseArrays")
+                Map<Integer, String> recognition_legend = new HashMap<>();
+
+                    for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
+                        Log.e("recognitions imgs", entry.getKey()+" ** " + images_by_part.get(position) + " ** "+entry.getValue()+" ** " + position);
+                        if(entry.getKey().equals(position)){
+                        for(Map.Entry<Integer,String> n:entry.getValue().entrySet()){
+                                for (Map.Entry<Integer, List<Classifier.Recognition>> recognitionEntry : recognitions_by_part.entrySet()) {
+                                    if (n.getKey().equals(recognitionEntry.getKey())) {
+                                        Bitmap bitmap = BitmapFactory.decodeFile(n.getValue());
+                                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                                        List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
+                                        Canvas canvas = new Canvas(bitmap_cropped);
+                                        recognitions = recognitions.subList(0, 2);
+                                        for (Classifier.Recognition r : recognitions) {
+                                            Paint paint = new Paint();
+                                            paint.setStyle(Paint.Style.STROKE);
+                                            paint.setStrokeWidth(4f);
+                                            Random rnd = new Random();
+                                            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                                            recognition_legend.put(color, r.getTitle());
+                                            paint.setColor(color);
+                                            paint.setAntiAlias(true);
+                                            canvas.drawRect(r.getLocation(), paint);
+                                        }
+                                        holder.image.setImageBitmap(bitmap_cropped);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+        });
+
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        Log.e("images size",images_by_part.size()+"");
+        return images_by_part.size();
     }
 
-    public class ImageHolder extends RecyclerView.ViewHolder{
 
+    public class ImageHolder extends RecyclerView.ViewHolder {
+
+        @BindView(R.id.iv)
         ImageView image;
 
         public ImageHolder(@NonNull View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

@@ -7,16 +7,19 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.Toolbar;
 
 import com.fxn.pix.Pix;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,13 +44,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.Model;
 
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> culturePartList = new ArrayList<>();
-    List<String> pictures_path = new ArrayList<>();
-    HashMap<Integer, String> culturePart_image = new HashMap<>();
+    HashMap<Integer, String> images_by_part = new HashMap<>();
+    Map<Integer, List<Classifier.Recognition>> recognitions_by_part =new HashMap<>();
     private static AppDatabase DB;
-    List<Model> models_List = new ArrayList<>();
-    boolean modelFinded = false;
-    Model modele = new Model();
-
 
     @BindView(R.id.culture_parts_lv)
     RecyclerView parts_lv;
@@ -121,8 +120,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
             if (resultCode == Activity.RESULT_OK && requestCode == c.getId()) {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                culturePart_image.put((int) c.getId(), returnValue.get(0));
-                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, culturePart_image);
+                images_by_part.put((int) c.getId(), returnValue.get(0));
+                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
@@ -135,7 +134,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.btn_analysis)
     public void doAnalysis() {
-        for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
+        for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
@@ -179,7 +178,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                     c.setFilesize(event.filesize);
                     c.setModel_downloaded(false);
                 }
-                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, culturePart_image);
+                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
@@ -197,12 +196,26 @@ public class ChooseCulturePartActivity extends BaseActivity {
                     c.setRecognizing(true);
                 }else{
                     c.setRecognizing(false);
+                    recognitions_by_part.put((int) event.part_id,event.recognitions);
                 }
             }
-            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, culturePart_image);
+            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
             parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
             parts_lv.setAdapter(culturePartAdapter);
             culturePartAdapter.notifyDataSetChanged();
         }
+        if(recognitions_by_part.size()==images_by_part.size()){
+            goToPartialResult();
+        }
+    }
+
+    private void goToPartialResult(){
+        Intent partial=new Intent(ChooseCulturePartActivity.this,PartialResultActivity.class);
+        Gson gson=new Gson();
+        String recognitions=gson.toJson(recognitions_by_part);
+        String images=gson.toJson(images_by_part);
+        partial.putExtra("recognitions_by_part",recognitions);
+        partial.putExtra("images_by_part", images);
+        startActivity(partial);
     }
 }
