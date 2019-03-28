@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
     android:layout_height="match_parent">
     <LinearLayout
         android:orientation="vertical"
@@ -12,7 +13,7 @@
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="60dp"
                 android:background="@color/colorPrimaryDark"
                 android:gravity="center"
                 android:text="Images analysées"
@@ -35,6 +36,8 @@
                 android:padding="4dp"
                 android:clipToPadding="false">
             </com.yuyakaido.android.cardstackview.CardStackView>
+
+
 
             <!--androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/analysed_img"

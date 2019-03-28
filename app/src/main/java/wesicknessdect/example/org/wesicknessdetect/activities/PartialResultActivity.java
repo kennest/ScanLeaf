@@ -13,6 +13,7 @@ import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
 import com.yuyakaido.android.cardstackview.RewindAnimationSetting;
+import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -109,7 +110,10 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         manager.setCanScrollHorizontal(true);
         manager.setCanScrollVertical(false);
         manager.setSwipeThreshold(0.3f);
+        manager.setStackFrom(StackFrom.Left);
+        manager.setTranslationInterval(8f);
         partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
+        manager.setVisibleCount(partialResultImageAdapter.getItemCount());
         images_analysed_lv.setLayoutManager(manager);
         images_analysed_lv.setAdapter(partialResultImageAdapter);
     }
@@ -128,8 +132,11 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             manager.setCanScrollHorizontal(true);
             manager.setCanScrollVertical(false);
             manager.setSwipeThreshold(0.3f);
+            manager.setStackFrom(StackFrom.Left);
+            manager.setTranslationInterval(8f);
 
             partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
+            manager.setVisibleCount(partialResultImageAdapter.getItemCount());
             images_analysed_lv.setLayoutManager(manager);
             images_analysed_lv.setAdapter(partialResultImageAdapter);
             partialResultImageAdapter.notifyDataSetChanged();
