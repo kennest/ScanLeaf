@@ -7,13 +7,19 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,10 +59,12 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
 
         //Log.e("recognitions imgs 0", "/" + images_by_part.get(position) + "//" + position);
         context.runOnUiThread(new Runnable() {
+            @SuppressLint("DefaultLocale")
             @Override
             public void run() {
                 @SuppressLint("UseSparseArrays")
                 Map<Integer, String> recognition_legend = new HashMap<>();
+                //holder.symptoms_txt=new LinearLayout(context);
                 Set<String> symptoms=new HashSet<>();
                     for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
                         Log.e("recognitions imgs", entry.getKey()+" ** " + images_by_part.get(position) + " ** "+entry.getValue()+" ** " + position);
@@ -70,12 +78,25 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         Canvas canvas = new Canvas(bitmap_cropped);
                                         recognitions = recognitions.subList(0, 2);
                                         for (Classifier.Recognition r : recognitions) {
+
                                             symptoms.add(r.getTitle()+"---"+(Math.round(r.getConfidence()*100))+"%");
                                             Paint paint = new Paint();
                                             paint.setStyle(Paint.Style.STROKE);
                                             paint.setStrokeWidth(4f);
                                             Random rnd = new Random();
                                             int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+
+                                            //For each recognitions add a layout with the corresponding color of the canvas
+                                            LinearLayout line=new LinearLayout(context);
+                                            line.setOrientation(LinearLayout.HORIZONTAL);
+                                            TextView txt=new TextView(context);
+                                            txt.setText(String.format("%s  ---  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
+                                            txt.setTextColor(color);
+                                            txt.setTypeface(txt.getTypeface(), Typeface.BOLD);
+                                            txt.setTextSize(20);
+                                            line.addView(txt);
+                                            holder.symptoms_txt.addView(line);
+
                                             recognition_legend.put(color, r.getTitle());
                                             paint.setColor(color);
                                             paint.setAntiAlias(true);
@@ -87,8 +108,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                             }
                         }
                     }
-                ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, new ArrayList<>(symptoms));
-                holder.symptoms_txt.setAdapter(itemsAdapter);
+
                 }
         });
 
@@ -106,7 +126,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
         @BindView(R.id.iv)
         ImageView image;
         @BindView(R.id.symptoms_txt)
-        ListView symptoms_txt;
+        LinearLayout symptoms_txt;
 
         public ImageHolder(@NonNull View itemView) {
             super(itemView);

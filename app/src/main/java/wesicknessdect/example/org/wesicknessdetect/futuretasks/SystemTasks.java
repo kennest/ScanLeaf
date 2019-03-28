@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
+import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.util.Base64;
@@ -27,14 +28,17 @@ import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProces
 
 public class SystemTasks {
     private static SystemTasks systemTasks;
+    private static Context mContext;
 
-    private SystemTasks() {
+    private SystemTasks(Context context) {
+        mContext=context;
     }  //private constructor.
 
-    public static SystemTasks getInstance() {
+    public static SystemTasks getInstance(Context context) {
         if (systemTasks == null) { //if there is no instance available... create new one
-            systemTasks = new SystemTasks();
+            systemTasks = new SystemTasks(context);
         }
+        mContext=context;
         return systemTasks;
     }
 
@@ -93,7 +97,6 @@ public class SystemTasks {
                 if (MODE == DetectorMode.TF_OD_API) {
                     try {
                         detector = TensorFlowObjectDetectionAPIModel.create(
-                                assetManager,
                                 model,
                                 label,
                                     TF_OD_API_INPUT_SIZE);
@@ -113,5 +116,6 @@ public class SystemTasks {
 
                 }
                 return recognitions;
+
     }
 }

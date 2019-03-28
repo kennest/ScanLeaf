@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -34,6 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -173,7 +175,7 @@ public class RemoteTasks {
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            return new User();
+        return new User();
         }
 
 
@@ -268,11 +270,26 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        struggles=DB.struggleDao().getAll().getValue();
+                        return null;
+                    }
+                }.execute();
             }
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
+
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    struggles=DB.struggleDao().getAll().getValue();
+                    return null;
+                }
+            }.execute();
         }
         return struggles;
     }
@@ -298,12 +315,26 @@ public class RemoteTasks {
                 }
             }else{
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        symptoms=DB.symptomDao().getAll().getValue();
+                        return null;
+                    }
+                }.execute();
             }
 
         }else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    symptoms=DB.symptomDao().getAll().getValue();
+                    return null;
+                }
+            }.execute();
         }
         return symptoms;
     }
@@ -344,12 +375,26 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        cultureParts=DB.culturePartsDao().getAll().getValue();
+                        return null;
+                    }
+                }.execute();
             }
 
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    cultureParts=DB.culturePartsDao().getAll().getValue();
+                    return null;
+                }
+            }.execute();
         }
         return cultureParts;
     }
@@ -375,11 +420,25 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        diseases=DB.diseaseDao().getAll().getValue();
+                        return null;
+                    }
+                }.execute();
             }
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    diseases=DB.diseaseDao().getAll().getValue();
+                    return null;
+                }
+            }.execute();
         }
         return diseases;
     }
@@ -405,16 +464,31 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        questions=DB.questionDao().getAll().getValue();
+                        return null;
+                    }
+                }.execute();
             }
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    questions=DB.questionDao().getAll().getValue();
+                    return null;
+                }
+            }.execute();
         }
         return questions;
     }
 
     //Get the model from the server
+    @SuppressLint("StaticFieldLeak")
     public Model getModel(int part_id) throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
@@ -450,11 +524,25 @@ public class RemoteTasks {
 
             } else {
                 Log.e("Error Body", response.errorBody().toString());
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        model=DB.modelDao().getByPart(part_id).getValue();
+                        return null;
+                    }
+                }.execute();
             }
             return model;
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    model=DB.modelDao().getByPart(part_id).getValue();
+                    return null;
+                }
+            }.execute();
             return model;
         }
 

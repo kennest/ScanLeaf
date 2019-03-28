@@ -68,12 +68,12 @@ public class TensorFlowObjectDetectionAPIModel implements Classifier {
   /**
    * Initializes a native TensorFlow session for classifying images.
    *
-   * @param assetManager The asset manager to be used to load assets.
+   //* @param assetManager The asset manager to be used to load assets.
    * @param modelFilename The filepath of the model GraphDef protocol buffer.
    * @param labelFilename The filepath of label file for classes.
    */
   public static Classifier create(
-      final AssetManager assetManager,
+      //final AssetManager assetManager,
       final String modelFilename,
       final String labelFilename,
       final int inputSize) throws IOException {

@@ -127,6 +127,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.btn_analysis)
     public void doAnalysis() {
+        analysisBtn.setEnabled(false);
+        analysisBtn.setClickable(false);
+        analysisBtn.setText("TRAITEMENT...");
+        analysisBtn.setBackgroundColor(getResources().getColor(R.color.gray));
         for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
@@ -142,7 +146,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 List<Classifier.Recognition> recognitions = new ArrayList<>();
-                                recognitions = SystemTasks.getInstance().recognizedSymptoms(getAssets(), bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
+                                recognitions = SystemTasks.getInstance(getApplicationContext()).recognizedSymptoms(getAssets(), bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
                                 Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
                                 return null;
                             }
@@ -200,6 +204,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
         if(recognitions_by_part.size()==images_by_part.size()){
             //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
             goToPartialResult();
+            analysisBtn.setEnabled(true);
+            analysisBtn.setClickable(true);
+            analysisBtn.setText("ANALYSER");
+            analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
         }
     }
 

@@ -69,12 +69,19 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
             holder.image_part.setImageBitmap(bitmap_cropped);
         }
 
+        //Si la partie es en cours de traitement
         if(cultureParts.get(position).isRecognizing()){
             holder.progressBar_recognize.setVisibility(View.VISIBLE);
+            holder.imageButton.setEnabled(false);
+            holder.imageButton.setClickable(false);
+
         }else{
             holder.progressBar_recognize.setVisibility(View.GONE);
+            holder.imageButton.setEnabled(true);
+            holder.imageButton.setClickable(true);
         }
 
+        //Si le telechargement du modele est fini
         if (cultureParts.get(position).getDownloaded() == cultureParts.get(position).getFilesize()) {
             holder.progressBar.setVisibility(View.GONE);
             holder.imageButton.setVisibility(View.VISIBLE);

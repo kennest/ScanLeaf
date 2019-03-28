@@ -20,6 +20,13 @@
                 android:textSize="19dp"
                 android:textStyle="bold" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <com.yuyakaido.android.cardstackview.CardStackView
                 android:id="@+id/analysed_img"
                 android:layout_width="match_parent"

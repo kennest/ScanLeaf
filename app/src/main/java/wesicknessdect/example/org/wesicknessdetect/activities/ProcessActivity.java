@@ -238,8 +238,7 @@ public class ProcessActivity extends BaseActivity {
             Map<Integer,String> recognition_legend=new HashMap<>();
             if (MODE == DetectorMode.TF_OD_API) {
                 try {
-                    detector = TensorFlowObjectDetectionAPIModel.create(
-                            getAssets(), base64model(), TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE);
+                    detector = TensorFlowObjectDetectionAPIModel.create(base64model(), TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE);
 
                     cropSize = TF_OD_API_INPUT_SIZE;
 

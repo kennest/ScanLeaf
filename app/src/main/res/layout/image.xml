@@ -13,13 +13,15 @@
         android:minHeight="200dp"
         android:scaleType="fitCenter" />
 
-    <ListView
+    <LinearLayout
+        android:orientation="vertical"
         android:background="@drawable/img_border"
+        android:padding="20dp"
         android:id="@+id/symptoms_txt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    </ListView>
+    </LinearLayout>
 
 </LinearLayout>
 
