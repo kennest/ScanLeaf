@@ -41,10 +41,10 @@ public class AppController extends Application {
         PRDownloader.initialize(getApplicationContext(), config);
 
 
-        RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg",101);
+        RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
 
         //Delete the Database
-        //getApplicationContext().deleteDatabase(DATABASE_NAME);
+        getApplicationContext().deleteDatabase(DATABASE_NAME);
 
         //Create the database
         appDatabase = AppDatabase.getInstance(getApplicationContext());
@@ -68,6 +68,7 @@ public class AppController extends Application {
 
                 //Init all needed data
                 try {
+                    RemoteTasks.getInstance(getApplicationContext()).getCountries();
                     RemoteTasks.getInstance(getApplicationContext()).getCulturePart(1);
                     RemoteTasks.getInstance(getApplicationContext()).getQuestions();
                     RemoteTasks.getInstance(getApplicationContext()).getSymptoms();

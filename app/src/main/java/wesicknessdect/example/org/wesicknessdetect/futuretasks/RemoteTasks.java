@@ -1,7 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -35,7 +34,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,6 +74,7 @@ public class RemoteTasks {
     List<Disease> diseases = new ArrayList<>();
     List<Struggle> struggles = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
+    List<Country> countries = new ArrayList<>();
     User user = new User();
     boolean fileDownloaded;
     boolean writtenToDisk;
@@ -99,7 +98,8 @@ public class RemoteTasks {
     }
 
 
-    private void getCountries() {
+    //Get the Countries from Server
+    public List<Country> getCountries() {
         if (Constants.isOnline(mContext)) {
             Log.e("Country call started:", "Started Ok!!");
             APIService service = APIClient.getClient().create(APIService.class);
@@ -107,11 +107,12 @@ public class RemoteTasks {
             countryCall.enqueue(new Callback<List<Country>>() {
                 @Override
                 public void onResponse(Call<List<Country>> call, Response<List<Country>> response) {
+                    countries = response.body();
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             for (Country c : response.body()) {
-                                AppDatabase.getInstance(mContext).countryDao().createCountry(c);
+                                DB.countryDao().createCountry(c);
                                 Log.e("Country:", c.getName());
                             }
                         }
@@ -127,8 +128,9 @@ public class RemoteTasks {
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            countries = DB.countryDao().getAll().getValue();
         }
-
+        return countries;
     }
 
     //Send Signup data
@@ -175,7 +177,7 @@ public class RemoteTasks {
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-        return new User();
+            return new User();
         }
 
 
@@ -184,30 +186,23 @@ public class RemoteTasks {
     //Send Login credentials
     public String doLogin(Credential c) throws InterruptedException, ExecutionException {
         if (Constants.isOnline(mContext)) {
+            EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
             Thread.sleep(1000);
             FutureTask<String> future = new FutureTask<>(new Callable<String>() {
                 @Override
                 public String call() throws Exception {
                     APIService service = APIClient.getClient().create(APIService.class);
                     Call<User> loginCall = service.doLogin(c);
-                    loginCall.enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                            if (response.isSuccessful()) {
-                                if (response.body() != null) {
-                                    UserResponseSuccessfullProcess(response);
-                                }
-                            } else {
-                                UserResponseErrorProcess(response);
-                            }
+                    Response<User> response = loginCall.execute();
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            UserResponseSuccessfullProcess(response);
+                            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                         }
-
-                        @Override
-                        public void onFailure(@NonNull Call<User> call, Throwable t) {
-                            FailureProcess(t);
-                            call.cancel();
-                        }
-                    });
+                    } else {
+                        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                        UserResponseErrorProcess(response);
+                    }
                     return result;
                 }
             });
@@ -258,9 +253,9 @@ public class RemoteTasks {
             Response<StruggleResponse> response = call.execute();
             if (response.isSuccessful()) {
                 struggles = response.body().getResult();
-                for(Struggle s:struggles){
-                    Log.e("Struggles",s.getLink()+"//"+s.getDescription());
-                    new AsyncTask<Void,Void,Void>(){
+                for (Struggle s : struggles) {
+                    Log.e("Struggles", s.getLink() + "//" + s.getDescription());
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             DB.struggleDao().createStruggle(s);
@@ -270,10 +265,10 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        struggles=DB.struggleDao().getAll().getValue();
+                        struggles = DB.struggleDao().getAll().getValue();
                         return null;
                     }
                 }.execute();
@@ -283,10 +278,10 @@ public class RemoteTasks {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
 
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    struggles=DB.struggleDao().getAll().getValue();
+                    struggles = DB.struggleDao().getAll().getValue();
                     return null;
                 }
             }.execute();
@@ -296,16 +291,16 @@ public class RemoteTasks {
 
     //Get Struggles from Server
     @SuppressLint("StaticFieldLeak")
-    public List<Symptom> getSymptoms()throws IOException{
+    public List<Symptom> getSymptoms() throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
-            Call<List<Symptom>> call=service.getSymptoms();
-            Response<List<Symptom>> response=call.execute();
+            Call<List<Symptom>> call = service.getSymptoms();
+            Response<List<Symptom>> response = call.execute();
             if (response.isSuccessful()) {
-                symptoms=response.body();
-                for(Symptom s:symptoms){
+                symptoms = response.body();
+                for (Symptom s : symptoms) {
                     Log.e("Symptom", s.getName() + "//" + s.getLink());
-                    new AsyncTask<Void,Void,Void>(){
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             DB.symptomDao().createSymptom(s);
@@ -313,25 +308,25 @@ public class RemoteTasks {
                         }
                     }.execute();
                 }
-            }else{
+            } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        symptoms=DB.symptomDao().getAll().getValue();
+                        symptoms = DB.symptomDao().getAll().getValue();
                         return null;
                     }
                 }.execute();
             }
 
-        }else {
+        } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    symptoms=DB.symptomDao().getAll().getValue();
+                    symptoms = DB.symptomDao().getAll().getValue();
                     return null;
                 }
             }.execute();
@@ -350,15 +345,20 @@ public class RemoteTasks {
                 cultureParts = response.body();
                 Log.e("Cultures Part", cultureParts.size() + "");
 
+                //Download Fake Image Url
+                String url= "https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg";
+                DownloadFile(url);
                 for (CulturePart c : cultureParts) {
-                    c.setImage("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
-                    Log.e("Culture Image", c.getImage());
+
+                    Uri uri = Uri.parse(url);
+                    String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                    c.setImage(destination+uri.getLastPathSegment());
+                   Log.e("Culture Image", c.getImage());
                     c.setCulture_id(id);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             DB.culturePartsDao().createCulturePart(c);
-
                             //get the model
                             Model m = null;
                             try {
@@ -375,10 +375,10 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        cultureParts=DB.culturePartsDao().getAll().getValue();
+                        cultureParts = DB.culturePartsDao().getAll().getValue();
                         return null;
                     }
                 }.execute();
@@ -388,10 +388,10 @@ public class RemoteTasks {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    cultureParts=DB.culturePartsDao().getAll().getValue();
+                    cultureParts = DB.culturePartsDao().getAll().getValue();
                     return null;
                 }
             }.execute();
@@ -420,10 +420,10 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        diseases=DB.diseaseDao().getAll().getValue();
+                        diseases = DB.diseaseDao().getAll().getValue();
                         return null;
                     }
                 }.execute();
@@ -432,10 +432,10 @@ public class RemoteTasks {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    diseases=DB.diseaseDao().getAll().getValue();
+                    diseases = DB.diseaseDao().getAll().getValue();
                     return null;
                 }
             }.execute();
@@ -464,10 +464,10 @@ public class RemoteTasks {
                 }
             } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        questions=DB.questionDao().getAll().getValue();
+                        questions = DB.questionDao().getAll().getValue();
                         return null;
                     }
                 }.execute();
@@ -476,10 +476,10 @@ public class RemoteTasks {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    questions=DB.questionDao().getAll().getValue();
+                    questions = DB.questionDao().getAll().getValue();
                     return null;
                 }
             }.execute();
@@ -512,22 +512,22 @@ public class RemoteTasks {
 
                 if (!fmodel.exists()) {
                     //DownloadFile(model.getPb(), part_id);
-                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(),model.getPb(),part_id));
+                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), model.getPb(), part_id));
                 }
                 model.setPb(fmodel.getAbsolutePath());
 
                 if (!flabel.exists()) {
                     //DownloadFile(model.getLabel(), part_id);
-                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(),model.getLabel(),part_id));
+                    mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), model.getLabel(), part_id));
                 }
                 model.setLabel(flabel.getAbsolutePath());
 
             } else {
                 Log.e("Error Body", response.errorBody().toString());
-                new AsyncTask<Void,Void,Void>(){
+                new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        model=DB.modelDao().getByPart(part_id).getValue();
+                        model = DB.modelDao().getByPart(part_id).getValue();
                         return null;
                     }
                 }.execute();
@@ -536,10 +536,10 @@ public class RemoteTasks {
         } else {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            new AsyncTask<Void,Void,Void>(){
+            new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    model=DB.modelDao().getByPart(part_id).getValue();
+                    model = DB.modelDao().getByPart(part_id).getValue();
                     return null;
                 }
             }.execute();
@@ -550,7 +550,7 @@ public class RemoteTasks {
 
 
     //Download the model
-    public void DownloadFile(String url, int part_id) {
+    public void DownloadFile(String url) {
         if (Constants.isOnline(mContext)) {
             Uri uri = Uri.parse(url);
             String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
@@ -579,26 +579,21 @@ public class RemoteTasks {
                     .setOnProgressListener(new OnProgressListener() {
                         @Override
                         public void onProgress(Progress progress) {
-                            //Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
-                            currentBytes = progress.currentBytes;
-                            totalBytes = progress.totalBytes;
-                            EventBus.getDefault().post(new ModelDownloadEvent(progress.currentBytes, progress.totalBytes, part_id));
+                            Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
                         }
                     })
                     .start(new OnDownloadListener() {
                         @Override
                         public void onDownloadComplete() {
                             Log.d(url, "Finished::" + uri.getLastPathSegment());
-                            EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, part_id));
+                            //EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, 101));
                         }
 
                         @Override
                         public void onError(Error error) {
 
                         }
-
                     });
-            downloadID.add(downloadId);
 
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
         } else {
@@ -665,7 +660,7 @@ public class RemoteTasks {
 
     //Do Stuffs if Response is successful
     private void UserResponseSuccessfullProcess(Response<User> response) {
-
+        Log.d("Login response", response.body().toString());
         User user = response.body();
         int profile_id = (int) AppDatabase.getInstance(mContext).profileDao().createProfile(user.getProfile());
         user.setProfile_id(profile_id);

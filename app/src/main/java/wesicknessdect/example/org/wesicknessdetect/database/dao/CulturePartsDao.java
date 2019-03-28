@@ -20,4 +20,7 @@ public interface CulturePartsDao {
 
     @Query("SELECT * FROM CulturePart WHERE nom=:name")
     LiveData<CulturePart> getByName(String name);
+
+    @Query("SELECT * FROM CulturePart WHERE id=:id")
+    CulturePart getById(long id);
 }

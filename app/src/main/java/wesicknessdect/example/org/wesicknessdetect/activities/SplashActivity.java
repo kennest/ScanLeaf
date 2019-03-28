@@ -4,11 +4,13 @@ import androidx.room.Room;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -99,12 +101,13 @@ public class SplashActivity extends BaseActivity {
             @Override
             public void run() {
                 if(!isAuthenticated) {
-                    EventBus.getDefault().post(new ShowPartScreenEvent("from splash screen"));
-//                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//                    startActivity(intent);
-//                    finish();
+                    //EventBus.getDefault().post(new ShowPartScreenEvent("from splash screen"));
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                   finish();
                 }else{
                     EventBus.getDefault().post(new UserAuthenticatedEvent(token));
+                    finish();
                 }
             }
         }, SPLASH_TIME_OUT);

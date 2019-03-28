@@ -146,7 +146,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 List<Classifier.Recognition> recognitions = new ArrayList<>();
-                                recognitions = SystemTasks.getInstance(getApplicationContext()).recognizedSymptoms(getAssets(), bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
+                                recognitions = SystemTasks.getInstance(getApplicationContext()).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
                                 Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
                                 return null;
                             }

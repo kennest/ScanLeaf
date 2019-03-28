@@ -30,7 +30,7 @@
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="130dp"
+        android:layout_marginTop="150dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/radius"
         android:backgroundTint="#ffffff"
@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="nom"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/first_name"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="prénom"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/last_name"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="username"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/username"
@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="telephone"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/phone"
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="email"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/email"
@@ -130,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="password"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/password"
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="fonction"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <EditText
                     android:id="@+id/fonction"
@@ -162,7 +162,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="pays"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/countrySpin"
@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:text="sexe"
-                    android:textColor="#2a830e" />
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/sexeSpin"
@@ -197,7 +197,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/radius"
-            android:backgroundTint="#2a830e"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:text="Inscription"
             android:textAllCaps="false"
             android:textColor="#FFF" />
@@ -208,19 +208,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="@drawable/radius"
-            android:backgroundTint="#fd0"
+            android:backgroundTint="@color/colorliht"
             android:text="Déjà inscrit?"
             android:textAllCaps="false"
-            android:textColor="#2a830e" />
+            android:textColor="@color/white" />
     </LinearLayout>
 
-    <ImageView
+    <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/imageVIew"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-
         android:layout_marginBottom="5dp"
         android:padding="5dp"
         android:src="@drawable/ic_launcher" />

@@ -14,6 +14,7 @@ public class Constants {
         put("avatar", "{\"profil\":{\"avatar\":[\"Upload a valid image. The file you uploaded was either not an image or a corrupted image.\"]}}");
         put("mobile", "{\"profil\":{\"mobile\":[\"Ce numero n'est pas valide. Veuillez le saisir comme suit +33399999999\"]}}");
         put("username", "{\"username\":[\"A user with that username already exists.\"]}");
+        put("error_login","{\"non_field_errors\":[\"Incorrect credentials please try again\"]}");
     }};
 
 

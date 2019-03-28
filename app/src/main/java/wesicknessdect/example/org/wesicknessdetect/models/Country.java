@@ -10,11 +10,10 @@ import androidx.room.PrimaryKey;
         unique = true)})
 public class Country {
 
-    @PrimaryKey(autoGenerate = true)
+    @SerializedName(value = "id")
+    @PrimaryKey
     private int id;
 
-    @SerializedName(value = "id")
-    private long res_id;
 
     @SerializedName(value = "name")
     private String name;
@@ -35,11 +34,4 @@ public class Country {
         this.name = name;
     }
 
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
-    }
 }

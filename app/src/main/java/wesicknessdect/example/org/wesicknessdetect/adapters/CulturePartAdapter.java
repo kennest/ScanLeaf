@@ -29,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPixScreenEvent;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 
 public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.CultureHolder> {
@@ -62,7 +63,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
         holder.progressBar.setMaximum(cultureParts.get(position).getFilesize());
         holder.progressBar.setProgress((int) cultureParts.get(position).getDownloaded());
         holder.name.setText(cultureParts.get(position).getNom());
-        //RemoteTasks.getInstance(context).DownloadFile(cultureParts.get(position).getImage());
+
         if (f.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
             Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 200, 200, false);

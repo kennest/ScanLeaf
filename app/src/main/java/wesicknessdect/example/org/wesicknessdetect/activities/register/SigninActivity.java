@@ -12,6 +12,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.lifecycle.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -91,7 +93,7 @@ public class SigninActivity extends BaseActivity implements ISignupView {
             @Override
             public void run() {
 
-                int country_id = AppDatabase.getInstance(SigninActivity.this).countryDao().getByName(cName).getId();
+                int country_id = AppDatabase.getInstance(SigninActivity.this).countryDao().getByName(cName).getValue().getId();
 
                 User u = new User();
                 Profile p = new Profile();
@@ -113,20 +115,20 @@ public class SigninActivity extends BaseActivity implements ISignupView {
     }
 
     private void getCountryFromDBandFillSpinner() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                countries = AppDatabase.getInstance(getApplicationContext()).countryDao().getAll();
-                for (Country c : countries) {
-                    countryStr.add(c.getName());
-                    Log.i("Country in DB::", c.getId() + "/" + c.getName());
-                }
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SigninActivity.this, android.R.layout.simple_spinner_item, countryStr);
-                // Drop down layout style - list view with radio button
-                dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                country.setAdapter(dataAdapter);
-            }
-        }).start();
+                AppDatabase.getInstance(getApplicationContext()).countryDao().getAll().observe(this, new Observer<List<Country>>() {
+                    @Override
+                    public void onChanged(List<Country> countries) {
+                        for (Country c : countries) {
+                            countryStr.add(c.getName());
+                            Log.i("Country in DB::", c.getId() + "/" + c.getName());
+                        }
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SigninActivity.this, android.R.layout.simple_spinner_item, countryStr);
+                        // Drop down layout style - list view with radio button
+                        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        country.setAdapter(dataAdapter);
+                    }
+                });
+
     }
 
     @Override

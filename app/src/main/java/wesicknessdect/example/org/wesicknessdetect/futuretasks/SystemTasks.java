@@ -91,7 +91,7 @@ public class SystemTasks {
 
 
     //Recognized Symptoms on given bitmap
-    public List<Classifier.Recognition> recognizedSymptoms(AssetManager assetManager, Bitmap bitmap, String model,String label,long part_id){
+    public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model,String label,long part_id){
         EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id,false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions=new ArrayList<>();
                 if (MODE == DetectorMode.TF_OD_API) {
@@ -116,6 +116,5 @@ public class SystemTasks {
 
                 }
                 return recognitions;
-
     }
 }

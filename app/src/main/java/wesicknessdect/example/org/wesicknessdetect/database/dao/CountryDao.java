@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.database.dao;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -14,8 +15,8 @@ public interface CountryDao {
     void createCountry(Country diagnostic);
 
     @Query("SELECT * FROM Country")
-    List<Country> getAll();
+    LiveData<List<Country>> getAll();
 
     @Query("SELECT * FROM Country WHERE name=:name")
-    Country getByName(String name);
+    LiveData<Country> getByName(String name);
 }

@@ -15,13 +15,12 @@ import androidx.room.PrimaryKey;
         parentColumns = "id",
         childColumns = "profile_id"),
         indices = {@Index("profile_id")})
-public class User  {
-
-    @PrimaryKey(autoGenerate = true)
-    private int id;
+public class User {
 
     @SerializedName(value = "id")
-    private long res_id;
+    @PrimaryKey
+    private int id;
+
 
     @SerializedName(value = "first_name")
     private String nom;
@@ -123,11 +122,4 @@ public class User  {
         return !TextUtils.isEmpty(getNom()) || !TextUtils.isEmpty(getUsername()) || Patterns.EMAIL_ADDRESS.matcher(getEmail()).matches();
     }
 
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
-    }
 }
