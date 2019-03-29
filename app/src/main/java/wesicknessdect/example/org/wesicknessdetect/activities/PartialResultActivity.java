@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,7 +17,6 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import java.lang.reflect.Type;
 import java.text.Normalizer;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +44,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
+    @BindView(R.id.disease_txt)
+    TextView disease;
     String TAG = "PartialResultActivity";
 
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
@@ -57,6 +59,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     PartialResultImageAdapter partialResultImageAdapter;
     CardStackLayoutManager manager;
     int index = 0;
+    Map.Entry<Long, Integer> maxEntry = null;
 
     private static AppDatabase DB;
 
@@ -109,8 +112,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         DB.diseaseDao().getAll().observe(this, new Observer<List<Disease>>() {
             @Override
             public void onChanged(List<Disease> diseases) {
-                for(Disease d:diseases){
-                    disease_score.put((long) d.getId(),0);
+                for (Disease d : diseases) {
+                    disease_score.put((long) d.getId(), 0);
                 }
             }
         });
@@ -119,27 +122,42 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         DB.diseaseSymptomsDao().getAll().observe(PartialResultActivity.this, new Observer<List<DiseaseSymptom>>() {
             @Override
             public void onChanged(List<DiseaseSymptom> diseaseSymptoms) {
-                int score=0;
+                int score = 0;
                 for (DiseaseSymptom ds : diseaseSymptoms) {
-                    for(Integer i:img_symptoms_id){
+                    for (Integer i : img_symptoms_id) {
                         //Log.e("Score index", (long)i+ "//"+ds.getSymptom_id() );
                         Long l = Long.valueOf(i);
-                        if(l.equals(ds.getSymptom_id())){
-                            Log.e("Score index equal", (long)i+ "//"+ds.getSymptom_id()+"//"+ds.getDisease_id());
-                            score=score+1;
-                            disease_score.put(ds.getDisease_id(),score);
+                        if (l.equals(ds.getSymptom_id())) {
+                            Log.e("Score index equal", (long) i + "//" + ds.getSymptom_id() + "//" + ds.getDisease_id());
+                            score = score + 1;
+                            disease_score.put(ds.getDisease_id(), score);
                         }
                     }
                 }
+
+
+                //Get the max value of the score map
+
                 Log.e("Score", disease_score.size() + "");
-                for(Map.Entry<Long,Integer> score_entry:disease_score.entrySet()){
-                    Log.e("Score "+score_entry.getKey(), score_entry.getValue() + "");
+                for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
+                    Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
+                    if (maxEntry == null || score_entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                        maxEntry = score_entry;
+                        DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
+                            @Override
+                            public void onChanged(List<Disease> diseases) {
+                                for (Disease d : diseases) {
+                                    if (d.getId() == maxEntry.getKey()) {
+                                          disease.setText(d.getName().toUpperCase());
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
-                //Collections.max(disease_score.values());
 
             }
         });
-
 
 
     }
