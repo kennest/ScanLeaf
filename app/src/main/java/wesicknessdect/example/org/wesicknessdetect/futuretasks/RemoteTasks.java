@@ -48,6 +48,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
+import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
@@ -418,6 +419,12 @@ public class RemoteTasks {
                         @Override
                         protected Void doInBackground(Void... voids) {
                             DB.diseaseDao().createDisease(d);
+                            for(Integer i:d.getSymptoms()){
+                                DiseaseSymptom ds=new DiseaseSymptom();
+                                ds.setDisease_id(d.getId());
+                                ds.setSymptom_id(i);
+                                DB.diseaseSymptomsDao().createDiseaseSymptom(ds);
+                            }
                             return null;
                         }
                     }.execute();

@@ -1,11 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 
 import com.google.gson.Gson;
@@ -14,21 +11,30 @@ import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
-import com.yuyakaido.android.cardstackview.RewindAnimationSetting;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.lang.reflect.Type;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.PartialResultImageAdapter;
+import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
+import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 
 public class PartialResultActivity extends BaseActivity implements CardStackListener {
 
@@ -42,43 +48,100 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     Map<Integer, String> images_by_parts = new HashMap<>();
+    HashMap<Long, Integer> disease_score = new HashMap<>();
+    Map<Long, Long> disease_symptoms = new HashMap<Long, Long>();
+    List<Integer> img_symptoms_id = new ArrayList<>();
+    Set<String> symptoms_set = new HashSet<>();
+    List<Classifier.Recognition> recognitions = new ArrayList<>();
     private Map<Integer, Map<Integer, String>> images_by_part_adapter = new HashMap<>();
     PartialResultImageAdapter partialResultImageAdapter;
     CardStackLayoutManager manager;
     int index = 0;
+
+    private static AppDatabase DB;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partial_results);
         ButterKnife.bind(this);
+        DB = AppDatabase.getInstance(this);
         InitCardSwipe();
+        InitScoreData();
     }
 
-    private void InitView() {
-        Gson gson = new Gson();
-        Type typeOfHashMap = new TypeToken<Map<Integer, List<Classifier.Recognition>>>() {
-        }.getType();
-        Type typeOfHashMap2 = new TypeToken<Map<Integer, String>>() {
-        }.getType();
+    private void InitScoreData() {
 
-        String recognitions_json = getIntent().getStringExtra("recognitions_by_part");
-        String images_json = getIntent().getStringExtra("images_by_part");
-
-        recognitions_by_part = gson.fromJson(recognitions_json, typeOfHashMap);
-        images_by_parts = gson.fromJson(images_json, typeOfHashMap2);
-
-        for (Map.Entry<Integer, String> entry : images_by_parts.entrySet()) {
-            Map<Integer, String> map = new HashMap<>();
-            map.put(entry.getKey(), entry.getValue());
-            images_by_part_adapter.put(index, map);
-            index = +1;
+        //Get All recognition in one list
+        for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : recognitions_by_part.entrySet()) {
+            recognitions.addAll(recognition_entry.getValue().subList(0, 4));
         }
 
-        Log.e(TAG + " map size", images_by_part_adapter.size() + "");
-        partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
-        images_analysed_lv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        images_analysed_lv.setAdapter(partialResultImageAdapter);
+        Log.e("All img Recognitions", recognitions.size() + "");
+
+        //Add distinct label in a list
+        for (Classifier.Recognition r : recognitions) {
+            symptoms_set.add(r.getTitle().toUpperCase(Locale.ENGLISH));
+        }
+
+        Log.e("All Recognitions label", symptoms_set.size() + "");
+
+        //Check Symptoms Table to get the id of the given label
+        DB.symptomDao().getAll().observe(this, new Observer<List<Symptom>>() {
+            @Override
+            public void onChanged(List<Symptom> symptoms) {
+                for (Symptom s : symptoms) {
+                    //Remove accent from String
+                    String item = Normalizer.normalize(s.getName(), Normalizer.Form.NFD);
+                    item = item.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+                    for (String n : symptoms_set) {
+                        //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
+                        if (item.toUpperCase().equals(n)) {
+                            img_symptoms_id.add(s.getId());
+                        }
+                    }
+                }
+                Log.e("All img symptom id", img_symptoms_id.size() + "");
+            }
+        });
+
+        DB.diseaseDao().getAll().observe(this, new Observer<List<Disease>>() {
+            @Override
+            public void onChanged(List<Disease> diseases) {
+                for(Disease d:diseases){
+                    disease_score.put((long) d.getId(),0);
+                }
+            }
+        });
+
+
+        DB.diseaseSymptomsDao().getAll().observe(PartialResultActivity.this, new Observer<List<DiseaseSymptom>>() {
+            @Override
+            public void onChanged(List<DiseaseSymptom> diseaseSymptoms) {
+                int score=0;
+                for (DiseaseSymptom ds : diseaseSymptoms) {
+                    for(Integer i:img_symptoms_id){
+                        //Log.e("Score index", (long)i+ "//"+ds.getSymptom_id() );
+                        Long l = Long.valueOf(i);
+                        if(l.equals(ds.getSymptom_id())){
+                            Log.e("Score index equal", (long)i+ "//"+ds.getSymptom_id()+"//"+ds.getDisease_id());
+                            score=score+1;
+                            disease_score.put(ds.getDisease_id(),score);
+                        }
+                    }
+                }
+                Log.e("Score", disease_score.size() + "");
+                for(Map.Entry<Long,Integer> score_entry:disease_score.entrySet()){
+                    Log.e("Score "+score_entry.getKey(), score_entry.getValue() + "");
+                }
+                //Collections.max(disease_score.values());
+
+            }
+        });
+
+
+
     }
 
     private void InitCardSwipe() {
@@ -154,7 +217,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 //            //images_analysed_lv.rewind();
 //            manager.smoothScrollToPosition(images_analysed_lv,null,0);
             //progressBar.setVisibility(View.VISIBLE);
-           this.Reload();
+            this.Reload();
         }
     }
 
@@ -171,18 +234,18 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @Override
     public void onCardAppeared(View view, int position) {
-        Log.e("Card Appeared ", position+"");
-        if (position== 0) {
-            Log.e("Card Appeared ", position+"");
+        Log.e("Card Appeared ", position + "");
+        if (position == 0) {
+            Log.e("Card Appeared ", position + "");
             progressBar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onCardDisappeared(View view, int position) {
-        Log.e("Card Disappeared ", position+"//"+partialResultImageAdapter.getItemCount());
-        if (position == (partialResultImageAdapter.getItemCount()-1)) {
-            Log.e("Card Disappeared ", position+"//"+(partialResultImageAdapter.getItemCount()-1));
+        Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
+        if (position == (partialResultImageAdapter.getItemCount() - 1)) {
+            Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
             progressBar.setVisibility(View.VISIBLE);
         }
     }

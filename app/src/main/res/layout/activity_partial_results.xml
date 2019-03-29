@@ -49,7 +49,7 @@
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/lin2"
             android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             >
             <!--<LinearLayout-->
@@ -93,6 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:background="@color/white"
                 android:layout_marginTop="5dp">
                 <TextView
                     android:layout_width="match_parent"
@@ -104,6 +105,10 @@
                     android:textColor="@color/white"
                     android:textSize="19dp"
                     android:textStyle="bold"  />
+                <TextView
+                    android:id="@+id/disease_txt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
 
             </LinearLayout>

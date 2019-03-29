@@ -84,6 +84,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
         //Si la partie est deja traitee
         if (cultureParts.get(position).isChecked()) {
             holder.checked.setVisibility(View.VISIBLE);
+            holder.progressBar_recognize.setVisibility(View.GONE);
         }else{
             holder.checked.setVisibility(View.GONE);
         }
