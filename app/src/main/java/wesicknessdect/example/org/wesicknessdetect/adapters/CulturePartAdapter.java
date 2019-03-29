@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -19,7 +20,6 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +29,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPixScreenEvent;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 
 public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.CultureHolder> {
@@ -71,15 +70,22 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
         }
 
         //Si la partie es en cours de traitement
-        if(cultureParts.get(position).isRecognizing()){
+        if (cultureParts.get(position).isRecognizing()) {
             holder.progressBar_recognize.setVisibility(View.VISIBLE);
             holder.imageButton.setEnabled(false);
             holder.imageButton.setClickable(false);
-
-        }else{
+            holder.checked.setVisibility(View.GONE);
+        } else {
             holder.progressBar_recognize.setVisibility(View.GONE);
             holder.imageButton.setEnabled(true);
             holder.imageButton.setClickable(true);
+        }
+
+        //Si la partie est deja traitee
+        if (cultureParts.get(position).isChecked()) {
+            holder.checked.setVisibility(View.VISIBLE);
+        }else{
+            holder.checked.setVisibility(View.GONE);
         }
 
         //Si le telechargement du modele est fini
@@ -126,6 +132,8 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
         TextView name;
         @BindView(R.id.progressBar_recognize)
         ProgressBar progressBar_recognize;
+        @BindView(R.id.checked)
+        ImageView checked;
 
         public CultureHolder(View itemView) {
             super(itemView);

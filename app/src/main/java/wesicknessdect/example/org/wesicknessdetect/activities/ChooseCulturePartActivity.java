@@ -193,6 +193,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                     c.setRecognizing(true);
                 }else{
                     c.setRecognizing(false);
+                    c.setChecked(true);
                     recognitions_by_part.put((int) event.part_id,event.recognitions);
                 }
             }

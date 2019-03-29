@@ -80,6 +80,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                             CulturePart culturePart = AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey());
                             if (culturePart!=null) {
                                 holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
+                                holder.part_name.setText(culturePart.getNom());
                             }
                             for (Map.Entry<Integer, List<Classifier.Recognition>> recognitionEntry : recognitions_by_part.entrySet()) {
                                 if (n.getKey().equals(recognitionEntry.getKey())) {
@@ -87,9 +88,10 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                     Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
                                     List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
                                     Canvas canvas = new Canvas(bitmap_cropped);
-                                    recognitions = recognitions.subList(0, 2);
-                                    for (Classifier.Recognition r : recognitions) {
 
+                                    recognitions = recognitions.subList(0, 3);
+
+                                    for (Classifier.Recognition r : recognitions) {
                                         symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
                                         Paint paint = new Paint();
                                         paint.setStyle(Paint.Style.STROKE);
@@ -101,7 +103,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         LinearLayout line = new LinearLayout(context);
                                         line.setOrientation(LinearLayout.HORIZONTAL);
                                         TextView txt = new TextView(context);
-                                        txt.setText(String.format("%s  ---  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
+                                        txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
                                         txt.setTextColor(color);
                                         txt.setTypeface(txt.getTypeface(), Typeface.BOLD);
                                         txt.setTextSize(20);
@@ -140,6 +142,8 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
         LinearLayout symptoms_txt;
         @BindView(R.id.part_image)
         CircularImageView part_image;
+        @BindView(R.id.part_name)
+        TextView part_name;
 
         public ImageHolder(@NonNull View itemView) {
             super(itemView);

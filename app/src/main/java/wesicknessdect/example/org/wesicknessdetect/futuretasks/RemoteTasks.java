@@ -346,14 +346,17 @@ public class RemoteTasks {
                 Log.e("Cultures Part", cultureParts.size() + "");
 
                 //Download Fake Image Url
-                String url= "https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg";
-                DownloadFile(url);
-                for (CulturePart c : cultureParts) {
+//                String url= "https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg";
+//                DownloadFile(url);
 
-                    Uri uri = Uri.parse(url);
-                    String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                    c.setImage(destination+uri.getLastPathSegment());
-                   Log.e("Culture Image", c.getImage());
+                for (CulturePart c : cultureParts) {
+                    if(c.getImage()!=null){
+                        Log.e("Culture Image", c.getImage());
+                        DownloadFile(c.getImage());
+                        Uri uri = Uri.parse(c.getImage());
+                        String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                        c.setImage(destination+uri.getLastPathSegment());
+                    }
                     c.setCulture_id(id);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
@@ -373,6 +376,7 @@ public class RemoteTasks {
                         }
                     }.execute();
                 }
+
             } else {
                 Log.e("Error Body", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {

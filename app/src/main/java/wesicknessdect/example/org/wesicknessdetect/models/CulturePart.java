@@ -37,6 +37,9 @@ public class CulturePart {
     private long downloaded=0;
 
     @Ignore
+    private boolean checked=false;
+
+    @Ignore
     private long filesize=0;
 
     public long getId() {
@@ -101,5 +104,13 @@ public class CulturePart {
 
     public void setRecognizing(boolean recognizing) {
         this.recognizing = recognizing;
+    }
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 }

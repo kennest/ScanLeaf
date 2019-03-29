@@ -25,15 +25,28 @@
             android:minHeight="200dp"
             android:scaleType="fitCenter" />
 
-        <LinearLayout
-            android:id="@+id/symptoms_txt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/img_border"
-            android:orientation="vertical"
-            android:padding="20dp">
 
-        </LinearLayout>
+        <ScrollView
+            android:background="@drawable/img_border"
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/symptoms_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+                <TextView
+                    android:id="@+id/part_name"
+                    android:padding="5dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/white"
+                    android:layout_height="wrap_content"
+                    android:text="PART_NAME"/>
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 
@@ -88,11 +101,10 @@
         android:layout_height="80dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="27dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="26dp"
         app:civ_border_color="@color/colorPrimaryDark"
-        app:civ_border_width="2dp"
-        />
+        app:civ_border_width="2dp" />
 </RelativeLayout>
 
 

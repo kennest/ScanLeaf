@@ -1,5 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -110,7 +112,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         manager.setCanScrollHorizontal(true);
         manager.setCanScrollVertical(false);
         manager.setSwipeThreshold(0.3f);
-        manager.setStackFrom(StackFrom.Left);
+        manager.setStackFrom(StackFrom.Top);
         manager.setTranslationInterval(8f);
         partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
         manager.setVisibleCount(partialResultImageAdapter.getItemCount());
@@ -127,31 +129,32 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void onCardSwiped(Direction direction) {
         Log.e("Card Swiped", manager.getTopPosition() + "/****/" + partialResultImageAdapter.getItemCount());
         if (manager.getTopPosition() == partialResultImageAdapter.getItemCount()) {
-            manager = new CardStackLayoutManager(this, this);
-            manager.setDirections(Direction.HORIZONTAL);
-            manager.setCanScrollHorizontal(true);
-            manager.setCanScrollVertical(false);
-            manager.setSwipeThreshold(0.3f);
-            manager.setStackFrom(StackFrom.Left);
-            manager.setTranslationInterval(8f);
-
-            partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
-            manager.setVisibleCount(partialResultImageAdapter.getItemCount());
-            images_analysed_lv.setLayoutManager(manager);
-            images_analysed_lv.setAdapter(partialResultImageAdapter);
-            partialResultImageAdapter.notifyDataSetChanged();
-
-//            RewindAnimationSetting setting = new RewindAnimationSetting.Builder()
-//                    .setDirection(Direction.Bottom)
-//                    .setDuration(200)
-//                    .setInterpolator(new DecelerateInterpolator())
-//                    .build();
+//            manager = new CardStackLayoutManager(this, this);
+//            manager.setDirections(Direction.HORIZONTAL);
+//            manager.setCanScrollHorizontal(true);
+//            manager.setCanScrollVertical(false);
+//            manager.setSwipeThreshold(0.3f);
+//            manager.setStackFrom(StackFrom.Top);
+//            manager.setTranslationInterval(8f);
 //
-//            manager.setRewindAnimationSetting(setting);
-
-            //images_analysed_lv.rewind();
-            manager.smoothScrollToPosition(images_analysed_lv,null,0);
+//            partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
+//            manager.setVisibleCount(partialResultImageAdapter.getItemCount());
+//            images_analysed_lv.setLayoutManager(manager);
+//            images_analysed_lv.setAdapter(partialResultImageAdapter);
+//            partialResultImageAdapter.notifyDataSetChanged();
+//
+////            RewindAnimationSetting setting = new RewindAnimationSetting.Builder()
+////                    .setDirection(Direction.Bottom)
+////                    .setDuration(200)
+////                    .setInterpolator(new DecelerateInterpolator())
+////                    .build();
+////
+////            manager.setRewindAnimationSetting(setting);
+//
+//            //images_analysed_lv.rewind();
+//            manager.smoothScrollToPosition(images_analysed_lv,null,0);
             //progressBar.setVisibility(View.VISIBLE);
+           this.Reload();
         }
     }
 
