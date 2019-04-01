@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;

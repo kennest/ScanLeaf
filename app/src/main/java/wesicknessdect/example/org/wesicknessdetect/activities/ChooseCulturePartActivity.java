@@ -30,6 +30,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CulturePartAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.DeletePartPictureEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
@@ -135,6 +136,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
+
                     // modele = model;
                     Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
                     File modelfile=new File(model.getPb());
@@ -146,7 +148,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                             @Override
                             protected Void doInBackground(Void... voids) {
                                 List<Classifier.Recognition> recognitions = new ArrayList<>();
-                                recognitions = SystemTasks.getInstance(getApplicationContext()).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
+                                recognitions = SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
                                 Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
                                 return null;
                             }
@@ -209,6 +211,22 @@ public class ChooseCulturePartActivity extends BaseActivity {
             analysisBtn.setClickable(true);
             analysisBtn.setText("ANALYSER");
             analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+    }
+
+    //Listen for deletion on picture part
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDeletePartPicture(DeletePartPictureEvent event){
+        for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
+            Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
+            if (entry.getKey()==Integer.valueOf((Integer) event.part_id)) {
+                Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
+                images_by_part.remove(entry.getKey());
+                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
+                parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                parts_lv.setAdapter(culturePartAdapter);
+                culturePartAdapter.notifyDataSetChanged();
+            }
         }
     }
 

@@ -1,6 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.register;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,6 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import com.appizona.yehiahd.fastsave.FastSave;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +28,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
@@ -85,16 +93,15 @@ public class SigninActivity extends BaseActivity implements ISignupView {
         t.startAnimation(titre);
     }
 
+    @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.signinsubmit)
     public void SignupTask() {
         String cName = country.getSelectedItem().toString();
         Log.i("Country Selected", cName);
-        new Thread(new Runnable() {
+
+        AppDatabase.getInstance(SigninActivity.this).countryDao().getByName(cName).observe(this, new Observer<Country>() {
             @Override
-            public void run() {
-
-                int country_id = AppDatabase.getInstance(SigninActivity.this).countryDao().getByName(cName).getValue().getId();
-
+            public void onChanged(Country country) {
                 User u = new User();
                 Profile p = new Profile();
                 u.setNom(firstame.getText().toString());
@@ -107,11 +114,19 @@ public class SigninActivity extends BaseActivity implements ISignupView {
                 p.setAvatar(null);
                 p.setFonction(fonction.getText().toString());
                 p.setMobile(phone.getText().toString());
-                p.setCountry(country_id);
+                p.setCountry_id(country.getId());
                 u.setProfile(p);
-                signupPresenter.doSignup(u);
+                new AsyncTask<Void,Void,Void>(){
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        signupPresenter.doSignup(u);
+                        return null;
+                    }
+                }.execute();
             }
-        }).start();
+        });
+
+
     }
 
     private void getCountryFromDBandFillSpinner() {

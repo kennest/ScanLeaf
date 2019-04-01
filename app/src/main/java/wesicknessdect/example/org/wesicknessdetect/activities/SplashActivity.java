@@ -6,7 +6,6 @@ import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
@@ -75,18 +74,23 @@ public class SplashActivity extends BaseActivity {
 
         //*****************CHECK IF USER IS AUTHENTICATED****************/
 
-        duhaut = AnimationUtils.loadAnimation(this, R.anim.uptodown);
-        dubas =AnimationUtils.loadAnimation(this, R.anim.downtoup);
+        fromLeft = AnimationUtils.loadAnimation(this, R.anim.lefttoright);
+        fromRight =AnimationUtils.loadAnimation(this, R.anim.rightoleft);
+        dubas =AnimationUtils.loadAnimation(this, R.anim.splashtransition);
         appear = AnimationUtils.loadAnimation(this, R.anim.splashtransition);
         appear.setStartOffset(800);
-        duhaut.setStartOffset(1000);
-        dubas.setStartOffset(1000);
-        ImageView iv2 = findViewById(R.id.chapeau);
+        fromLeft.setStartOffset(800);
+        fromRight.setStartOffset(800);
+        //duhaut.setStartOffset(1000);
+        dubas.setStartOffset(1500);
+        ImageView left = findViewById(R.id.left);
         ImageView iv3 = findViewById(R.id.plantation);
-        ImageView imageView= findViewById(R.id.vK);
-        imageView.startAnimation(appear);
-        iv2.startAnimation(duhaut);
+        ImageView right= findViewById(R.id.right);
+
+        left.startAnimation(fromLeft);
+        right.startAnimation(fromRight);
         iv3.startAnimation(dubas);
+
         if(isAuthenticated) {
             welcome.setVisibility(View.VISIBLE);
             try {

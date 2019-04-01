@@ -8,32 +8,42 @@
     android:background="#ffffff"
     >
 
-
-    <ImageView
-        android:id="@+id/vK"
-        android:layout_width="206dp"
-        android:layout_height="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
-        android:src="@drawable/vkouakou"
-
-        />
-
-    <ImageView
-        android:id="@+id/chapeau"
-        android:layout_width="152dp"
-        android:layout_height="97dp"
+    <LinearLayout
+        android:weightSum="2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/plantation"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="165dp"
-        android:layout_marginEnd="103dp"
-        android:src="@drawable/chapeau" />
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="350dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_weight="1"
+            android:id="@+id/left"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="100dp"
+            android:src="@drawable/logoleft" />
+
+        <ImageView
+            android:layout_weight="1"
+            android:id="@+id/right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/logoright"
+            android:paddingRight="100dp"/>
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/plantation"
         android:layout_width="match_parent"
-        android:layout_height="600dp"
+        android:layout_height="300dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"

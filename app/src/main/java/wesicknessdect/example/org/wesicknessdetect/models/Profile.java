@@ -3,15 +3,18 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 import com.google.gson.annotations.SerializedName;
 
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(foreignKeys = @ForeignKey(entity = Country.class,
+        parentColumns = "id",
+        childColumns = "country_id"),
+        indices = {@Index("country_id")})
 public class Profile {
-    @SerializedName(value = "id")
-    @PrimaryKey
+//    @SerializedName(value = "id")
+    @PrimaryKey(autoGenerate = true)
     private int id;
-
-
 
     @SerializedName(value = "avatar")
     private String avatar;
@@ -20,7 +23,7 @@ public class Profile {
     private String gender;
 
     @SerializedName(value = "country")
-    private int country;
+    private int country_id;
 
     @SerializedName(value = "fonction")
     private String fonction;
@@ -33,7 +36,6 @@ public class Profile {
 
     @SerializedName(value = "mobile")
     private String mobile;
-
 
     public int getId() {
         return id;
@@ -59,12 +61,12 @@ public class Profile {
         this.gender = gender;
     }
 
-    public int getCountry() {
-        return country;
+    public int getCountry_id() {
+        return country_id;
     }
 
-    public void setCountry(int country) {
-        this.country = country;
+    public void setCountry_id(int country_id) {
+        this.country_id = country_id;
     }
 
     public String getBirth() {

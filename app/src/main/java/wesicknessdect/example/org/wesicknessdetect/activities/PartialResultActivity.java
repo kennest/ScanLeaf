@@ -1,11 +1,14 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
@@ -32,6 +35,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.PartialResultImageAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
@@ -43,6 +47,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.btn_save_diagnostic)
+    FloatingActionButton save_diagnostic;
 
     @BindView(R.id.disease_txt)
     TextView disease;
@@ -70,7 +77,14 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         ButterKnife.bind(this);
         DB = AppDatabase.getInstance(this);
         InitCardSwipe();
-        InitScoreData();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InitScoreData();
+            }
+        });
+
+        //getLocation();
     }
 
     private void InitScoreData() {
@@ -90,7 +104,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         Log.e("All Recognitions label", symptoms_set.size() + "");
 
         //Check Symptoms Table to get the id of the given label
-        DB.symptomDao().getAll().observe(this, new Observer<List<Symptom>>() {
+        DB.symptomDao().getAll().observe(PartialResultActivity.this, new Observer<List<Symptom>>() {
             @Override
             public void onChanged(List<Symptom> symptoms) {
                 for (Symptom s : symptoms) {
@@ -109,55 +123,54 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
         });
 
-        DB.diseaseDao().getAll().observe(this, new Observer<List<Disease>>() {
+        DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
             @Override
             public void onChanged(List<Disease> diseases) {
                 for (Disease d : diseases) {
                     disease_score.put((long) d.getId(), 0);
                 }
-            }
-        });
-
-
-        DB.diseaseSymptomsDao().getAll().observe(PartialResultActivity.this, new Observer<List<DiseaseSymptom>>() {
-            @Override
-            public void onChanged(List<DiseaseSymptom> diseaseSymptoms) {
-                int score = 0;
-                for (DiseaseSymptom ds : diseaseSymptoms) {
-                    for (Integer i : img_symptoms_id) {
-                        //Log.e("Score index", (long)i+ "//"+ds.getSymptom_id() );
-                        Long l = Long.valueOf(i);
-                        if (l.equals(ds.getSymptom_id())) {
-                            Log.e("Score index equal", (long) i + "//" + ds.getSymptom_id() + "//" + ds.getDisease_id());
-                            score = score + 1;
-                            disease_score.put(ds.getDisease_id(), score);
-                        }
-                    }
-                }
-
-
-                //Get the max value of the score map
-
-                Log.e("Score", disease_score.size() + "");
-                for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
-                    Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
-                    if (maxEntry == null || score_entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-                        maxEntry = score_entry;
-                        DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
-                            @Override
-                            public void onChanged(List<Disease> diseases) {
-                                for (Disease d : diseases) {
-                                    if (d.getId() == maxEntry.getKey()) {
-                                          disease.setText(d.getName().toUpperCase());
-                                    }
+                DB.diseaseSymptomsDao().getAll().observe(PartialResultActivity.this, new Observer<List<DiseaseSymptom>>() {
+                    @Override
+                    public void onChanged(List<DiseaseSymptom> diseaseSymptoms) {
+                        int score = 0;
+                        for (DiseaseSymptom ds : diseaseSymptoms) {
+                            for (Integer i : img_symptoms_id) {
+                                //Log.e("Score index", (long)i+ "//"+ds.getSymptom_id() );
+                                Long l = Long.valueOf(i);
+                                if (l.equals(ds.getSymptom_id())) {
+                                    Log.e("Score index equal", (long) i + "//" + ds.getSymptom_id() + "//" + ds.getDisease_id());
+                                    score = score + 1;
+                                    disease_score.put(ds.getDisease_id(), score);
                                 }
                             }
-                        });
-                    }
-                }
+                        }
 
+
+                        //Get the max value of the score map
+                        Log.e("Score", disease_score.size() + "");
+                        for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
+                            Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
+                            if (maxEntry == null || score_entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                                maxEntry = score_entry;
+                                DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
+                                    @Override
+                                    public void onChanged(List<Disease> diseases) {
+                                        for (Disease d : diseases) {
+                                            if (d.getId() == maxEntry.getKey()) {
+                                                disease.setText(d.getName().toUpperCase());
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                    }
+                });
             }
         });
+
+
 
 
     }
@@ -237,6 +250,12 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             //progressBar.setVisibility(View.VISIBLE);
             this.Reload();
         }
+    }
+
+    @SuppressLint("CheckResult")
+    public void getLocation(){
+        Location location= SystemTasks.getInstance(this).getLocation();
+        Log.d("Location",location.getLatitude()+"//"+location.getLongitude());
     }
 
     @Override

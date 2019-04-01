@@ -42,6 +42,9 @@ public class CulturePart {
     @Ignore
     private long filesize=0;
 
+    @Ignore
+    private boolean has_picture=false;
+
     public long getId() {
         return id;
     }
@@ -112,5 +115,13 @@ public class CulturePart {
 
     public void setChecked(boolean checked) {
         this.checked = checked;
+    }
+
+    public boolean isHas_picture() {
+        return has_picture;
+    }
+
+    public void setHas_picture(boolean has_picture) {
+        this.has_picture = has_picture;
     }
 }

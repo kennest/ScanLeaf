@@ -33,14 +33,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.login.LoginActivity">
+        <activity android:name=".activities.login.LoginActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.register.SigninActivity" />
+        <activity android:name=".activities.register.SigninActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".MainActivity" />
         <activity
             android:name=".activities.FinalResultActivity"

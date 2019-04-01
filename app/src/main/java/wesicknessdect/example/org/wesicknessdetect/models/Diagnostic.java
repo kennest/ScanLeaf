@@ -11,18 +11,16 @@ import androidx.room.PrimaryKey;
         @ForeignKey(
                 entity = User.class, parentColumns = "id", childColumns = "user_id"
         ),
-        @ForeignKey(
-                entity = Parcel.class,
-                parentColumns = "id",
-                childColumns = "parcel_id"
-        )
-},indices = {@Index("user_id"),@Index("parcel_id")})
+//        @ForeignKey(
+//                entity = Parcel.class,
+//                parentColumns = "id",
+//                childColumns = "parcel_id"
+//        )
+},indices = {@Index("user_id")})
 public class Diagnostic  {
-    @PrimaryKey(autoGenerate = true)
-    private int id;
-
     @SerializedName(value = "id")
-    private long res_id;
+    @PrimaryKey
+    private int id;
 
     private double longitude;
     private double latitude;
@@ -31,7 +29,6 @@ public class Diagnostic  {
     private float probability;
     private long user_id;
     private int is_share;
-    private int parcel_id;
 
     public int getId() {
         return id;
@@ -95,21 +92,5 @@ public class Diagnostic  {
 
     public void setIs_share(int is_share) {
         this.is_share = is_share;
-    }
-
-    public int getParcel_id() {
-        return parcel_id;
-    }
-
-    public void setParcel_id(int parcel_id) {
-        this.parcel_id = parcel_id;
-    }
-
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
     }
 }

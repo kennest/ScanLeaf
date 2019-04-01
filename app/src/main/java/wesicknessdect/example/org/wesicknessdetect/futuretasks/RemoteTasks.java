@@ -142,34 +142,33 @@ public class RemoteTasks {
 
             Thread.sleep(1000);
             FutureTask<User> future = new FutureTask<>(new Callable<User>() {
+                @SuppressLint("StaticFieldLeak")
                 @Override
                 public User call() throws Exception {
                     APIService service = APIClient.getClient().create(APIService.class);
                     Call<User> SignupCall = service.doSignup(u);
-                    SignupCall.enqueue(new Callback<User>() {
-                        @Override
-                        public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
-                            if (response.isSuccessful()) {
-                                if (response.body() != null) {
-                                    user = response.body();
-                                    result = response.body().toString();
-                                    UserResponseSuccessfullProcess(response);
+                    Response<User> response=SignupCall.execute();
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            user = response.body();
+                            result = response.body().toString();
+                            User user = response.body();
+                            new AsyncTask<Void,Void,Void>(){
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    int profile_id = (int) DB.profileDao().createProfile(user.getProfile());
+                                    user.setProfile_id(profile_id);
+                                    DB.userDao().createUser(user);
+                                    FastSave.getInstance().saveString("token", response.body().getToken());
+                                    EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
+                                    return null;
                                 }
-                            } else {
-                                UserResponseErrorProcess(response);
-                            }
-                            Log.e("SignupCall Result", result);
-
-                            //Dispatch hide loading event
-                            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                            }.execute();
                         }
-
-                        @Override
-                        public void onFailure(@NonNull Call<User> call, Throwable t) {
-                            FailureProcess(t);
-                            call.cancel();
-                        }
-                    });
+                    } else {
+                        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                        UserResponseErrorProcess(response);
+                    }
                     return user;
                 }
             });
@@ -190,6 +189,7 @@ public class RemoteTasks {
             EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
             Thread.sleep(1000);
             FutureTask<String> future = new FutureTask<>(new Callable<String>() {
+                @SuppressLint("StaticFieldLeak")
                 @Override
                 public String call() throws Exception {
                     APIService service = APIClient.getClient().create(APIService.class);
@@ -197,7 +197,18 @@ public class RemoteTasks {
                     Response<User> response = loginCall.execute();
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
-                            UserResponseSuccessfullProcess(response);
+                            user=response.body();
+                            new AsyncTask<Void,Void,Void>(){
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    int profile_id = (int) DB.profileDao().createProfile(user.getProfile());
+                                    user.setProfile_id(profile_id);
+                                    DB.userDao().createUser(user);
+                                    FastSave.getInstance().saveString("token", response.body().getToken());
+                                    EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
+                                    return null;
+                                }
+                            }.execute();
                             EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                         }
                     } else {
@@ -216,7 +227,7 @@ public class RemoteTasks {
         }
     }
 
-    //Get Culture from Server
+    //Get Cultures from Server
     public List<Culture> getCulture() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
@@ -290,7 +301,7 @@ public class RemoteTasks {
         return struggles;
     }
 
-    //Get Struggles from Server
+    //Get Symptoms from Server
     @SuppressLint("StaticFieldLeak")
     public List<Symptom> getSymptoms() throws IOException {
         if (Constants.isOnline(mContext)) {
@@ -498,7 +509,7 @@ public class RemoteTasks {
         return questions;
     }
 
-    //Get the model from the server
+    //Get the model of the given part id from the server
     @SuppressLint("StaticFieldLeak")
     public Model getModel(int part_id) throws IOException {
         if (Constants.isOnline(mContext)) {
@@ -669,26 +680,16 @@ public class RemoteTasks {
         }
     }
 
-    //Do Stuffs if Response is successful
-    private void UserResponseSuccessfullProcess(Response<User> response) {
-        Log.d("Login response", response.body().toString());
-        User user = response.body();
-        int profile_id = (int) AppDatabase.getInstance(mContext).profileDao().createProfile(user.getProfile());
-        user.setProfile_id(profile_id);
-        AppDatabase.getInstance(mContext).userDao().createUser(user);
-        FastSave.getInstance().saveString("token", response.body().getToken());
-        EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
-    }
 
     //Do Stuffs if response is Error
     private void UserResponseErrorProcess(Response<User> response) {
         try {
             result = "ERROR ::" + response.errorBody().string();
+            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
             //Check wether if error msg is in the conatants error msg
             for (Map.Entry<String, String> entry : Constants.api_error_msg.entrySet()) {
                 if (result.contains(entry.getKey())) {
                     Log.e("Find Error", entry.getKey());
-                    EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                     EventBus.getDefault().post(new ShowLoadingEvent("Error " + entry.getKey(), entry.getValue(), true));
                 }
             }
