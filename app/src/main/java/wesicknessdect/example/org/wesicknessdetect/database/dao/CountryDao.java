@@ -12,7 +12,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Country;
 @Dao
 public interface CountryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void createCountry(Country diagnostic);
+    long createCountry(Country diagnostic);
 
     @Query("SELECT * FROM Country")
     LiveData<List<Country>> getAll();

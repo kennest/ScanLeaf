@@ -104,6 +104,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="11dp"
-        android:src="@drawable/ic_dialog_close_dark"
+        android:src="@drawable/close_box"
         android:backgroundTint="#C62828"/>
 </RelativeLayout>

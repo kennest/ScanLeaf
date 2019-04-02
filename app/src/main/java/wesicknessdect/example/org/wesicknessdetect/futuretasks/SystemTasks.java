@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +16,12 @@ import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 
+import com.appizona.yehiahd.fastsave.FastSave;
+import com.github.florent37.rxgps.RxGps;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.material.snackbar.Snackbar;
+import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -31,23 +37,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import rx.functions.Action1;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.content.Context.LOCATION_SERVICE;
-import static androidx.core.app.ActivityCompat.requestPermissions;
 
 
 public class SystemTasks {
     private static SystemTasks systemTasks;
     private static Activity mContext;
-    private LocationManager locationManager;
-    private LocationListener listener;
     private Location loc;
 
     private SystemTasks(Activity context) {
@@ -109,61 +114,38 @@ public class SystemTasks {
         return future.get();
     }
 
-    public Location getLocation() {
-
-        locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
-
-        listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                loc = new Location(location);
-            }
-
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-                //
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-                //
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(i);
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext,
-                ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                request_permission();
-            }
-            return loc;
-        } else {
-            // permission has been granted
-            locationManager.requestLocationUpdates("gps", 5000, 0, listener);
-            return loc;
-        }
-        //return loc;
+    @SuppressLint("CheckResult")
+    public void getLocation() {
+        new RxGps(mContext).locationLowPower()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(location -> {
+                    //you've got the location
+                    Log.d("Location", location.getLatitude() + "//" + location.getLongitude());
+                    FastSave.getInstance().saveString("location",location.getLatitude()+":"+location.getLongitude());
+                }, throwable -> {
+                    if (throwable instanceof RxGps.PermissionException) {
+                        //the user does not allow the permission
+                    } else if (throwable instanceof RxGps.PlayServicesNotAvailableException) {
+                        //the user do not have play services
+                        Log.e("Location", "No play services");
+                    }
+                });
     }
-
-    private void request_permission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(mContext,
-                ACCESS_COARSE_LOCATION)) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mContext.requestPermissions(new String[]{ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 10);
+    public void ensureLocationSettings() {
+        LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
+                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
+                .build();
+        RxLocationSettings.with((FragmentActivity) mContext).ensure(locationSettingsRequest).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean enabled) {
+                // Toast.makeText(BootActivity.this, enabled ? "Enabled" : "Failed",
+                // Toast.LENGTH_LONG).show();
+                if (enabled) {
+                    getLocation();
+                }
             }
-
-        } else {
-            // permission has not been granted yet. Request it directly.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mContext.requestPermissions(new String[]{ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 10);
-            }
-        }
+        });
     }
 
 

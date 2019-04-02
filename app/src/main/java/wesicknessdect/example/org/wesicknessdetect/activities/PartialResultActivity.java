@@ -1,13 +1,13 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.appizona.yehiahd.fastsave.FastSave;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -17,27 +17,33 @@ import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.PartialResultImageAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
+import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 
 public class PartialResultActivity extends BaseActivity implements CardStackListener {
@@ -58,18 +64,19 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     Map<Integer, String> images_by_parts = new HashMap<>();
     HashMap<Long, Integer> disease_score = new HashMap<>();
-    Map<Long, Long> disease_symptoms = new HashMap<Long, Long>();
     List<Integer> img_symptoms_id = new ArrayList<>();
     Set<String> symptoms_set = new HashSet<>();
     List<Classifier.Recognition> recognitions = new ArrayList<>();
     private Map<Integer, Map<Integer, String>> images_by_part_adapter = new HashMap<>();
     PartialResultImageAdapter partialResultImageAdapter;
     CardStackLayoutManager manager;
+    Diagnostic diagnostic=new Diagnostic();
     int index = 0;
     Map.Entry<Long, Integer> maxEntry = null;
 
     private static AppDatabase DB;
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +84,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         ButterKnife.bind(this);
         DB = AppDatabase.getInstance(this);
         InitCardSwipe();
+
+        InitDiagnosticData();
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -84,7 +94,52 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
         });
 
-        //getLocation();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+               SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
+
+            }
+        });
+
+    }
+
+    private void InitDiagnosticData(){
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => "+c.getTime());
+
+        String location=FastSave.getInstance().getString("location","0.0:0.0");
+        String[] locpart = location.split(":");
+
+        diagnostic.setLatitude(Double.parseDouble(locpart[0]));
+        diagnostic.setLongitude(Double.parseDouble(locpart[1]));
+        diagnostic.setLocalisation("SRID=4326;POINT ("+locpart[1]+" "+locpart[0]+")");
+
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String date = df.format(c.getTime());
+        Log.e("Time:",date);
+        String[] parts = date.split(" ");
+        diagnostic.setDate(parts[0]);
+        diagnostic.setHour(parts[1]);
+
+        diagnostic.setProbability(95f);
+        long user_id=Long.parseLong(FastSave.getInstance().getString("user_id","1"));
+        diagnostic.setUser_id(user_id);
+        diagnostic.setIs_share(0);
+        diagnostic.setCulture_id(1);
+        diagnostic.setAdvancedAnalysis("2019-03-08T16:00:59Z");
+        diagnostic.setFinish(true);
+
+        diagnostic.setImages_by_parts(images_by_parts);
+
+        DB.profileDao().getAll().observe(this, new Observer<List<Profile>>() {
+            @Override
+            public void onChanged(List<Profile> profiles) {
+                for(Profile p:profiles){
+                    diagnostic.setCountry_id(p.getCountry_id());
+                }
+            }
+        });
     }
 
     private void InitScoreData() {
@@ -158,6 +213,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                                         for (Disease d : diseases) {
                                             if (d.getId() == maxEntry.getKey()) {
                                                 disease.setText(d.getName().toUpperCase());
+                                                diagnostic.setDisease(d.getName());
                                             }
                                         }
                                     }
@@ -170,9 +226,15 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
         });
 
+    }
 
-
-
+    @OnClick(R.id.btn_save_diagnostic)
+    public void SendDiagnostic() {
+        try {
+         RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void InitCardSwipe() {
@@ -252,11 +314,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         }
     }
 
-    @SuppressLint("CheckResult")
-    public void getLocation(){
-        Location location= SystemTasks.getInstance(this).getLocation();
-        Log.d("Location",location.getLatitude()+"//"+location.getLongitude());
-    }
 
     @Override
     public void onCardRewound() {

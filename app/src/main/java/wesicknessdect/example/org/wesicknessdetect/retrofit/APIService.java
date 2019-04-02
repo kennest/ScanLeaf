@@ -17,8 +17,10 @@ import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
@@ -51,6 +53,12 @@ public interface APIService {
 
     @GET("api/models")
     Call<Model> getModels(@Header("Authorization") String token);
+
+    @POST("api/diagnostic/")
+    Call<Diagnostic> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
+
+    @POST("api/pictures/")
+    Call<Picture> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);
 
     @GET("api/questions")
     Call<List<Question>> getQuestion();

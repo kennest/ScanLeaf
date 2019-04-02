@@ -9,21 +9,25 @@ import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = Diagnostic.class,
-                parentColumns = "id",
-        childColumns = "diagnostic_id"),
-        @ForeignKey(
                 entity = CulturePart.class,
                 parentColumns = "id",
                 childColumns = "culture_part_id")
-},indices = {@Index("diagnostic_id"),@Index("culture_part_id")})
+},indices = {@Index("culture_part_id")})
 public class Picture {
+    @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)
     private int id;
-    @SerializedName(value = "id")
-    private long res_id;
+
+    @SerializedName(value = "diagnostic")
     private long diagnostic_id;
+
+    @SerializedName(value = "partCulture")
     private long culture_part_id;
+
+    private boolean sended;
+
+    @SerializedName(value = "image")
+    private String image;
 
     public int getId() {
         return id;
@@ -49,11 +53,19 @@ public class Picture {
         this.culture_part_id = culture_part_id;
     }
 
-    public long getRes_id() {
-        return res_id;
+    public String getImage() {
+        return image;
     }
 
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public boolean isSended() {
+        return sended;
+    }
+
+    public void setSended(boolean sended) {
+        this.sended = sended;
     }
 }

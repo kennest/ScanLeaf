@@ -69,8 +69,11 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.google.maps.android:android-maps-utils:0.4+'
     //noinspection GradleCompatible
-    implementation 'com.google.android.gms:play-services:12.0.1'
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.budiyev.android:circular-progress-bar:1.2.2'
     implementation "com.yuyakaido.android:card-stack-view:2.2.5"
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'com.github.florent37:rxgps:1.0.2'
+    implementation 'com.github.jetradarmobile:android-rxlocationsettings:1.1.0'
+
 }

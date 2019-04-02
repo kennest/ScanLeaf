@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -42,6 +47,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
     Map<Integer, String> images_by_part = new HashMap<>();
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part =new HashMap<>();
     private static AppDatabase DB;
+
+    private static final ExecutorService executor=Executors.newSingleThreadExecutor();
 
     @BindView(R.id.culture_parts_lv)
     RecyclerView parts_lv;
@@ -133,6 +140,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         analysisBtn.setText("TRAITEMENT...");
         analysisBtn.setBackgroundColor(getResources().getColor(R.color.gray));
         for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
+
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
@@ -154,7 +162,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                             }
                         }.execute();
                     }else{
-                        Log.e("Recognize Error","Cannot find models and labels");
+                        Log.e("Recognizing Error","Cannot find models and labels");
                     }
                 }
             });

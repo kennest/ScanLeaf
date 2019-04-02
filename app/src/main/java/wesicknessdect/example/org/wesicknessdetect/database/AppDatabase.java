@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CountryDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CultureDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CulturePartsDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.DiagnosticDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseSymptomsDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ModelDao;
@@ -74,6 +75,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract UserDao userDao();
     public abstract ProfileDao profileDao();
     public abstract CountryDao countryDao();
+    public abstract DiagnosticDao diagnosticDao();
     public abstract CulturePartsDao culturePartsDao();
     public abstract ModelDao modelDao();
     public abstract CultureDao cultureDao();

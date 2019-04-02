@@ -106,7 +106,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         TextView txt = new TextView(context);
                                         txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
                                         txt.setTextColor(color);
-                                        txt.setTypeface(txt.getTypeface(), Typeface.BOLD);
+                                        txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
                                         txt.setTextSize(20);
                                         line.addView(txt);
                                         holder.symptoms_txt.addView(line);
