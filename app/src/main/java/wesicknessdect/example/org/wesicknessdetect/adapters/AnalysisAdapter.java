@@ -69,7 +69,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.centerCrop()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(R.drawable.ic_camera)
                 .error(R.drawable.ic_close_box_white_48dp);
 

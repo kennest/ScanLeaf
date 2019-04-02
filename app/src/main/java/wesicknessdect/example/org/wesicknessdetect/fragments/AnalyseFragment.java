@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -54,6 +55,7 @@ public class AnalyseFragment extends Fragment {
                         0.5f);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                Collections.reverse(diagnosticPictures);
                 recyclerView.setAdapter(new AnalysisAdapter(getActivity(),diagnosticPictures));
                 recyclerView.addItemDecoration(decoration);
             }
