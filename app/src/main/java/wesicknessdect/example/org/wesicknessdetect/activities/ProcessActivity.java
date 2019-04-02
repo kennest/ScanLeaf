@@ -18,6 +18,8 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
+import org.greenrobot.eventbus.EventBus;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -69,6 +71,12 @@ public class ProcessActivity extends BaseActivity {
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
         actionButton = findViewById(R.id.fab);
+actionButton.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        viewPager.setCurrentItem(0, true);
+    }
+});
 
         mainAdapter = new MainAdapter(getSupportFragmentManager());
 
