@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.database.dao;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -15,7 +16,7 @@ public interface CultureDao {
     void createCulture(Culture culture);
 
     @Query("SELECT * FROM Culture")
-    List<Culture> getAll();
+    LiveData<List<Culture>> getAll();
 
     @Query("SELECT * FROM Culture WHERE name=:name")
     Culture getByName(String name);

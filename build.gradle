@@ -1,7 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    
+    ext.glide_version = '4.8.0'
+    ext.glide_slider_version = '1.4.0'
     repositories {
         google()
         jcenter()
@@ -19,6 +20,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
         maven{url 'https://jitpack.io'}
     }
 }

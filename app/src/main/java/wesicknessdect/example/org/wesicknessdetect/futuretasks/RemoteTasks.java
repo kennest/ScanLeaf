@@ -301,23 +301,24 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 picture = response.body();
                 DownloadFile(picture.getImage());
-                Uri uri = Uri.parse(p.getImage());
+                Uri uri = Uri.parse(picture.getImage());
                 String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                 p.setImage(destination + uri.getLastPathSegment());
+                Log.e("Diagnostic picture X:", destination + uri.getLastPathSegment());
                 picture.setSended(true);
+                DB.pictureDao().createPicture(p);
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
 
         } else {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-
         }
         return true;
     }
 
     //Get Cultures from Server
-    public List<Culture> getCulture() {
+    public List<Culture> getCultures() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             Call<List<Culture>> call = service.getCultures();

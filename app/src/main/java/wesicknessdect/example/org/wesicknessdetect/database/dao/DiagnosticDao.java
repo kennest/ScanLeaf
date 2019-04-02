@@ -7,7 +7,9 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 
 @Dao
 public interface DiagnosticDao {
@@ -17,6 +19,7 @@ public interface DiagnosticDao {
     @Query("SELECT * FROM Diagnostic")
     List<Diagnostic> getAll();
 
+    @Transaction
     @Query("SELECT * FROM Diagnostic")
-    LiveData<List<Diagnostic>> getDiagnosticWithPictures();
+    LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures();
 }

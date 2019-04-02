@@ -2,12 +2,14 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,9 +61,12 @@ public class AppController extends Application {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
+                RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
                 Culture c=new Culture();
+                Uri uri = Uri.parse("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+                String destination = getApplicationContext().getExternalFilesDir(null).getPath() + File.separator;
                 c.setName("CACAO");
-                c.setImage("");
+                c.setImage(destination+uri.getLastPathSegment());
                 c.setNbParties(5);
                 c.setNomModele("");
                 appDatabase.cultureDao().createCulture(c);

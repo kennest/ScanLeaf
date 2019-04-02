@@ -104,10 +104,11 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         LinearLayout line = new LinearLayout(context);
                                         line.setOrientation(LinearLayout.HORIZONTAL);
                                         TextView txt = new TextView(context);
+                                        txt.setPadding(5,5,5,0);
                                         txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
                                         txt.setTextColor(color);
                                         txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
-                                        txt.setTextSize(20);
+                                        txt.setTextSize(15);
                                         line.addView(txt);
                                         holder.symptoms_txt.addView(line);
 

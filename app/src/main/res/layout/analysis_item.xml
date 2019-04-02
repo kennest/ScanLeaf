@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:layout_margin="4dp"
     android:padding="4dp">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/analyse_image"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:src="@drawable/plante" />
-
-    <RelativeLayout
+    <com.glide.slider.library.SliderLayout
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+    <com.glide.slider.library.Indicators.PagerIndicator
+        android:id="@+id/custom_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:gravity="center"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_toEndOf="@id/analyse_image">
+       >
 
         <TextView
             android:id="@+id/user_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
             android:fontFamily="sans-serif"
             android:gravity="top"
-            android:text="John Doe"
+            android:text="Disease"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -34,12 +41,10 @@
             android:id="@+id/analyse_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/user_name"
-            android:layout_toEndOf="@id/tick"
             android:text="53 minute ago"
             android:textColor="#444444"
             android:textSize="14sp"
             android:textStyle="bold" />
 
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+</LinearLayout>

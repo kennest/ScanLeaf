@@ -83,7 +83,7 @@ public class BaseActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserAuthenticated(UserAuthenticatedEvent event){
         Log.e("User authenticated",event.token);
-        Intent i=new Intent(BaseActivity.this,ChooseCulturePartActivity.class);
+        Intent i=new Intent(BaseActivity.this,ProcessActivity.class);
         startActivity(i);
         finish();
     }

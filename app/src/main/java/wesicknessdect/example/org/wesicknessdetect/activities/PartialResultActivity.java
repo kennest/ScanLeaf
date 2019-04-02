@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.room.Transaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,6 +42,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
@@ -98,7 +100,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             @Override
             public void run() {
                SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
-
             }
         });
 
@@ -232,6 +233,20 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void SendDiagnostic() {
         try {
          RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
+             @Override
+             public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
+                 for (DiagnosticPictures dp:diagnosticPictures){
+                     Log.e("Diagnostic DB::"+diagnosticPictures.indexOf(dp),dp.pictures.size()+"");
+                 }
+             }
+         });
         } catch (IOException e) {
             e.printStackTrace();
         }

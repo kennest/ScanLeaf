@@ -85,21 +85,6 @@ public class ProcessActivity extends BaseActivity {
 
     boolean flag = false;
 
-    //TF var
-    Classifier detector;
-    private static final int TF_OD_API_INPUT_SIZE = 500;
-    private static final String TF_OD_API_MODEL_FILE =
-            "file:///android_asset/ssd_mobilenet.pb";
-    private static final String TF_OD_API_LABELS_FILE = "file:///android_asset/bois_cacao.txt";
-    int cropSize = TF_OD_API_INPUT_SIZE;
-
-    private enum DetectorMode {
-        TF_OD_API, MULTIBOX, YOLO;
-    }
-
-    private Bitmap croppedBitmap = null;
-    private static final DetectorMode MODE = DetectorMode.TF_OD_API;
-    private static final Logger LOGGER = new Logger();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +103,7 @@ public class ProcessActivity extends BaseActivity {
         actionButton = findViewById(R.id.fab);
 
         viewPager.setAdapter(new MainAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(1, true);
+        viewPager.setCurrentItem(0, true);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -232,149 +217,6 @@ public class ProcessActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("Req code", requestCode + "");
-        if (resultCode == Activity.RESULT_OK && requestCode == 200) {
-            assert data != null;
-            ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-            Map<Integer,String> recognition_legend=new HashMap<>();
-            if (MODE == DetectorMode.TF_OD_API) {
-                try {
-                    detector = TensorFlowObjectDetectionAPIModel.create(base64model(), TF_OD_API_LABELS_FILE, TF_OD_API_INPUT_SIZE);
-
-                    cropSize = TF_OD_API_INPUT_SIZE;
-
-                    Bitmap bitmap = BitmapFactory.decodeFile(returnValue.get(0));
-                    croppedBitmap = Bitmap.createBitmap(cropSize, cropSize, Bitmap.Config.ARGB_8888);
-                    Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, cropSize, cropSize, false);
-
-                    //detector.recognizeImage(bitmap);
-
-                    List<Classifier.Recognition> recognitions = detector.recognizeImage(bitmap_cropped);
-                    Log.e("Recognitions", recognitions.toString());
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    // Get the layout inflater
-                    LayoutInflater inflater = getLayoutInflater();
-
-                    View v = inflater.inflate(R.layout.activity_test_recognition, null, false);
-                    ImageView image = v.findViewById(R.id.image_result);
-
-                    Canvas canvas = new Canvas(bitmap_cropped);
-                    // Draw a solid color to the canvas background
-                    //canvas.drawColor(Color.LTGRAY);
-
-                    // Initialize a new Paint instance to draw the Rectangle
-
-
-                    recognitions=recognitions.subList(0,4);
-                    for (Classifier.Recognition r : recognitions) {
-                        Paint paint = new Paint();
-                        paint.setStyle(Paint.Style.STROKE);
-                        paint.setStrokeWidth(4f);
-                        Random rnd = new Random();
-                        int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-                        recognition_legend.put(color,r.getTitle());
-                        paint.setColor(color);
-                        paint.setAntiAlias(true);
-                        canvas.drawRect(r.getLocation(), paint);
-                    }
-
-
-                    //Glide.with(this).load(bitmap_cropped).into(image);
-                    image.setImageBitmap(bitmap_cropped);
-                    // Inflate and set the layout for the dialog
-                    // Pass null as the parent view because its going in the dialog layout
-                    builder.setView(v)
-                            // Add action buttons
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    //EventBus.getDefault().post(new ShowQuizPageEvent("quiz"));
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
-
-
-                } catch (final IOException e) {
-                    LOGGER.e("Exception initializing classifier!", e);
-                    Toast toast =
-                            Toast.makeText(
-                                    getApplicationContext(), "Classifier could not be initialized", Toast.LENGTH_SHORT);
-                    toast.show();
-                    finish();
-                } catch (InterruptedException|ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-    }
-
-    //Converti le model en Base64
-    public String modelB64() throws InterruptedException, ExecutionException{
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        FutureTask<String> future =
-                new FutureTask<>(new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        InputStream inputStream = null;
-                        String modelb64 = "";
-                        try {
-                            inputStream = getAssets().open("frozen_bois_graph.pb");
-
-                            byte[] buffer = new byte[8192];
-                            int bytesRead;
-                            ByteArrayOutputStream output = new ByteArrayOutputStream();
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                output.write(buffer, 0, bytesRead);
-                            }
-                            byte file[] = output.toByteArray();
-
-                            modelb64 = Base64.encodeToString(file, 0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.i("modelb64",modelb64);
-
-                        return modelb64;
-                    }
-                });
-        executor.execute(future);
-        return future.get();
-    }
-
-    //Converti le base64 du model en fichier
-    public String base64model() throws InterruptedException, ExecutionException {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        FutureTask<String> future =
-                new FutureTask<>(new Callable<String>() {
-                    public String call() throws InterruptedException, ExecutionException{
-                        File file = new File(getCacheDir().getPath()+"/cacao_graph.pb");
-                        int size = (int) file.length();
-                        byte[] bytes = Base64.decode(modelB64(),0);
-                        try {
-                            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                            bos.write(bytes);
-                            bos.flush();
-                            bos.close();
-                        } catch (FileNotFoundException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                        Log.i("base64model",file.getAbsolutePath());
-                        return file.getAbsolutePath();
-                    }});
-        executor.execute(future);
-        return future.get();
     }
 
     private class MainAdapter extends FragmentStatePagerAdapter {

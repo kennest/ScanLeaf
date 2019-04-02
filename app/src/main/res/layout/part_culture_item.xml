@@ -5,14 +5,22 @@
     android:layout_margin="5dp"
     android:layout_width="170dp"
     android:layout_height="170dp">
+
     <ImageButton
         android:id="@+id/add_part_picture"
-        android:src="@drawable/ic_plus_circle_white_48dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
         android:backgroundTint="@color/colorPrimaryDark"
-        android:layout_width="165dp"
-        android:layout_height="165dp"
-        android:visibility="invisible"
-        />
+        android:src="@drawable/ic_plus_circle_white_48dp"
+        android:visibility="invisible" />
 
     <com.budiyev.android.circularprogressbar.CircularProgressBar
         android:id="@+id/progress_bar"
@@ -23,9 +31,9 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="7dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="13dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="0dp"
         app:animateProgress="true"
         app:backgroundStrokeColor="#ff3f51b5"
         app:backgroundStrokeWidth="20dp"
@@ -104,6 +112,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="11dp"
-        android:src="@drawable/close_box"
+        android:src="@drawable/ic_close_box_white_48dp"
         android:backgroundTint="#C62828"/>
 </RelativeLayout>
