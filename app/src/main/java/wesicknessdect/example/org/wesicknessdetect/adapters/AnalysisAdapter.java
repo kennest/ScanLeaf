@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.glide.slider.library.Animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
@@ -55,6 +57,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         //Glide.with(context).load(R.drawable.plante_sample).into(((StatusHolder)holder).analyseImage);
         context.runOnUiThread(new Runnable() {
+            @SuppressLint("CheckResult")
             @Override
             public void run() {
                 ArrayList<String> listUrl =new ArrayList<>();
@@ -65,10 +68,10 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 }
 
                 RequestOptions requestOptions = new RequestOptions();
-                requestOptions.centerCrop();
-                //.diskCacheStrategy(DiskCacheStrategy.NONE)
-                //.placeholder(R.drawable.placeholder)
-                //.error(R.drawable.placeholder);
+                requestOptions.centerCrop()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .placeholder(R.drawable.ic_camera)
+                .error(R.drawable.ic_close_box_white_48dp);
 
                 for (int i = 0; i < listUrl.size(); i++) {
                     TextSliderView sliderView = new TextSliderView(context);
@@ -88,12 +91,11 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 // set Slider Transition Animation
                 // mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
                 holder.slideview.setPresetTransformer(SliderLayout.Transformer.Accordion);
-
                 holder.slideview.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
                 holder.slideview.setCustomAnimation(new DescriptionAnimation());
                 holder.slideview.setDuration(4000);
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-                holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getHour());
+                holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
             }
         });
 

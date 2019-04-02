@@ -20,6 +20,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPixScreenEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowQuizPageEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 
@@ -103,6 +104,15 @@ public class BaseActivity extends AppCompatActivity {
         Intent i=new Intent(BaseActivity.this,ChooseCulturePartActivity.class);
         startActivity(i);
         //finish();
+    }
+
+    //launch part chooser activity
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void showProcessScreen(ShowProcessScreenEvent event){
+        Log.e("Process started",event.message);
+        Intent i=new Intent(BaseActivity.this,ProcessActivity.class);
+        startActivity(i);
+        finish();
     }
 
 

@@ -40,6 +40,7 @@ import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
@@ -269,6 +270,7 @@ public class RemoteTasks {
                     }
                 }.execute();
 
+                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
                 EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
             } else {
                 Log.e("Error:", response.errorBody().string());

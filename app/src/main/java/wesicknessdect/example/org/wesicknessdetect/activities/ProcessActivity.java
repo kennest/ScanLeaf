@@ -2,17 +2,9 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,44 +12,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.fxn.pix.Pix;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import wesicknessdect.example.org.wesicknessdetect.R;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
@@ -82,6 +49,7 @@ public class ProcessActivity extends BaseActivity {
     ChatsFragment chatsFragment;
     AnalyseFragment analyseFragment;
     MaladiesFragment maladiesFragment;
+    MainAdapter mainAdapter;
 
     boolean flag = false;
 
@@ -102,7 +70,9 @@ public class ProcessActivity extends BaseActivity {
         appBarLayout = findViewById(R.id.app_bar);
         actionButton = findViewById(R.id.fab);
 
-        viewPager.setAdapter(new MainAdapter(getSupportFragmentManager()));
+        mainAdapter = new MainAdapter(getSupportFragmentManager());
+
+        viewPager.setAdapter(mainAdapter);
         viewPager.setCurrentItem(0, true);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -233,23 +203,20 @@ public class ProcessActivity extends BaseActivity {
                     return cameraFragment;
                 }
                 return cameraFragment;
-            }
-            if (position == 1) {
+            } else if (position == 1) {
 
                 if (analyseFragment == null) {
                     analyseFragment = new AnalyseFragment();
                     return analyseFragment;
                 }
                 return analyseFragment;
-            }
-            if (position == 2) {
+            } else if (position == 2) {
                 if (maladiesFragment == null) {
                     maladiesFragment = new MaladiesFragment();
                     return maladiesFragment;
                 }
                 return maladiesFragment;
-            }
-            if (position == 3) {
+            } else if (position == 3) {
 
                 if (chatsFragment == null) {
                     chatsFragment = new ChatsFragment();
