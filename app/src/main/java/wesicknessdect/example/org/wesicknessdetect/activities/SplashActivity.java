@@ -93,7 +93,7 @@ public class SplashActivity extends BaseActivity {
         ImageView left = findViewById(R.id.left);
         ImageView iv3 = findViewById(R.id.plantation);
         ImageView right= findViewById(R.id.right);
-        pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(1500);
+        pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(3000);
         left.startAnimation(fromLeft);
         right.startAnimation(fromRight);
         iv3.startAnimation(dubas);
