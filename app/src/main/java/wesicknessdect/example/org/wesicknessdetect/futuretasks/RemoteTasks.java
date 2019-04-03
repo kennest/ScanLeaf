@@ -47,6 +47,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
@@ -78,12 +79,14 @@ public class RemoteTasks {
     List<Struggle> struggles = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
     List<Country> countries = new ArrayList<>();
+    List<Diagnostic> diagnostics = new ArrayList<>();
+    List<Picture> pictures = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
     Picture picture = new Picture();
     User user = new User();
     boolean fileDownloaded;
     int downloadId = 0;
-    long diagnostic_id=0;
+    long diagnostic_id = 0;
 
 
     private RemoteTasks(Context context) {
@@ -238,7 +241,7 @@ public class RemoteTasks {
     @SuppressLint("StaticFieldLeak")
     public Diagnostic sendDiagnostic(Diagnostic d) throws IOException {
         EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
-        Log.e("Diagnostic pictures",d.getImages_by_parts().size()+"");
+        Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
 
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
@@ -261,7 +264,7 @@ public class RemoteTasks {
                     protected Void doInBackground(Void... voids) {
                         for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
                             try {
-                                SendDiagnosticPicture(entry.getValue(),entry.getKey(),diagnostic_id);
+                                SendDiagnosticPicture(entry.getValue(), entry.getKey(), diagnostic_id);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -283,18 +286,73 @@ public class RemoteTasks {
         return diagnostic;
     }
 
+    //Get Diagnostic from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Diagnostic> getDiagnostics() throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            Call call = service.getDiagnostics(token);
+            Response<DiagnosticResponse> response = call.execute();
+            if (response.isSuccessful()) {
+                diagnostics = response.body().getResult();
+                for(Diagnostic d:diagnostics){
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.diagnosticDao().createDiagnostic(d);
+                            return null;
+                        }
+                    }.execute();
+                }
+            }else{
+                Log.e("Error:", response.errorBody().string());
+            }
+        } else {
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            return null;
+        }
+        return diagnostics;
+    }
+    @SuppressLint("StaticFieldLeak")
+    public List<Picture> getDiagnosticPictures(long diagnostic_id) throws IOException{
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            Call call = service.getDiagnosticPictures(diagnostic_id,token);
+            Response<List<Picture>> response = call.execute();
+            if (response.isSuccessful()) {
+                pictures = response.body();
+                for(Picture p:pictures){
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                           DB.pictureDao().createPicture(p);
+                            return null;
+                        }
+                    }.execute();
+                }
+            }else{
+                Log.e("Error:", response.errorBody().string());
+            }
+        } else {
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            return null;
+        }
+        return pictures;
+    }
+
 
     //Send Picture of Diagnostic to Server
     public boolean SendDiagnosticPicture(String image, long part_id, long diagnotic_id) throws IOException {
         if (Constants.isOnline(mContext)) {
-
             APIService service = APIClient.getClient().create(APIService.class);
             Picture p = new Picture();
             p.setCulture_part_id(part_id);
             p.setDiagnostic_id(diagnotic_id);
-            String base_64= new EncodeBase64().encode(image);
+            String base_64 = new EncodeBase64().encode(image);
 
-            Log.e("Diagnostic picture:", image+"//"+part_id+"//"+diagnotic_id+"//"+base_64);
+            Log.e("Diagnostic picture:", image + "//" + part_id + "//" + diagnotic_id + "//" + base_64);
             p.setImage(base_64);
 
             String token = FastSave.getInstance().getString("token", null);
