@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorPrimaryDark"
+    android:background="#D3D3D3"
     android:layout_margin="5dp"
     android:layout_width="170dp"
     android:layout_height="170dp">
@@ -18,7 +18,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="#D3D3D3"
         android:src="@drawable/ic_plus_circle_white_48dp"
         android:visibility="invisible" />
 
@@ -58,7 +58,7 @@
         android:layout_marginTop="60dp"
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="60dp"
-        android:tint="#1AEC25"
+        android:tint="@color/colorPrimary"
         android:visibility="gone"
         android:src="@drawable/ic_check_circle_white_48dp" />
 
@@ -76,7 +76,7 @@
         android:visibility="visible"
         android:id="@+id/name"
         android:textColor="@color/white"
-        android:background="@color/black"
+        android:background="@color/colorPrimaryDark"
         android:alpha="0.8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -113,5 +113,5 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="11dp"
         android:src="@drawable/ic_close_box_white_48dp"
-        android:backgroundTint="#C62828"/>
+        android:backgroundTint="@color/colorPrimaryLightPix"/>
 </RelativeLayout>

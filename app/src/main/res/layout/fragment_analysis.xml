@@ -3,14 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="45dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
 
     <TextView
         android:id="@+id/recent_updates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#a0a0a0"
+        android:background="@color/colorPrimaryDark"
         android:paddingBottom="2dp"
         android:paddingEnd="12dp"
         android:paddingStart="12dp"

@@ -3,9 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#ededed"
-    android:layout_margin="4dp"
-    android:padding="4dp">
+    android:background="@color/colorPrimary"
+    android:layout_marginBottom="2dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
 
     <com.glide.slider.library.SliderLayout
         android:id="@+id/slider"
@@ -15,15 +16,16 @@
         android:id="@+id/custom_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="#ededed"
         android:gravity="center"/>
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
+        android:weightSum="2"
        >
 
         <TextView
@@ -31,22 +33,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="0dp"
+            android:paddingRight="20dp"
             android:layout_marginTop="0dp"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="top"
             android:text="Disease"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/analyse_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="53 minute ago"
-            android:textColor="#444444"
+            android:textColor="#d3d3d3"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:textAlignment="textEnd"/>
 
     </LinearLayout>
 </LinearLayout>

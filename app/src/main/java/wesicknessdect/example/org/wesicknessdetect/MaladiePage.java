@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 
 public class MaladiePage extends AppCompatActivity {
@@ -16,6 +18,9 @@ public class MaladiePage extends AppCompatActivity {
 
         wv.findViewById(R.id.pageweb);
         wv.loadUrl(url);
+        Log.v("url webview ", url);
+        wv.getSettings().setJavaScriptEnabled(true);
+        wv.setWebViewClient(new WebViewClient());
     }
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -3,6 +3,7 @@ package wesicknessdect.example.org.wesicknessdetect.fragments;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,11 +36,15 @@ public class MaladiesFragment extends Fragment {
                 Color.parseColor("#EAEAEA"),
                 0.5f);
 
+        Log.v("MaladiesFragment ", "onCreateView");
+
         recyclerView = view.findViewById(R.id.maladie_rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new DiseaseAdapter(getContext()));
         recyclerView.addItemDecoration(decoration);
+
+        Log.v("MaladiesFragment ", "onCreateView end");
 
 
         return view;
