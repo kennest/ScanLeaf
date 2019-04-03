@@ -39,6 +39,8 @@ public class AnalyseFragment extends Fragment {
 
     private static AppDatabase DB;
 
+    AnalysisAdapter analysisAdapter;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -61,8 +63,8 @@ public class AnalyseFragment extends Fragment {
 //                            0.5f);
                     recyclerView.setHasFixedSize(true);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    Collections.reverse(diagnosticPictures);
-                    recyclerView.setAdapter(new AnalysisAdapter(getActivity(),diagnosticPictures));
+                    analysisAdapter=new AnalysisAdapter(getActivity(),diagnosticPictures);
+                    recyclerView.setAdapter(analysisAdapter);
                     //recyclerView.addItemDecoration(decoration);
                 }else{
                     empty.setVisibility(View.VISIBLE);

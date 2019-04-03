@@ -108,10 +108,10 @@ actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onPageSelected(int position) {
                 if (position == 0) {
-                    translateUp();
-                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                    actionButton.setVisibility(View.GONE);
+//                    translateUp();
+//                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                    actionButton.setVisibility(View.GONE);
                 } else if (flag) {
                     translateDown();
                     actionButton.setVisibility(View.VISIBLE);

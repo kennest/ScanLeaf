@@ -56,6 +56,7 @@ public class CameraFragment extends Fragment {
         AppDatabase.getInstance(getContext()).cultureDao().getAll().observe(this, new Observer<List<Culture>>() {
             @Override
             public void onChanged(List<Culture> cultures) {
+                Log.e("Cultures DB",cultures.size()+"");
                 cultureAdapter=new CultureAdapter(cultures,getActivity());
                 culture_lv.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                 culture_lv.setAdapter(cultureAdapter);

@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class ChooseCultureActivity extends Fragment {
         AppDatabase.getInstance(getContext()).cultureDao().getAll().observe(this, new Observer<List<Culture>>() {
             @Override
             public void onChanged(List<Culture> cultures) {
+                Log.e("Cultures DB",cultures.size()+"");
                 cultureAdapter=new CultureAdapter(cultures,getActivity());
                 culture_lv.setAdapter(cultureAdapter);
             }
