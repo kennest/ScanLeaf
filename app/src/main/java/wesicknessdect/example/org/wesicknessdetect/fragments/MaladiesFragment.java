@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.fragments;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import wesicknessdect.example.org.wesicknessdetect.MaladiePage;
 import wesicknessdect.example.org.wesicknessdetect.adapters.DiseaseAdapter;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.ui.SeparatorDecoration;
@@ -38,6 +40,7 @@ public class MaladiesFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(new DiseaseAdapter(getContext()));
         recyclerView.addItemDecoration(decoration);
+
 
         return view;
     }

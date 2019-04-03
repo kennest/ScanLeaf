@@ -6,10 +6,12 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -18,14 +20,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.ProfileActivity">
-
-        </activity>
+        <activity android:name=".MaladiePage"></activity>
+        <activity android:name=".activities.ProfileActivity"></activity>
         <activity android:name=".activities.CommunityActivity" />
         <activity android:name=".activities.SplashActivity">
             <intent-filter>
@@ -34,7 +35,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.login.LoginActivity"
+        <activity
+            android:name=".activities.login.LoginActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,8 +44,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.register.SigninActivity"
-            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".activities.register.SigninActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".MainActivity" />
         <activity
             android:name=".activities.FinalResultActivity"
@@ -59,9 +62,10 @@
         <activity android:name=".activities.ChooseCulturePartActivity" />
         <activity android:name=".activities.PartialResultActivity" />
 
-        <service android:name=".utils.DownloadService"
+        <service
+            android:name=".utils.DownloadService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
