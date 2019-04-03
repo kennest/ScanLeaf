@@ -40,6 +40,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.PossibleAnswer;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
@@ -66,6 +67,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
         PossibleAnswer.class,
         Question.class,
         Symptom.class,
+        SymptomRect.class,
         UserParcel.class,
         UserChoice.class,
         Message.class,

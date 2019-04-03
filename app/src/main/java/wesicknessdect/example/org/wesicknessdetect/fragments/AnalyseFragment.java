@@ -62,6 +62,7 @@ public class AnalyseFragment extends Fragment {
 //                            Color.parseColor("#EAEAEA"),
 //                            0.5f);
                     recyclerView.setHasFixedSize(true);
+                    Collections.reverse(diagnosticPictures);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                     analysisAdapter=new AnalysisAdapter(getActivity(),diagnosticPictures);
                     recyclerView.setAdapter(analysisAdapter);

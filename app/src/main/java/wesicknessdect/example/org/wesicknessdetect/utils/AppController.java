@@ -21,7 +21,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 
 public class AppController extends Application {
     private static final String DATABASE_NAME = "wesickness.db";
-    public AppDatabase appDatabase;
+    public static AppDatabase appDatabase;
     private static AppController mInstance;
     List<CulturePart> culturePartList=new ArrayList<>();
 

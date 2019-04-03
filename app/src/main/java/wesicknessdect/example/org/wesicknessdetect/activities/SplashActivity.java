@@ -33,7 +33,7 @@ public class SplashActivity extends BaseActivity {
     TextView tv;
     WebView pulse;
     Animation appear,dubas,fromLeft,fromRight, out;
-    private AppDatabase appDatabase;
+    private static AppDatabase appDatabase;
     private static final String DATABASE_NAME = "wesickness.db";
     String token="";
     boolean isAuthenticated=false;
