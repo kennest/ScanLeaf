@@ -59,7 +59,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
                 c.maladieName.setText("Pourriture brune");
                 c.maladie_desc.setText("La pourriture brune est une maladie du  ...");
                 c.url = "https://scanleaf.000webhostapp.com/Maladies/Pourriture%20brune/pourriture_brune.html";
-                c.rl.setOnClickListener(new View.OnClickListener() {
+                c.maladie_url.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.v("DiseaseAdapter ", "onBindViewHolder "+c.url);
@@ -75,7 +75,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
                 c.maladieName.setText("Swollen shoot");
                 c.maladie_desc.setText("Le swollen shoot est une maladie du  ...");
                 c.url = "https://scanleaf.000webhostapp.com/Maladies/Swollen%20shoot/swollen_shoot.html";
-                c.rl.setOnClickListener(new View.OnClickListener() {
+                c.maladie_url.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.v("DiseaseAdapter ", "onBindViewHolder "+c.url);
