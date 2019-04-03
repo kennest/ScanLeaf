@@ -55,18 +55,17 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
+        ArrayList<String> listUrl =new ArrayList<>();
+
+        for(Picture p:diagnosticPictures.get(position).pictures){
+            Log.e("Slider images",p.getImage()+"//"+diagnosticPictures.get(position).getDiagnostic().getId());
+            listUrl.add(p.getImage());
+        }
         //Glide.with(context).load(R.drawable.plante_sample).into(((StatusHolder)holder).analyseImage);
         context.runOnUiThread(new Runnable() {
             @SuppressLint("CheckResult")
             @Override
             public void run() {
-                ArrayList<String> listUrl =new ArrayList<>();
-
-                for(Picture p:diagnosticPictures.get(position).pictures){
-                    Log.e("images in DB",p.getImage());
-                    listUrl.add(p.getImage());
-                }
-
                 RequestOptions requestOptions = new RequestOptions();
                 requestOptions.centerCrop()
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -95,7 +94,8 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 holder.slideview.setCustomAnimation(new DescriptionAnimation());
                 holder.slideview.setDuration(4000);
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-                holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
+                //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
+                holder.analyseTime.setText("1 min Ago");
             }
         });
 
@@ -119,6 +119,12 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         public StatusHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.e("History item","CLICKED");
+                }
+            });
         }
     }
 }

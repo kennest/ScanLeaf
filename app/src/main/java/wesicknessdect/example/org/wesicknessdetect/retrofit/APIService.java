@@ -74,7 +74,7 @@ public interface APIService {
     @GET("api/struggles")
     Call<StruggleResponse> getStruggles();
 
-    @GET("api/diagnostic/")
+    @GET("api/diagnostics/")
     Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token);
 
     @GET("api/pictures/")

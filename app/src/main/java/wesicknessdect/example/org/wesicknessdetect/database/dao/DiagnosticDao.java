@@ -17,7 +17,7 @@ public interface DiagnosticDao {
     long createDiagnostic(Diagnostic diagnostic);
 
     @Query("SELECT * FROM Diagnostic")
-    List<Diagnostic> getAll();
+    LiveData<List<Diagnostic>> getAll();
 
     @Transaction
     @Query("SELECT * FROM Diagnostic")

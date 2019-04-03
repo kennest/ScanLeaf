@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="45dp"
-    android:orientation="vertical"
     android:background="@color/white">
 
 
@@ -28,8 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
     </androidx.recyclerview.widget.RecyclerView>
+
+<include layout="@layout/empty" android:visibility="gone" android:id="@+id/empty_data"/>
 
 
 </RelativeLayout>

@@ -20,6 +20,8 @@ import com.google.android.material.tabs.TabLayout;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.IOException;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -31,6 +33,7 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 
 /**
  * Created by Jordan Adopo on 10/02/2019.
@@ -60,6 +63,13 @@ public class ProcessActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process);
+
+        //Init Necessary Data
+        try {
+            RemoteTasks.getInstance(this).getDiagnostics();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

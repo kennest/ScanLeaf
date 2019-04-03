@@ -2,9 +2,11 @@ package wesicknessdect.example.org.wesicknessdetect.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,10 @@ public class AnalyseFragment extends Fragment {
 
     @BindView(R.id.status_rv)
     RecyclerView recyclerView;
+
+    @BindView(R.id.empty_data)
+    View empty;
+
     private static AppDatabase DB;
 
     @Nullable
@@ -48,16 +54,20 @@ public class AnalyseFragment extends Fragment {
         DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
             @Override
             public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
+                if(diagnosticPictures.size()>0){
+//                    SeparatorDecoration decoration = new SeparatorDecoration(
+//                            getContext(),
+//                            Color.parseColor("#EAEAEA"),
+//                            0.5f);
+                    recyclerView.setHasFixedSize(true);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    Collections.reverse(diagnosticPictures);
+                    recyclerView.setAdapter(new AnalysisAdapter(getActivity(),diagnosticPictures));
+                    //recyclerView.addItemDecoration(decoration);
+                }else{
+                    empty.setVisibility(View.VISIBLE);
+                }
 
-                SeparatorDecoration decoration = new SeparatorDecoration(
-                        getContext(),
-                        Color.parseColor("#EAEAEA"),
-                        0.5f);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                Collections.reverse(diagnosticPictures);
-                recyclerView.setAdapter(new AnalysisAdapter(getActivity(),diagnosticPictures));
-                recyclerView.addItemDecoration(decoration);
             }
         });
     }

@@ -292,20 +292,29 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call call = service.getDiagnostics(token);
+            Call call = service.getDiagnostics("Token " + token);
             Response<DiagnosticResponse> response = call.execute();
             if (response.isSuccessful()) {
                 diagnostics = response.body().getResult();
-                for(Diagnostic d:diagnostics){
+
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            DB.diagnosticDao().createDiagnostic(d);
+                            for (Diagnostic d : diagnostics) {
+                                long id = DB.diagnosticDao().createDiagnostic(d);
+                                try {
+                                    getDiagnosticPictures(id);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                             return null;
                         }
                     }.execute();
-                }
-            }else{
+
+
+
+            } else {
                 Log.e("Error:", response.errorBody().string());
             }
         } else {
@@ -314,25 +323,37 @@ public class RemoteTasks {
         }
         return diagnostics;
     }
+
     @SuppressLint("StaticFieldLeak")
-    public List<Picture> getDiagnosticPictures(long diagnostic_id) throws IOException{
+    public List<Picture> getDiagnosticPictures(long diagnostic_id) throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call call = service.getDiagnosticPictures(diagnostic_id,token);
+            Call call = service.getDiagnosticPictures(diagnostic_id, "Token " + token);
             Response<List<Picture>> response = call.execute();
             if (response.isSuccessful()) {
                 pictures = response.body();
-                for(Picture p:pictures){
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                           DB.pictureDao().createPicture(p);
-                            return null;
-                        }
-                    }.execute();
+                if(response.body().size()>0){
+                    for(Picture p:pictures){
+                        DownloadFile(p.getImage());
+                        Log.e("Remote images X 0:", p.getDiagnostic_id() + "//" + p.getId() + "//" + p.getImage());
+                        p.setSended(true);
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                Uri uri = Uri.parse(p.getImage());
+                                String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                                p.setImage(destination + uri.getLastPathSegment());
+                                p.setDiagnostic_id(diagnostic_id);
+                                DB.pictureDao().createPicture(p);
+                                Log.e("image DB","CREATED");
+                                return null;
+                            }
+                        }.execute();
+                    }
                 }
-            }else{
+
+            } else {
                 Log.e("Error:", response.errorBody().string());
             }
         } else {
@@ -722,50 +743,51 @@ public class RemoteTasks {
 
 
     //Download the model
+    @SuppressLint("StaticFieldLeak")
     public void DownloadFile(String url) {
         if (Constants.isOnline(mContext)) {
-            Uri uri = Uri.parse(url);
-            String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
-            Log.e("PATHS X", destination + uri.getLastPathSegment());
+                    Uri uri = Uri.parse(url);
+                    String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
+                    Log.e("PATHS X", destination + uri.getLastPathSegment());
 
-            downloadId = PRDownloader.download(url, destination, uri.getLastPathSegment())
-                    .build()
-                    .setOnStartOrResumeListener(new OnStartOrResumeListener() {
-                        @Override
-                        public void onStartOrResume() {
+                    downloadId = PRDownloader.download(url, destination, uri.getLastPathSegment())
+                            .build()
+                            .setOnStartOrResumeListener(new OnStartOrResumeListener() {
+                                @Override
+                                public void onStartOrResume() {
 
-                        }
-                    })
-                    .setOnPauseListener(new OnPauseListener() {
-                        @Override
-                        public void onPause() {
+                                }
+                            })
+                            .setOnPauseListener(new OnPauseListener() {
+                                @Override
+                                public void onPause() {
 
-                        }
-                    })
-                    .setOnCancelListener(new OnCancelListener() {
-                        @Override
-                        public void onCancel() {
+                                }
+                            })
+                            .setOnCancelListener(new OnCancelListener() {
+                                @Override
+                                public void onCancel() {
 
-                        }
-                    })
-                    .setOnProgressListener(new OnProgressListener() {
-                        @Override
-                        public void onProgress(Progress progress) {
-                            Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
-                        }
-                    })
-                    .start(new OnDownloadListener() {
-                        @Override
-                        public void onDownloadComplete() {
-                            Log.d(url, "Finished::" + uri.getLastPathSegment());
-                            //EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, 101));
-                        }
+                                }
+                            })
+                            .setOnProgressListener(new OnProgressListener() {
+                                @Override
+                                public void onProgress(Progress progress) {
+                                    Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
+                                }
+                            })
+                            .start(new OnDownloadListener() {
+                                @Override
+                                public void onDownloadComplete() {
+                                    Log.d(url, "Finished::" + uri.getLastPathSegment());
+                                    //EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, 101));
+                                }
 
-                        @Override
-                        public void onError(Error error) {
+                                @Override
+                                public void onError(Error error) {
 
-                        }
-                    });
+                                }
+                            });
 
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
         } else {
