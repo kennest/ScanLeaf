@@ -4,9 +4,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/colorPrimary"
-    android:layout_marginBottom="2dp"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp">
+    android:layout_marginBottom="10dp"
+android:padding="8dp">
 
     <com.glide.slider.library.SliderLayout
         android:id="@+id/slider"
@@ -25,8 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:weightSum="2"
-       >
+        android:weightSum="2">
 
         <TextView
             android:id="@+id/user_name"

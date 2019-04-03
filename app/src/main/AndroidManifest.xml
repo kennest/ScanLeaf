@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".MaladiePage"></activity>
+        <activity android:name=".activities.DiseaseActivity"></activity>
         <activity android:name=".activities.ProfileActivity"></activity>
         <activity android:name=".activities.CommunityActivity" />
         <activity android:name=".activities.SplashActivity">

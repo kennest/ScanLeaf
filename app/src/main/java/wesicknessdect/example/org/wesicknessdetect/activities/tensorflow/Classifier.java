@@ -22,6 +22,8 @@ import android.os.Parcelable;
 
 import java.util.List;
 
+import androidx.room.Entity;
+
 /**
  * Generic interface for interacting with different recognition engines.
  */

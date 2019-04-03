@@ -2,17 +2,19 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(indices = {@Index(value = "name",
+        unique = true)})
 public class Culture {
+    @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)
     private long id;
 
-    @SerializedName(value = "id")
-    private long res_id;
-
+    @ColumnInfo(name = "name")
     @SerializedName(value = "name")
     private String name;
 
@@ -62,11 +64,4 @@ public class Culture {
         this.image = image;
     }
 
-    public long getRes_id() {
-        return res_id;
-    }
-
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
-    }
 }

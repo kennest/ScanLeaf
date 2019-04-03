@@ -47,6 +47,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
@@ -78,12 +79,14 @@ public class RemoteTasks {
     List<Struggle> struggles = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
     List<Country> countries = new ArrayList<>();
+    List<Diagnostic> diagnostics = new ArrayList<>();
+    List<Picture> pictures = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
     Picture picture = new Picture();
     User user = new User();
     boolean fileDownloaded;
     int downloadId = 0;
-    long diagnostic_id=0;
+    long diagnostic_id = 0;
 
 
     private RemoteTasks(Context context) {
@@ -236,9 +239,9 @@ public class RemoteTasks {
 
     //Send Diagnostic to Server
     @SuppressLint("StaticFieldLeak")
-    public Diagnostic sendDiagnostic(Diagnostic d) throws IOException {
+    public Diagnostic sendDiagnostic(Diagnostic d) throws IOException,InterruptedException {
         EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
-        Log.e("Diagnostic pictures",d.getImages_by_parts().size()+"");
+        Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
 
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
@@ -261,7 +264,46 @@ public class RemoteTasks {
                     protected Void doInBackground(Void... voids) {
                         for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
                             try {
-                                SendDiagnosticPicture(entry.getValue(),entry.getKey(),diagnostic_id);
+                                SendDiagnosticPicture(entry.getValue(), entry.getKey(), diagnostic_id);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return null;
+                    }
+                }.execute();
+                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+            } else {
+                Log.e("Error:", response.errorBody().string());
+                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+            }
+        } else {
+            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            return null;
+        }
+        return diagnostic;
+    }
+
+    //Get Diagnostic from Server
+    @SuppressLint("StaticFieldLeak")
+    public List<Diagnostic> getDiagnostics() throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            Call call = service.getDiagnostics("Token " + token);
+            Response<DiagnosticResponse> response = call.execute();
+            if (response.isSuccessful()) {
+                diagnostics = response.body().getResult();
+
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (Diagnostic d : diagnostics) {
+                            long id = DB.diagnosticDao().createDiagnostic(d);
+                            try {
+                                getDiagnosticPictures(id);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -270,31 +312,68 @@ public class RemoteTasks {
                     }
                 }.execute();
 
-                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
-                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+
             } else {
                 Log.e("Error:", response.errorBody().string());
-                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
             }
         } else {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return null;
         }
-        return diagnostic;
+        return diagnostics;
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public List<Picture> getDiagnosticPictures(long diagnostic_id) throws IOException {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            Call call = service.getDiagnosticPictures(diagnostic_id, "Token " + token);
+            Response<List<Picture>> response = call.execute();
+            if (response.isSuccessful()) {
+                List<Picture> list = response.body();
+                if (response.body().size() > 0) {
+                    for (Picture p : list) {
+                        DownloadFile(p.getImage());
+                        Log.e("Remote images X 0:", p.getDiagnostic_id() + "//" + p.getId() + "//" + p.getImage());
+                        p.setSended(true);
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                Uri uri = Uri.parse(p.getImage());
+                                String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                                p.setImage(destination + uri.getLastPathSegment());
+                                p.setDiagnostic_id(diagnostic_id);
+                                DB.pictureDao().createPicture(p);
+                                Log.e("image DB", "CREATED");
+                                return null;
+                            }
+                        }.execute();
+                    }
+                }
+
+            } else {
+                Log.e("Error:", response.errorBody().string());
+            }
+        } else {
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            return null;
+        }
+        return pictures;
     }
 
 
     //Send Picture of Diagnostic to Server
+    @SuppressLint("StaticFieldLeak")
     public boolean SendDiagnosticPicture(String image, long part_id, long diagnotic_id) throws IOException {
         if (Constants.isOnline(mContext)) {
-
             APIService service = APIClient.getClient().create(APIService.class);
             Picture p = new Picture();
             p.setCulture_part_id(part_id);
             p.setDiagnostic_id(diagnotic_id);
-            String base_64= new EncodeBase64().encode(image);
+            String base_64 = new EncodeBase64().encode(image);
 
-            Log.e("Diagnostic picture:", image+"//"+part_id+"//"+diagnotic_id+"//"+base_64);
+            Log.e("Diagnostic picture:", image + "//" + part_id + "//" + diagnotic_id + "//" + base_64);
             p.setImage(base_64);
 
             String token = FastSave.getInstance().getString("token", null);
@@ -308,7 +387,13 @@ public class RemoteTasks {
                 p.setImage(destination + uri.getLastPathSegment());
                 Log.e("Diagnostic picture X:", destination + uri.getLastPathSegment());
                 picture.setSended(true);
-                DB.pictureDao().createPicture(p);
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        DB.pictureDao().createPicture(p);
+                        return null;
+                    }
+                }.execute();
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
@@ -320,25 +405,31 @@ public class RemoteTasks {
     }
 
     //Get Cultures from Server
-    public List<Culture> getCultures() {
+    @SuppressLint("StaticFieldLeak")
+    public List<Culture> getCultures() throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             Call<List<Culture>> call = service.getCultures();
-            call.enqueue(new Callback<List<Culture>>() {
-                @Override
-                public void onResponse(Call<List<Culture>> call, Response<List<Culture>> response) {
-                    if (response.isSuccessful()) {
-                        cultures = response.body();
-                    } else {
-
-                    }
+            Response<List<Culture>> response = call.execute();
+            if (response.isSuccessful()) {
+                cultures = response.body();
+                for (Culture c : cultures) {
+                    //Uri uri = Uri.parse("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+                    Uri uri = Uri.parse(c.getImage());
+                    DownloadFile(c.getImage());
+                    String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                    c.setImage(destination+uri.getLastPathSegment());
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            DB.cultureDao().createCulture(c);
+                            return null;
+                        }
+                    }.execute();
                 }
-
-                @Override
-                public void onFailure(Call<List<Culture>> call, Throwable t) {
-
-                }
-            });
+            } else {
+                Log.e("Error:", response.errorBody().string());
+            }
 
         } else {
             //Dispatch show loading event
@@ -521,6 +612,7 @@ public class RemoteTasks {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
+                            d.setLink(Constants.base_url+d.getLink());
                             DB.diseaseDao().createDisease(d);
                             for (Integer i : d.getSymptoms()) {
                                 DiseaseSymptom ds = new DiseaseSymptom();
@@ -664,6 +756,7 @@ public class RemoteTasks {
 
 
     //Download the model
+    @SuppressLint("StaticFieldLeak")
     public void DownloadFile(String url) {
         if (Constants.isOnline(mContext)) {
             Uri uri = Uri.parse(url);
@@ -717,61 +810,6 @@ public class RemoteTasks {
 
     }
 
-    //Write Model Streams to Disk
-    private boolean writeResponseBodyToDisk(ResponseBody body) {
-        try {
-            // todo change the file location/name according to your needs
-            File modelFile = new File(mContext.getExternalFilesDir(null) + File.separator + "example.pb");
-
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            try {
-                byte[] fileReader = new byte[4096];
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
-
-                inputStream = body.byteStream();
-                outputStream = new FileOutputStream(modelFile);
-
-                while (true) {
-                    int read = inputStream.read(fileReader);
-
-                    if (read == -1) {
-                        break;
-                    }
-                    outputStream.write(fileReader, 0, read);
-                    fileSizeDownloaded += read;
-                    Log.d("File Download: ", fileSizeDownloaded + " of " + fileSize);
-                }
-
-                outputStream.flush();
-                fileDownloaded = true;
-                Log.e("File Path", modelFile.getAbsolutePath());
-
-                EventBus.getDefault().post(new HideLoadingEvent("File Download Finished"));
-                EventBus.getDefault().post(new ShowLoadingEvent("Done!", "Data downloaded", true));
-
-                return fileDownloaded;
-            } catch (IOException e) {
-                fileDownloaded = false;
-                EventBus.getDefault().post(new ShowLoadingEvent("Error!", "Data not downloaded", true));
-                return fileDownloaded;
-            } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-
-                if (outputStream != null) {
-                    outputStream.close();
-                }
-            }
-        } catch (IOException e) {
-            fileDownloaded = false;
-            EventBus.getDefault().post(new ShowLoadingEvent("Error!", "Data not downloaded", true));
-            return fileDownloaded;
-        }
-    }
-
 
     //Do Stuffs if response is Error
     private void UserResponseErrorProcess(Response<User> response) {
@@ -788,12 +826,5 @@ public class RemoteTasks {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    //Do Stuffs on Request Failure
-    private void FailureProcess(Throwable t) {
-        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
-        EventBus.getDefault().post(new ShowLoadingEvent("Api Error ", t.getMessage(), true));
-        Log.e("Remote Task", t.getMessage());
     }
 }

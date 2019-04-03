@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 public class Constants {
-    public static final String base_url="http://";
+    public static final String base_url="http://178.33.130.202:8000";
     public static final HashMap<String,String> api_error_msg=new HashMap<String,String>() {{
         put("avatar", "{\"profil\":{\"avatar\":[\"Upload a valid image. The file you uploaded was either not an image or a corrupted image.\"]}}");
         put("mobile", "{\"profil\":{\"mobile\":[\"Ce numero n'est pas valide. Veuillez le saisir comme suit +33399999999\"]}}");

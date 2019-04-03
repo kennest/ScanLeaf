@@ -62,17 +62,10 @@ public class AppController extends Application {
             @Override
             protected Void doInBackground(Void... voids) {
                 RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
-                Culture c=new Culture();
-                Uri uri = Uri.parse("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
-                String destination = getApplicationContext().getExternalFilesDir(null).getPath() + File.separator;
-                c.setName("CACAO");
-                c.setImage(destination+uri.getLastPathSegment());
-                c.setNbParties(5);
-                c.setNomModele("");
-                appDatabase.cultureDao().createCulture(c);
 
                 //Init all needed data
                 try {
+                    RemoteTasks.getInstance(getApplicationContext()).getCultures();
                     RemoteTasks.getInstance(getApplicationContext()).getCountries();
                     RemoteTasks.getInstance(getApplicationContext()).getCulturePart(1);
                     RemoteTasks.getInstance(getApplicationContext()).getQuestions();

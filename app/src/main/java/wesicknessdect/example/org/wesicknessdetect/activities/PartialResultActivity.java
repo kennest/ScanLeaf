@@ -154,6 +154,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         //Add distinct label in a list
         for (Classifier.Recognition r : recognitions) {
+
             symptoms_set.add(r.getTitle().toUpperCase(Locale.ENGLISH));
         }
 
@@ -230,10 +231,10 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     }
 
     @OnClick(R.id.btn_save_diagnostic)
-    public void SendDiagnostic() {
+    public void SendDiagnostic(){
         try {
-         RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
             try {
+                RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();

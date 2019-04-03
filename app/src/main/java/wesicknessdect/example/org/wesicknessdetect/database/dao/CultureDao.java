@@ -13,7 +13,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 @Dao
 public interface CultureDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void createCulture(Culture culture);
+    long createCulture(Culture culture);
 
     @Query("SELECT * FROM Culture")
     LiveData<List<Culture>> getAll();
