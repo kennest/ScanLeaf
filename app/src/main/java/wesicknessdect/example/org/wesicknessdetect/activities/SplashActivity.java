@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.moshi.JsonAdapter;
@@ -27,9 +29,10 @@ import java.util.List;
 
 
 public class SplashActivity extends BaseActivity {
-    private static int SPLASH_TIME_OUT=6000;
+    private static int SPLASH_TIME_OUT=8000;
     TextView tv;
-    Animation appear,dubas,fromLeft,fromRight, duhaut;
+    WebView pulse;
+    Animation appear,dubas,fromLeft,fromRight, out;
     private AppDatabase appDatabase;
     private static final String DATABASE_NAME = "wesickness.db";
     String token="";
@@ -73,20 +76,24 @@ public class SplashActivity extends BaseActivity {
         }).start();
 
         //*****************CHECK IF USER IS AUTHENTICATED****************/
-
+        pulse=findViewById(R.id.pulse);
+        pulse.loadUrl("file:///android_asset/boonnnn.gif");
+        pulse.getSettings().setLoadWithOverviewMode(true);
+        pulse.getSettings().setUseWideViewPort(true);
+        out=AnimationUtils.loadAnimation(this, R.anim.splashtransitionout);
         fromLeft = AnimationUtils.loadAnimation(this, R.anim.lefttoright);
         fromRight =AnimationUtils.loadAnimation(this, R.anim.rightoleft);
         dubas =AnimationUtils.loadAnimation(this, R.anim.splashtransition);
         appear = AnimationUtils.loadAnimation(this, R.anim.splashtransition);
-        appear.setStartOffset(800);
-        fromLeft.setStartOffset(800);
-        fromRight.setStartOffset(800);
+        appear.setStartOffset(2800);
+        fromLeft.setStartOffset(2300);
+        fromRight.setStartOffset(2300);
         //duhaut.setStartOffset(1000);
         dubas.setStartOffset(1500);
         ImageView left = findViewById(R.id.left);
         ImageView iv3 = findViewById(R.id.plantation);
         ImageView right= findViewById(R.id.right);
-
+        pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(1500);
         left.startAnimation(fromLeft);
         right.startAnimation(fromRight);
         iv3.startAnimation(dubas);
@@ -94,7 +101,7 @@ public class SplashActivity extends BaseActivity {
         if(isAuthenticated) {
             welcome.setVisibility(View.VISIBLE);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
