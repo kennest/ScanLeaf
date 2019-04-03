@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    android:padding="4dp">
+    android:padding="4dp"
+    android:id="@+id/disease">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/maladie_image"
@@ -23,7 +24,7 @@
             android:id="@+id/maladie_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
+            android:fontFamily="@font/roboto"
             android:gravity="top"
             android:text="Swollen shoot"
             android:textColor="@android:color/black"
@@ -43,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:fontFamily="@font/roboto"
                 android:text="Le swollen shoot est une maladie qui agit ..."
                 android:textColor="#444444"
                 android:textSize="14sp"
@@ -60,6 +62,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginEnd="1dp"
             android:text="Plus de details"
+            android:fontFamily="@font/roboto"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold|italic" />
     </RelativeLayout>

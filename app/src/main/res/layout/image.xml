@@ -20,17 +20,18 @@
 
         <ImageView
             android:id="@+id/iv"
+            android:background="@drawable/arrondi_haut"
+            android:backgroundTint="@color/white"
             android:layout_width="match_parent"
             android:layout_height="310dp"
-            android:layout_marginBottom="10dp"
             android:adjustViewBounds="true"
             android:minHeight="200dp"
             android:scaleType="fitXY" />
 
 
         <ScrollView
-            android:background="@color/white"
-
+            android:background="@drawable/arrondi_bas"
+            android:backgroundTint="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout

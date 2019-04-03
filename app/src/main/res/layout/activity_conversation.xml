@@ -18,6 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:fontFamily="@font/roboto"
         android:background="@color/colorPrimary"
         android:textColor="@color/white"
         android:text="Conversation avec VieuxKoukou"
@@ -43,6 +44,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/radius"
             android:backgroundTint="#dddddd"
+            android:fontFamily="@font/roboto"
             android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
 
         <TextView
@@ -76,6 +78,7 @@
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/white"
             android:layout_marginRight="0dp"
+            android:fontFamily="@font/roboto"
             android:layout_gravity="right"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
@@ -107,6 +110,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:backgroundTint="#dddddd"
             android:layout_width="260dp"
+            android:fontFamily="@font/roboto"
             android:layout_height="wrap_content"
             android:background="@drawable/radius"
             android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
@@ -141,6 +145,7 @@
             android:id="@+id/msgSender1"
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/white"
+            android:fontFamily="@font/roboto"
             android:layout_marginRight="0dp"
             android:layout_gravity="right"
             android:layout_width="250dp"
@@ -173,6 +178,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:backgroundTint="#dddddd"
             android:layout_width="260dp"
+            android:fontFamily="@font/roboto"
             android:layout_height="wrap_content"
             android:background="@drawable/radius"
             android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
@@ -208,6 +214,7 @@
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/white"
             android:layout_marginRight="0dp"
+            android:fontFamily="@font/roboto"
             android:layout_gravity="right"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
@@ -239,6 +246,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:backgroundTint="#dddddd"
             android:layout_width="260dp"
+            android:fontFamily="@font/roboto"
             android:layout_height="wrap_content"
             android:background="@drawable/radius"
             android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"/>
@@ -274,6 +282,7 @@
             android:backgroundTint="@color/colorPrimaryDark"
             android:textColor="@color/white"
             android:layout_marginRight="0dp"
+            android:fontFamily="@font/roboto"
             android:layout_gravity="right"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
