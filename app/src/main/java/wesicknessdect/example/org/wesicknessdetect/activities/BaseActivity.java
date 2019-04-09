@@ -24,12 +24,15 @@ import wesicknessdect.example.org.wesicknessdetect.events.ShowPixScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowQuizPageEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
+import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
+import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 
 
 public class BaseActivity extends AppCompatActivity {
     IOSDialog dialog;
     boolean dialogIsCancelable;
     public static AppDatabase DB;
+    public  static APIService service;
 
 
 
@@ -39,6 +42,7 @@ public class BaseActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         DB=AppDatabase.getInstance(this);
+        service = APIClient.getClient().create(APIService.class);
     }
 
 

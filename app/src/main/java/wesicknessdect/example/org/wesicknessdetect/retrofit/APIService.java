@@ -1,6 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.retrofit;
 
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -27,6 +29,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 public interface APIService {
@@ -58,6 +61,9 @@ public interface APIService {
 
     @POST("api/diagnostic/")
     Call<Diagnostic> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
+
+    @POST("api/pixels/")
+    Call<SymptomRect> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
     @POST("api/pictures/")
     Call<Picture> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);

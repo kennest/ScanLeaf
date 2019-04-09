@@ -15,14 +15,12 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.google.gson.JsonObject;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import androidx.lifecycle.Observer;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +53,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
@@ -215,7 +212,7 @@ public class RemoteTasks {
                                 }
                             }.execute();
 
-                            new AsyncTask<Void,Void,Void>(){
+                            new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
                                     user.setProfile_id(profile_id);
@@ -245,7 +242,26 @@ public class RemoteTasks {
     }
 
 
-
+    //Send SymptomRect to server
+    public SymptomRect sendSymptomRect(JsonObject json) {
+        SymptomRect symptomRect = new SymptomRect();
+        APIService service = APIClient.getClient().create(APIService.class);
+        String token = FastSave.getInstance().getString("token", "");
+        Call<SymptomRect> call = service.sendSymptomRect("Token " + token, json);
+        try {
+            Response<SymptomRect> response = call.execute();
+            if (response.isSuccessful()) {
+                Log.e("Succeed:", "OK");
+                symptomRect = response.body();
+                return response.body();
+            } else {
+                Log.e("Error:", response.errorBody().string());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return symptomRect;
+    }
 
     //Get Diagnostic from Server
     @SuppressLint("StaticFieldLeak")
@@ -279,7 +295,7 @@ public class RemoteTasks {
             }
         } else {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            diagnostics=DB.diagnosticDao().getAll().getValue();
+            diagnostics = DB.diagnosticDao().getAll().getValue();
             return diagnostics;
         }
         return diagnostics;
@@ -299,8 +315,8 @@ public class RemoteTasks {
                     for (Picture p : list) {
                         Uri uri = Uri.parse(p.getImage());
                         String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                        File f=new File(destination+uri.getLastPathSegment());
-                        if(!f.exists()) {
+                        File f = new File(destination + uri.getLastPathSegment());
+                        if (!f.exists()) {
                             DownloadFile(p.getImage());
                         }
                         Log.e("Remote images X 0:", p.getDiagnostic_id() + "//" + p.getId() + "//" + p.getImage());
@@ -325,7 +341,7 @@ public class RemoteTasks {
             }
         } else {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            pictures=DB.pictureDao().getByDiagnosticId(diagnostic_id).getValue();
+            pictures = DB.pictureDao().getByDiagnosticId(diagnostic_id).getValue();
             return pictures;
         }
         return pictures;
@@ -436,7 +452,7 @@ public class RemoteTasks {
                     Uri uri = Uri.parse(c.getImage());
                     DownloadFile(c.getImage());
                     String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                    c.setImage(destination+uri.getLastPathSegment());
+                    c.setImage(destination + uri.getLastPathSegment());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
@@ -630,7 +646,7 @@ public class RemoteTasks {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            d.setLink(Constants.base_url+d.getLink());
+                            d.setLink(Constants.base_url + d.getLink());
                             DB.diseaseDao().createDisease(d);
                             for (Integer i : d.getSymptoms()) {
                                 DiseaseSymptom ds = new DiseaseSymptom();
