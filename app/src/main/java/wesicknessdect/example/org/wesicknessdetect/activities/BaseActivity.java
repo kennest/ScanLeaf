@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
@@ -28,6 +29,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent
 public class BaseActivity extends AppCompatActivity {
     IOSDialog dialog;
     boolean dialogIsCancelable;
+    public static AppDatabase DB;
 
 
 
@@ -36,6 +38,7 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        DB=AppDatabase.getInstance(this);
     }
 
 

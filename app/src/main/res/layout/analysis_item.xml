@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:text="53 minute ago"
             android:textColor="#ededed"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:layout_weight="1"
             android:textAlignment="textEnd"/>

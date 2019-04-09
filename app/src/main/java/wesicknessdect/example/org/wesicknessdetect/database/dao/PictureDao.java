@@ -12,7 +12,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 
 @Dao
 public interface PictureDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void createPicture(Picture picture);
 
     @Query("SELECT * FROM Picture")

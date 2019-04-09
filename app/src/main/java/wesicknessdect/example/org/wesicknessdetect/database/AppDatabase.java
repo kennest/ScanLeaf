@@ -17,6 +17,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.ProfileDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.StruggleDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomRectDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserDao;
 import wesicknessdect.example.org.wesicknessdetect.models.Attack;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
@@ -83,6 +84,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract ModelDao modelDao();
     public abstract CultureDao cultureDao();
     public abstract SymptomDao symptomDao();
+    public abstract SymptomRectDao symptomRectDao();
     public abstract QuestionDao questionDao();
     public abstract DiseaseDao diseaseDao();
     public abstract DiseaseSymptomsDao diseaseSymptomsDao();

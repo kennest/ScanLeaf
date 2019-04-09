@@ -46,6 +46,7 @@ import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classif
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
@@ -151,6 +152,7 @@ public class SystemTasks {
 
     //Recognized Symptoms on given bitmap
     public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+
         EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions = new ArrayList<>();
         if (MODE == DetectorMode.TF_OD_API) {
