@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_weight="1"/>
+            android:layout_weight="0.8"/>
 
         <TextView
             android:id="@+id/analyse_time"
@@ -54,18 +54,17 @@
             android:textColor="#ededed"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:textAlignment="textEnd"/>
         <ImageButton
             android:id="@+id/seeAnalysis"
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:src="@drawable/ic_eye"
-            android:tint="@color/colorPrimary"
+            android:src="@drawable/ic_info"
             android:layout_weight="1"
+            android:backgroundTint="@color/colorPrimaryPix"
             android:foregroundGravity="right"
             android:background="@drawable/radius"
-            android:backgroundTint="@color/white"
            android:layout_marginStart="60dp"
             android:layout_gravity="right"/>
 

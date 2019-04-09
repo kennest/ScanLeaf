@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:paddingTop="30dp"
+    android:paddingBottom="60dp"
+    android:paddingHorizontal="20dp"
+    android:background="@drawable/back"
     tools:context=".activities.login.LoginActivity">
 
     <LinearLayout
@@ -30,11 +33,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginRight="5dp"
-        android:background="@drawable/radius"
-        android:backgroundTint="#ffffff"
+        android:layout_marginTop="180dp"
+        android:background="#ffffff"
         android:orientation="vertical"
         android:padding="10dp">
 
@@ -50,36 +50,6 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="nom"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <EditText
-                    android:id="@+id/first_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
-                    android:drawableRight="@drawable/ic_person"
-                    android:drawablePadding="20dp"
-                    android:hint="Adopo" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="prénom"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <EditText
-                    android:id="@+id/last_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableRight="@drawable/ic_person"
-                    android:drawablePadding="20dp"
-                    android:hint="Landry Jordan" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -151,23 +121,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:text="fonction"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <EditText
-                    android:id="@+id/fonction"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
-                    android:drawableRight="@drawable/ic_profil"
-                    android:drawablePadding="20dp"
-                    android:hint="fonction"
-                     />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
                     android:text="pays"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -179,20 +132,6 @@
 
                 </androidx.appcompat.widget.AppCompatSpinner>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:text="sexe"
-                    android:textColor="@color/colorPrimaryDark" />
-
-                <androidx.appcompat.widget.AppCompatSpinner
-                    android:id="@+id/sexeSpin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="20dp">
-
-                </androidx.appcompat.widget.AppCompatSpinner>
             </LinearLayout>
 
         </ScrollView>
@@ -203,8 +142,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/radius"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:background="@color/colorPrimaryDark"
             android:text="Inscription"
             android:textAllCaps="false"
             android:textColor="#FFF" />
@@ -214,8 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:background="@drawable/radius"
-            android:backgroundTint="@color/colorliht"
+            android:background="@color/colorliht"
             android:text="Déjà inscrit?"
             android:textAllCaps="false"
             android:textColor="@color/white" />
@@ -230,6 +167,16 @@
         android:layout_marginBottom="5dp"
         android:padding="5dp"
         android:src="@drawable/ic_launcher" />
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/myPhoto"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="125dp"
+        android:layout_marginBottom="5dp"
+        android:padding="5dp"
+        android:tint="@color/colorPrimaryDark"
+        android:src="@drawable/ic_person" />
 
     <TextView
         android:id="@+id/tex1"
