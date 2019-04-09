@@ -61,6 +61,7 @@
         <activity android:name=".activities.ChooseCultureActivity" />
         <activity android:name=".activities.ChooseCulturePartActivity" />
         <activity android:name=".activities.PartialResultActivity" />
+        <activity android:name=".activities.AnalysisDetailsActivity" />
 
         <service
             android:name=".utils.DownloadService"

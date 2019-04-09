@@ -19,6 +19,9 @@ public interface SymptomRectDao {
     LiveData<List<SymptomRect>> getAll();
 
     @Query("SELECT * FROM SymptomRect WHERE picture_id=:id")
-    LiveData<SymptomRect> getByPicture(long id);
+    LiveData<List<SymptomRect>> getByPictureId(long id);
+
+    @Query("SELECT * FROM SymptomRect WHERE symptom_id=:id")
+    LiveData<List<SymptomRect>> getBySymptomId(long id);
 
 }

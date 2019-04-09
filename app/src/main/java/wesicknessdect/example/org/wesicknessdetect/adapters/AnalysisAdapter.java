@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
@@ -26,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 
@@ -75,6 +77,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
+                holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getId());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
                 holder.analyseTime.setText("1 min Ago");
 
@@ -103,6 +106,9 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 @Override
                 public void onClick(View v) {
                     Log.e("History item", "CLICKED");
+                    Intent i=new Intent(context, AnalysisDetailsActivity.class);
+                    i.putExtra("id", (Integer) v.getTag());
+                    context.startActivity(i);
                 }
             });
         }

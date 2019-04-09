@@ -3,6 +3,7 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.google.android.material.tabs.TabLayout;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -161,6 +164,7 @@ public class ProcessActivity extends BaseActivity {
         });
     }
 
+    //Save the rectf of symptoms to DB
 private void SaveRectFtoDatabase(){
     DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
         @SuppressLint("StaticFieldLeak")
@@ -172,7 +176,9 @@ private void SaveRectFtoDatabase(){
                     for (DiagnosticPictures dp : diagnosticPictures) {
                         Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
                         for (Picture p : dp.pictures) {
+
                             for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : AppController.getInstance().recognitions_by_part.entrySet()) {
+
                                 Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id());
                                 if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
                                     Log.e("Find Symptom picture", "TRUE");
@@ -206,7 +212,7 @@ private void SaveRectFtoDatabase(){
                             }
                         }
                     }
-
+                    //AppController.getInstance().setRecognitions_by_part(new HashMap<>());
                 }
             });
 
@@ -218,7 +224,7 @@ private void SaveRectFtoDatabase(){
         public void onChanged(List<SymptomRect> symptomRects) {
             Log.e("Symptoms Rect", symptomRects.size() + "");
             for(SymptomRect r:symptomRects){
-                Log.e("RectF", r.left+"/"+r.top+"/"+r.right+"/"+r.bottom);
+                Log.e("RectF:", r.left+"->"+r.top+"->"+r.right+"->"+r.bottom);
             }
         }
     });

@@ -243,6 +243,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                 e.printStackTrace();
             }
 
+//            for(Map.Entry<Integer,List<Classifier.Recognition>> entry:recognitions_by_part.entrySet()){
+//                entry.setValue(entry.getValue().subList(0,4));
+//            }
             AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
 
         } catch (IOException e) {

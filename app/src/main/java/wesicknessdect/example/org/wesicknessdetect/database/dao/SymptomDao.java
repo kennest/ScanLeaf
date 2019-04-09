@@ -21,6 +21,9 @@ public interface SymptomDao {
     @Query("SELECT * FROM Symptom WHERE question_id=:id")
     LiveData<Symptom> getByQuestion(long id);
 
+    @Query("SELECT * FROM Symptom WHERE id=:id")
+    LiveData<Symptom> getById(long id);
+
     @Query("SELECT * FROM Symptom WHERE name=:name")
     LiveData<Symptom> getByName(String name);
 }

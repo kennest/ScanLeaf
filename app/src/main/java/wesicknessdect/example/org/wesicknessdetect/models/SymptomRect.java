@@ -3,6 +3,7 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 import android.graphics.RectF;
 
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 @Entity
