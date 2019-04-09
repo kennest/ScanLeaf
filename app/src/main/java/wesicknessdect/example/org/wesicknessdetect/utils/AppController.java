@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 
@@ -12,8 +13,11 @@ import com.downloader.PRDownloaderConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
@@ -23,9 +27,14 @@ public class AppController extends Application {
     private static final String DATABASE_NAME = "wesickness.db";
     public static AppDatabase appDatabase;
     private static AppController mInstance;
-    List<CulturePart> culturePartList=new ArrayList<>();
+    public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
+    public Map<Integer, String> images_by_parts = new HashMap<>();
 
     public static synchronized AppController getInstance() {
+        if (mInstance == null) { //if there is no instance available... create new one
+            mInstance = new AppController();
+        }
+        //service = APIClient.getClient().create(APIService.class);
         return mInstance;
     }
 
@@ -53,6 +62,14 @@ public class AppController extends Application {
 
         //Create data
         InitDBFromServer();
+    }
+
+    public Map<Integer, List<Classifier.Recognition>> getRecognitions_by_part() {
+        return recognitions_by_part;
+    }
+
+    public void setRecognitions_by_part(Map<Integer, List<Classifier.Recognition>> recognitions_by_part) {
+        this.recognitions_by_part = recognitions_by_part;
     }
 
     @SuppressLint("StaticFieldLeak")

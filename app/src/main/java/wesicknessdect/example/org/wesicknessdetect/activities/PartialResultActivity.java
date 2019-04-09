@@ -50,6 +50,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 
 public class PartialResultActivity extends BaseActivity implements CardStackListener {
 
@@ -242,67 +243,11 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                 e.printStackTrace();
             }
 
-            DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
-                @SuppressLint("StaticFieldLeak")
-                @Override
-                public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (DiagnosticPictures dp : diagnosticPictures) {
-                                Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
-                                for (Picture p : dp.pictures) {
-                                    for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : recognitions_by_part.entrySet()) {
-                                        Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id());
-                                        if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
-                                            Log.e("Find Symptom picture", "TRUE");
-                                            for (Classifier.Recognition r : recognition_entry.getValue()) {
-                                                //Check Symptom table for equivalent name
-                                                DB.symptomDao().getAll().observe(PartialResultActivity.this, new Observer<List<Symptom>>() {
-                                                    @Override
-                                                    public void onChanged(List<Symptom> symptoms) {
-                                                        for(Symptom n:symptoms){
-                                                            if(n.getName().toUpperCase().equals(r.getTitle().toUpperCase())){
-                                                                Log.e("Find Symptom", "TRUE");
-                                                                SymptomRect sr = new SymptomRect();
-                                                                sr.set(r.getLocation());
-                                                                sr.picture_id = p.getId();
-                                                                sr.symptom_id = n.getId();
+            AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
 
-                                                                //Store symptom rect in DB
-                                                                new AsyncTask<Void, Void, Void>() {
-                                                                    @Override
-                                                                    protected Void doInBackground(Void... voids) {
-                                                                        DB.symptomRectDao().createSymptomRect(sr);
-                                                                        return null;
-                                                                    }
-                                                                }.execute();
-                                                            }
-                                                        }
-
-                                                    }
-                                                });
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    });
-
-                }
-            });
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
-            @Override
-            public void onChanged(List<SymptomRect> symptomRects) {
-                Log.e("Symptoms Rect", symptomRects.size() + "");
-            }
-        });
     }
 
     private void InitCardSwipe() {

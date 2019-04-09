@@ -3,6 +3,7 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,22 +22,31 @@ import com.google.android.material.tabs.TabLayout;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.events.ToggleViewEvent;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 
 /**
  * Created by Jordan Adopo on 10/02/2019.
@@ -78,6 +88,8 @@ public class ProcessActivity extends BaseActivity {
             e.printStackTrace();
         }
 
+        //Save RectF to database
+        SaveRectFtoDatabase();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -149,7 +161,68 @@ public class ProcessActivity extends BaseActivity {
         });
     }
 
+private void SaveRectFtoDatabase(){
+    DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
+        @SuppressLint("StaticFieldLeak")
+        @Override
+        public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (DiagnosticPictures dp : diagnosticPictures) {
+                        Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
+                        for (Picture p : dp.pictures) {
+                            for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : AppController.getInstance().recognitions_by_part.entrySet()) {
+                                Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id());
+                                if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
+                                    Log.e("Find Symptom picture", "TRUE");
+                                    for (Classifier.Recognition r : recognition_entry.getValue()) {
+                                        //Check Symptom table for equivalent name
+                                        DB.symptomDao().getAll().observe(ProcessActivity.this, new Observer<List<Symptom>>() {
+                                            @Override
+                                            public void onChanged(List<Symptom> symptoms) {
+                                                for(Symptom n:symptoms){
+                                                    if(n.getName().toUpperCase().equals(r.getTitle().toUpperCase())){
+                                                        Log.e("Find Symptom", "TRUE");
+                                                        SymptomRect sr = new SymptomRect();
+                                                        sr.set(r.getLocation());
+                                                        sr.picture_id = p.getId();
+                                                        sr.symptom_id = n.getId();
+                                                        //Store symptom rect in DB
+                                                        new AsyncTask<Void, Void, Void>() {
+                                                            @Override
+                                                            protected Void doInBackground(Void... voids) {
+                                                                DB.symptomRectDao().createSymptomRect(sr);
+                                                                return null;
+                                                            }
+                                                        }.execute();
+                                                    }
+                                                }
 
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            });
+
+        }
+    });
+
+    DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
+        @Override
+        public void onChanged(List<SymptomRect> symptomRects) {
+            Log.e("Symptoms Rect", symptomRects.size() + "");
+            for(SymptomRect r:symptomRects){
+                Log.e("RectF", r.left+"/"+r.top+"/"+r.right+"/"+r.bottom);
+            }
+        }
+    });
+}
 
     private void setupTabLayout() {
         LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(0));

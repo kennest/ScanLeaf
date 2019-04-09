@@ -79,7 +79,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
             maladieImage = itemView.findViewById(R.id.maladie_image);
             maladieName = itemView.findViewById(R.id.maladie_name);
             maladie_desc = itemView.findViewById(R.id.maladie_desc);
-            maladie_url= itemView.findViewById(R.id.maladie_icon);
+//            maladie_url= itemView.findViewById(R.id.maladie_icon);
             rl=itemView.findViewById(R.id.disease);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
