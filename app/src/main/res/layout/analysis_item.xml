@@ -6,7 +6,7 @@
     android:backgroundTint="#fff"
     android:layout_marginBottom="5dp"
     android:layout_marginHorizontal="5dp"
-    android:background="@drawable/radius"
+    android:background="@drawable/bordershadow"
 >
 
     <com.glide.slider.library.SliderLayout
