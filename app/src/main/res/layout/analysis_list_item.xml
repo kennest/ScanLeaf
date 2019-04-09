@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="?selectableItemBackground"
+    android:background="@drawable/bordershadow"
     android:layout_marginBottom="5dp"
-    android:backgroundTint="#fff"
+    android:backgroundTint="#ededed"
     android:orientation="vertical">
 
     <LinearLayout
@@ -41,20 +42,38 @@
                 android:fontFamily="@font/roboto"
                 android:gravity="top"
                 android:text="Disease"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryPix"
                 android:textSize="18sp"
                 android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/analyse_time"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_gravity="start"
-                android:text="53 minute ago"
-                android:textAlignment="textStart"
-                android:textColor="@color/colorPrimary"
-                android:textSize="15sp" />
+                android:orientation="horizontal"
+                android:weightSum="2">
+                <TextView
+                    android:id="@+id/analyse_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="53 minute ago"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    tools:ignore="RtlCompat" />
+                <ImageButton
+                    android:id="@+id/seeAnalysis"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/colorPrimaryPix"
+                    android:layout_weight="1"
+                    android:backgroundTint="#ededed"
+                    android:foregroundGravity="right"
+                    android:background="@drawable/bordershadow"
+                    android:layout_marginStart="60dp"
+                    android:layout_gravity="right"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>
