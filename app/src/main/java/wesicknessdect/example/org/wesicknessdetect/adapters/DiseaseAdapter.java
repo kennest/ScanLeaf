@@ -55,7 +55,11 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
         Log.v("DiseaseAdapter ", "onBindViewHolder position "+position);
                 c.maladieImage.setImageResource(R.drawable.swollen);
                 c.maladieName.setText(diseases.get(position).getName());
-                c.maladie_desc.setText(diseases.get(0).getDescription());
+                if(diseases.get(position).getDescription().length()>35) {
+                    c.maladie_desc.setText(String.format("%s...", diseases.get(position).getDescription().substring(0, 35)));
+                }else{
+                    c.maladie_desc.setText(diseases.get(position).getDescription());
+                }
                 c.itemView.setTag(diseases.get(position).getLink());
     }
 

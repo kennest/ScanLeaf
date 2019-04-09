@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
                 entity = CulturePart.class,
                 parentColumns = "id",
                 childColumns = "culture_part_id")
-},indices = {@Index("culture_part_id")})
+},indices = {@Index({"culture_part_id","image"})})
 public class Picture {
     @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)

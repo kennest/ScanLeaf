@@ -28,7 +28,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.events.ToggleViewEvent;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
@@ -41,7 +44,7 @@ import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 
 public class ProcessActivity extends BaseActivity {
 
-    ViewPager viewPager;
+    static ViewPager viewPager;
     TabLayout tabLayout;
     Toolbar toolbar;
     AppBarLayout appBarLayout;
@@ -54,7 +57,10 @@ public class ProcessActivity extends BaseActivity {
     ChatsFragment chatsFragment;
     AnalyseFragment analyseFragment;
     MaladiesFragment maladiesFragment;
-    MainAdapter mainAdapter;
+    static MainAdapter mainAdapter;
+
+    @BindView(R.id.toggleView)
+    FloatingActionButton toggleView;
 
     boolean flag = false;
 
@@ -63,6 +69,7 @@ public class ProcessActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_process);
+        ButterKnife.bind(this);
 
         //Init Necessary Data
         try {
@@ -70,6 +77,7 @@ public class ProcessActivity extends BaseActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,12 +89,14 @@ public class ProcessActivity extends BaseActivity {
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
         actionButton = findViewById(R.id.fab);
-actionButton.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        viewPager.setCurrentItem(0, true);
-    }
-});
+        actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewPager.setCurrentItem(0, true);
+            }
+
+
+        });
 
         mainAdapter = new MainAdapter(getSupportFragmentManager());
 
@@ -116,6 +126,11 @@ actionButton.setOnClickListener(new View.OnClickListener() {
                     translateDown();
                     actionButton.setVisibility(View.VISIBLE);
                 }
+                if (position == 1) {
+                    toggleView.setVisibility(View.VISIBLE);
+                } else {
+                    toggleView.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -125,7 +140,15 @@ actionButton.setOnClickListener(new View.OnClickListener() {
         });
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
+
+        toggleView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new ToggleViewEvent(true));
+            }
+        });
     }
+
 
 
     private void setupTabLayout() {
@@ -235,7 +258,6 @@ actionButton.setOnClickListener(new View.OnClickListener() {
                 }
                 return maladiesFragment;
             } else if (position == 3) {
-
                 if (chatsFragment == null) {
                     chatsFragment = new ChatsFragment();
                     return chatsFragment;
@@ -255,7 +277,7 @@ actionButton.setOnClickListener(new View.OnClickListener() {
             if (position == 2)
                 return "Maladies";
             if (position == 3)
-                return "Messages";
+                return "Communites";
             return null;
         }
 

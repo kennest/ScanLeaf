@@ -3,9 +3,12 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 import android.graphics.RectF;
 
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 @Entity
 public class SymptomRect extends RectF {
+    @PrimaryKey(autoGenerate = true)
+    private long id;
     public long symptom_id;
     public long picture_id;
 
@@ -23,5 +26,13 @@ public class SymptomRect extends RectF {
 
     public void setPicture_id(long picture_id) {
         this.picture_id = picture_id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

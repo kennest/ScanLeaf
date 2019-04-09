@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,9 +30,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
-import androidx.room.Transaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -45,8 +46,10 @@ import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class PartialResultActivity extends BaseActivity implements CardStackListener {
 
@@ -72,11 +75,11 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     private Map<Integer, Map<Integer, String>> images_by_part_adapter = new HashMap<>();
     PartialResultImageAdapter partialResultImageAdapter;
     CardStackLayoutManager manager;
-    Diagnostic diagnostic=new Diagnostic();
+    Diagnostic diagnostic = new Diagnostic();
     int index = 0;
     Map.Entry<Long, Integer> maxEntry = null;
 
-    private static AppDatabase DB;
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -84,7 +87,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partial_results);
         ButterKnife.bind(this);
-        DB = AppDatabase.getInstance(this);
         InitCardSwipe();
 
         InitDiagnosticData();
@@ -99,32 +101,32 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-               SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
+                SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
             }
         });
 
     }
 
-    private void InitDiagnosticData(){
+    private void InitDiagnosticData() {
         Calendar c = Calendar.getInstance();
-        System.out.println("Current time => "+c.getTime());
+        System.out.println("Current time => " + c.getTime());
 
-        String location=FastSave.getInstance().getString("location","0.0:0.0");
+        String location = FastSave.getInstance().getString("location", "0.0:0.0");
         String[] locpart = location.split(":");
 
         diagnostic.setLatitude(Double.parseDouble(locpart[0]));
         diagnostic.setLongitude(Double.parseDouble(locpart[1]));
-        diagnostic.setLocalisation("SRID=4326;POINT ("+locpart[1]+" "+locpart[0]+")");
+        diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[1] + " " + locpart[0] + ")");
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String date = df.format(c.getTime());
-        Log.e("Time:",date);
+        Log.e("Time:", date);
         String[] parts = date.split(" ");
         diagnostic.setDate(parts[0]);
         diagnostic.setHour(parts[1]);
 
         diagnostic.setProbability(95f);
-        long user_id=Long.parseLong(FastSave.getInstance().getString("user_id","1"));
+        long user_id = Long.parseLong(FastSave.getInstance().getString("user_id", "1"));
         diagnostic.setUser_id(user_id);
         diagnostic.setIs_share(0);
         diagnostic.setCulture_id(1);
@@ -136,7 +138,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         DB.profileDao().getAll().observe(this, new Observer<List<Profile>>() {
             @Override
             public void onChanged(List<Profile> profiles) {
-                for(Profile p:profiles){
+                for (Profile p : profiles) {
                     diagnostic.setCountry_id(p.getCountry_id());
                 }
             }
@@ -231,7 +233,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     }
 
     @OnClick(R.id.btn_save_diagnostic)
-    public void SendDiagnostic(){
+    public void SendDiagnostic() {
         try {
             try {
                 RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
@@ -241,16 +243,66 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
 
             DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
-             @Override
-             public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-                 for (DiagnosticPictures dp:diagnosticPictures){
-                     Log.e("Diagnostic DB::"+diagnosticPictures.indexOf(dp),dp.pictures.size()+"");
-                 }
-             }
-         });
+                @SuppressLint("StaticFieldLeak")
+                @Override
+                public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (DiagnosticPictures dp : diagnosticPictures) {
+                                Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
+                                for (Picture p : dp.pictures) {
+                                    for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : recognitions_by_part.entrySet()) {
+                                        Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id());
+                                        if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
+                                            Log.e("Find Symptom picture", "TRUE");
+                                            for (Classifier.Recognition r : recognition_entry.getValue()) {
+                                                //Check Symptom table for equivalent name
+                                                DB.symptomDao().getAll().observe(PartialResultActivity.this, new Observer<List<Symptom>>() {
+                                                    @Override
+                                                    public void onChanged(List<Symptom> symptoms) {
+                                                        for(Symptom n:symptoms){
+                                                            if(n.getName().toUpperCase().equals(r.getTitle().toUpperCase())){
+                                                                Log.e("Find Symptom", "TRUE");
+                                                                SymptomRect sr = new SymptomRect();
+                                                                sr.set(r.getLocation());
+                                                                sr.picture_id = p.getId();
+                                                                sr.symptom_id = n.getId();
+
+                                                                //Store symptom rect in DB
+                                                                new AsyncTask<Void, Void, Void>() {
+                                                                    @Override
+                                                                    protected Void doInBackground(Void... voids) {
+                                                                        DB.symptomRectDao().createSymptomRect(sr);
+                                                                        return null;
+                                                                    }
+                                                                }.execute();
+                                                            }
+                                                        }
+
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    });
+
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
+            @Override
+            public void onChanged(List<SymptomRect> symptomRects) {
+                Log.e("Symptoms Rect", symptomRects.size() + "");
+            }
+        });
     }
 
     private void InitCardSwipe() {

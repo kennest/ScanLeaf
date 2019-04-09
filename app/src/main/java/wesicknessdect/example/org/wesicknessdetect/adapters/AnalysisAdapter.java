@@ -1,17 +1,24 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.glide.slider.library.Animations.DescriptionAnimation;
 import com.glide.slider.library.SliderLayout;
 import com.glide.slider.library.SliderTypes.TextSliderView;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.io.File;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -40,7 +47,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     @Override
     public StatusHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.analysis_item,
+                R.layout.analysis_list_item,
                 parent,
                 false);
         return new StatusHolder(view);
@@ -49,39 +56,30 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         Log.e("XXXX 0 " + position, diagnosticPictures.get(position).pictures.size() + "");
+                if(diagnosticPictures.get(position).pictures.size()>0){
+                    for (Picture s : diagnosticPictures.get(position).pictures) {
+                        Log.e("XXXX N " + position, s.getImage());
+                    }
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inSampleSize = 8;
+                    Bitmap bm=BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage())),options);
+                    Glide.with(context)
+                            .asBitmap()
+                            .load(bm)
+                            .apply(new RequestOptions().centerCrop())
+                            .apply(new RequestOptions().error(R.drawable.close_box))
+                            .apply(new RequestOptions().placeholder(R.drawable.restart))
+                            .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                            .into(holder.image);
 
-        //Glide.with(context).load(R.drawable.plante_sample).into(((StatusHolder)holder).analyseImage);
+                    //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
+                }
+                holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
+                //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
+                holder.analyseTime.setText("1 min Ago");
 
-        holder.slideview.removeAllSliders();
-        for (Picture s : diagnosticPictures.get(position).pictures) {
-            Log.e("XXXX N " + position, s.getImage());
-            TextSliderView sliderView = new TextSliderView(context);
-            // if you want show image only / without description text use DefaultSliderView instead
+                //holder.slideview.addOnPageChangeListener(this);
 
-            RequestOptions requestOptions = new RequestOptions();
-            requestOptions.centerCrop();
-            // initialize SliderLayout
-            sliderView
-                    .image(s.getImage())
-                    .setRequestOption(requestOptions)
-                    .setProgressBarVisible(true);
-
-            //add your extra information
-            //sliderView.bundle(new Bundle());
-            holder.slideview.addSlider(sliderView);
-        }
-
-        // set Slider Transition Animation
-        // mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Default);
-        holder.slideview.setPresetTransformer(SliderLayout.Transformer.Accordion);
-        holder.slideview.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
-        holder.slideview.setCustomAnimation(new DescriptionAnimation());
-        holder.slideview.setDuration(4000);
-        holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-        //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-        holder.analyseTime.setText("1 min Ago");
-
-        //holder.slideview.addOnPageChangeListener(this);
     }
 
     @Override
@@ -91,8 +89,8 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
     class StatusHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.slider)
-        SliderLayout slideview;
+        @BindView(R.id.image)
+        CircularImageView image;
         @BindView(R.id.user_name)
         TextView userName;
         @BindView(R.id.analyse_time)
