@@ -77,7 +77,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-                holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getId());
+                holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
                 holder.analyseTime.setText("1 min Ago");
 

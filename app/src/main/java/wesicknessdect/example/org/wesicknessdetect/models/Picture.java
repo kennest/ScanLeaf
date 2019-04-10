@@ -14,9 +14,12 @@ import androidx.room.PrimaryKey;
                 childColumns = "culture_part_id")
 },indices = {@Index({"culture_part_id","image"})})
 public class Picture {
+
     @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int x;
+
+    private long net_id;
 
     @SerializedName(value = "diagnostic")
     private long diagnostic_id;
@@ -24,17 +27,17 @@ public class Picture {
     @SerializedName(value = "partCulture")
     private long culture_part_id;
 
-    private boolean sended;
+    private Integer sended;
 
     @SerializedName(value = "image")
     private String image;
 
-    public int getId() {
-        return id;
+    public int getX() {
+        return x;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setX(int x) {
+        this.x = x;
     }
 
     public long getDiagnostic_id() {
@@ -61,11 +64,19 @@ public class Picture {
         this.image = image;
     }
 
-    public boolean isSended() {
+    public Integer getSended() {
         return sended;
     }
 
-    public void setSended(boolean sended) {
+    public void setSended(Integer sended) {
         this.sended = sended;
+    }
+
+    public long getNet_id() {
+        return net_id;
+    }
+
+    public void setNet_id(long net_id) {
+        this.net_id = net_id;
     }
 }

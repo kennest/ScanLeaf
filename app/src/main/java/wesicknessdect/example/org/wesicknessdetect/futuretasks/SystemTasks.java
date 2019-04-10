@@ -168,10 +168,10 @@ public class SystemTasks {
 
                 recognitions = detector.recognizeImage(bitmap);
                 Log.e("Recognitions", recognitions.toString());
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
+                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0,4)));
 
             } catch (final IOException e) {
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
+                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0,4)));
                 LOGGER.e("Exception initializing classifier!", e);
             }
 

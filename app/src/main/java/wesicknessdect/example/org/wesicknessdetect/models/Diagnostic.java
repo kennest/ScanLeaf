@@ -19,8 +19,10 @@ import androidx.room.PrimaryKey;
 },indices = {@Index("user_id")})
 public class Diagnostic  {
     @SerializedName(value = "id")
-    @PrimaryKey
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    private int x;
+
+    private int net_id;
 
     private double longitude;
     private double latitude;
@@ -30,7 +32,7 @@ public class Diagnostic  {
     private String advancedAnalysis;
     private String disease;
     private boolean finish;
-    private boolean sended;
+    private Integer sended;
     private float probability=95f;
     @SerializedName(value = "user")
     private long user_id;
@@ -43,12 +45,12 @@ public class Diagnostic  {
     @Ignore
     private Map<Integer, String> images_by_parts;
 
-    public int getId() {
-        return id;
+    public int getX() {
+        return x;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setX(int x) {
+        this.x = x;
     }
 
     public double getLongitude() {
@@ -155,11 +157,11 @@ public class Diagnostic  {
         this.finish = finish;
     }
 
-    public boolean isSended() {
+    public Integer getSended() {
         return sended;
     }
 
-    public void setSended(boolean sended) {
+    public void setSended(Integer sended) {
         this.sended = sended;
     }
 
@@ -169,5 +171,13 @@ public class Diagnostic  {
 
     public void setImages_by_parts(Map<Integer, String> images_by_parts) {
         this.images_by_parts = images_by_parts;
+    }
+
+    public int getNet_id() {
+        return net_id;
+    }
+
+    public void setNet_id(int net_id) {
+        this.net_id = net_id;
     }
 }

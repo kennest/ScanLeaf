@@ -7,7 +7,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {@ForeignKey(entity = Diagnostic.class, parentColumns = "id", childColumns = "diagnostic_id")},
+@Entity(foreignKeys = {@ForeignKey(entity = Diagnostic.class, parentColumns = "x", childColumns = "diagnostic_id")},
         indices = {@Index("diagnostic_id")})
 public class Message {
     @PrimaryKey(autoGenerate = true)

@@ -13,7 +13,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 @Dao
 public interface SymptomRectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void createSymptomRect(SymptomRect symptomRect);
+    long createSymptomRect(SymptomRect symptomRect);
 
     @Query("SELECT * FROM SymptomRect")
     LiveData<List<SymptomRect>> getAll();

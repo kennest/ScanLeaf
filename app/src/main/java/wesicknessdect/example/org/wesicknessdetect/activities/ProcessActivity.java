@@ -51,6 +51,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
+import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
 /**
  * Created by Jordan Adopo on 10/02/2019.
@@ -88,9 +89,14 @@ public class ProcessActivity extends BaseActivity {
         //Init Necessary Data
         try {
             RemoteTasks.getInstance(this).getDiagnostics();
+            RemoteTasks.getInstance(this).getSymptomsRect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+        stopService(offline);
+        startService(offline);
 
         //Save RectF to database
         SaveRectFtoDatabase();
@@ -178,7 +184,7 @@ public class ProcessActivity extends BaseActivity {
                             Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
                             for (Picture p : dp.pictures) {
                                 for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : AppController.getInstance().recognitions_by_part.entrySet()) {
-                                    Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id());
+                                    Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id()+"//"+p.getX());
                                     if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
                                         Log.e("Find Symptom picture", "TRUE");
                                         for (Classifier.Recognition r : recognition_entry.getValue()) {
@@ -191,9 +197,9 @@ public class ProcessActivity extends BaseActivity {
                                                             Log.e("Find Symptom", "TRUE");
                                                             SymptomRect sr = new SymptomRect();
                                                             sr.set(r.getLocation());
-                                                            sr.picture_id = p.getId();
+                                                            sr.picture_id = p.getX();
                                                             sr.symptom_id = n.getId();
-                                                            sr.sended=false;
+                                                            sr.sended=0;
                                                             //Store symptom rect in DB
                                                             new AsyncTask<Void, Void, Void>() {
                                                                 @Override
@@ -222,20 +228,12 @@ public class ProcessActivity extends BaseActivity {
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
-                Log.e("Symptoms Rect", symptomRects.size() + "");
-                for (SymptomRect r : symptomRects) {
-                    Log.e("RectF:", r.left + "->" + r.top + "->" + r.right + "->" + r.bottom);
-
-                    JsonObject json=new JsonObject();
-                    json.addProperty("x_min",r.left);
-                    json.addProperty("y_min",r.bottom);
-                    json.addProperty("x_max",r.right);
-                    json.addProperty("y_max",r.top);
-                    json.addProperty("picture",r.picture_id);
-                    json.addProperty("symptom",r.symptom_id);
-
-                    //Try to send rect to Server
-                   RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(json);
+                Log.e("Symptoms Rect size::", symptomRects.size() + "");
+                if(symptomRects.size()>0) {
+                    for (SymptomRect r : symptomRects) {
+                        Log.e("RectF:", r.left + "->" + r.top + "->" + r.right + "->" + r.bottom);
+                        //Try to send rect to Server
+                    }
                 }
             }
         });

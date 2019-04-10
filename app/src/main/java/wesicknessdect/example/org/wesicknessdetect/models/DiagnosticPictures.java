@@ -8,7 +8,7 @@ import androidx.room.Relation;
 public class DiagnosticPictures {
     @Embedded
     public Diagnostic diagnostic;
-    @Relation(parentColumn = "id", entityColumn = "diagnostic_id", entity = Picture.class)
+    @Relation(parentColumn = "x", entityColumn = "diagnostic_id", entity = Picture.class)
     public List<Picture> pictures;
 
     public Diagnostic getDiagnostic() {

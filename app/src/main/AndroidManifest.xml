@@ -67,6 +67,8 @@
             android:name=".utils.DownloadService"
             android:enabled="true"
             android:exported="false" />
+        <service android:name=".utils.OfflineService" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

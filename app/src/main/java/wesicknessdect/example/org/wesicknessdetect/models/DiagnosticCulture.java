@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 @Entity(foreignKeys = {
         @ForeignKey(
                 entity = Diagnostic.class,
-                parentColumns = "id",
+                parentColumns = "x",
                 childColumns = "diagnostic_id"),
         @ForeignKey(
                 entity = Culture.class,

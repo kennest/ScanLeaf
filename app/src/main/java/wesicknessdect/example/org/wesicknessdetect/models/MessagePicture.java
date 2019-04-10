@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey;
                 childColumns = "message_id"),
         @ForeignKey(
                 entity = Picture.class,
-                parentColumns = "id",
+                parentColumns = "x",
                 childColumns = "picture_id")
 },indices = {@Index("message_id"),@Index("picture_id")})
 public class MessagePicture {

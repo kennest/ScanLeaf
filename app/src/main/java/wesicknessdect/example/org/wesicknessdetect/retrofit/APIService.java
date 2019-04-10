@@ -65,6 +65,9 @@ public interface APIService {
     @POST("api/pixels/")
     Call<SymptomRect> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
+    @GET("api/pixels")
+    Call<List<SymptomRect>> getSymptomRect(@Header("Authorization") String token);
+
     @POST("api/pictures/")
     Call<Picture> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);
 
