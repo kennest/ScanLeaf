@@ -15,6 +15,7 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.greenrobot.eventbus.EventBus;
@@ -248,13 +249,13 @@ public class RemoteTasks {
     public SymptomRect sendSymptomRect(SymptomRect r) {
         SymptomRect symptomRect = new SymptomRect();
         if (Constants.isOnline(mContext)) {
-            JsonObject json=new JsonObject();
-            json.addProperty("x_min",r.left);
-            json.addProperty("y_min",r.bottom);
-            json.addProperty("x_max",r.right);
-            json.addProperty("y_max",r.top);
-            json.addProperty("picture",r.picture_id);
-            json.addProperty("symptom",r.symptom_id);
+            JsonObject json = new JsonObject();
+            json.addProperty("x_min", r.left);
+            json.addProperty("y_min", r.bottom);
+            json.addProperty("x_max", r.right);
+            json.addProperty("y_max", r.top);
+            json.addProperty("picture", r.picture_id);
+            json.addProperty("symptom", r.symptom_id);
 
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
@@ -267,7 +268,7 @@ public class RemoteTasks {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            r.sended=1;
+                            r.sended = 1;
                             DB.symptomRectDao().createSymptomRect(r);
                             return null;
                         }
@@ -280,46 +281,54 @@ public class RemoteTasks {
                 e.printStackTrace();
             }
             return symptomRect;
-        }else{
+        } else {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                   r.sended=0;
+                    r.sended = 0;
                     DB.symptomRectDao().createSymptomRect(r);
                     return null;
                 }
             }.execute();
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
-       return symptomRect;
+        return symptomRect;
     }
 
     //Get SymptomRect from server
     @SuppressLint("StaticFieldLeak")
-    public List<SymptomRect> getSymptomsRect() throws IOException{
+    public List<SymptomRect> getSymptomsRect() throws IOException {
         if (Constants.isOnline(mContext)) {
+
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
             Call call = service.getSymptomRect("Token " + token);
-            Response<List<SymptomRect>> response = call.execute();
+            Response<List<JsonElement>> response = call.execute();
             if (response.isSuccessful()) {
-                symptomRects=response.body();
-                for(SymptomRect r:symptomRects){
-                    Log.e("RectF Remote:", r.getPicture_id()+"//"+r.left+"//"+r.right);
-                    new AsyncTask<Void,Void,Void>(){
+                List<JsonElement> symptomRects = response.body();
+                for (JsonElement r : symptomRects) {
+                    SymptomRect s = new SymptomRect();
+                    s.setX(r.getAsJsonObject().get("id").getAsInt());
+                    s.picture_id = r.getAsJsonObject().get("picture").getAsInt();
+                    s.symptom_id = r.getAsJsonObject().get("symptom").getAsInt();
+                    s.left = Float.parseFloat(r.getAsJsonObject().get("x_min").getAsString());
+                    s.bottom = Float.parseFloat(r.getAsJsonObject().get("y_min").getAsString());
+                    s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
+                    s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
+                    //Log.e("RectF Remote:", r.getPicture_id()+"//"+r.left+"//"+r.right);
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            r.sended=1;
-                            DB.symptomRectDao().createSymptomRect(r);
+                            s.sended = 1;
+                            DB.symptomRectDao().createSymptomRect(s);
                             return null;
                         }
                     }.execute();
-
                 }
-            }else{
+            } else {
                 Log.e("Error:", response.errorBody().string());
             }
-        }else{
+        } else {
             EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
         return symptomRects;
@@ -393,7 +402,7 @@ public class RemoteTasks {
                                 p.setImage(destination + uri.getLastPathSegment());
                                 p.setDiagnostic_id(diagnostic_id);
                                 DB.pictureDao().createPicture(p);
-                                Log.e("image DB", "CREATED "+p.getX());
+                                Log.e("image DB", "CREATED " + p.getX());
                                 return null;
                             }
                         }.execute();
@@ -431,7 +440,7 @@ public class RemoteTasks {
                     }
                 }.execute();
 
-                if(d.getImages_by_parts()!=null) {
+                if (d.getImages_by_parts() != null) {
                     Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
                     new AsyncTask<Void, Void, Void>() {
                         @Override
@@ -483,7 +492,6 @@ public class RemoteTasks {
         }
         return diagnostic;
     }
-
 
 
     //Send Picture of Diagnostic to Server

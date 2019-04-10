@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.retrofit;
 
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public interface APIService {
     Call<SymptomRect> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
     @GET("api/pixels")
-    Call<List<SymptomRect>> getSymptomRect(@Header("Authorization") String token);
+    Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token);
 
     @POST("api/pictures/")
     Call<Picture> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);

@@ -90,7 +90,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                     List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
                                     Canvas canvas = new Canvas(bitmap_cropped);
 
-                                    recognitions = recognitions.subList(0, 3);
+                                    //recognitions = recognitions.subList(0, 4);
 
                                     for (Classifier.Recognition r : recognitions) {
                                         symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
