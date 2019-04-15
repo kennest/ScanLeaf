@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
@@ -72,8 +73,21 @@ public class BaseActivity extends AppCompatActivity {
     //Show the loading Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadingEvent(ShowLoadingEvent event){
+
         dialogIsCancelable=event.cancelable;
         dialog=LoaderProgress(event.title,event.content,event.cancelable);
+        dialog.show();
+    }
+
+    //Show the failed SignUp Dialog
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onFailEvent(FailedSignUpEvent event){
+        Log.e("Signup Event dismissed",event.msg+": "+dialogIsCancelable);
+        if(dialog.isShowing() && dialogIsCancelable) {
+            dialog.dismiss();
+        }
+        dialogIsCancelable=event.cancelable;
+        dialog=LoaderProgress(event.title,event.msg,event.cancelable);
         dialog.show();
     }
 
@@ -136,6 +150,7 @@ public class BaseActivity extends AppCompatActivity {
                 .build();
         return d;
     }
+
 
 
     //Reload the current Activity

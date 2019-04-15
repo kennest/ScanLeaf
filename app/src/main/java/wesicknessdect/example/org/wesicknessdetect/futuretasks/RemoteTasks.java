@@ -38,6 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
@@ -148,7 +149,7 @@ public class RemoteTasks {
     public User doSignUp(User u) throws InterruptedException, ExecutionException {
         if (Constants.isOnline(mContext)) {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
+            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true));
 
             Thread.sleep(1000);
             FutureTask<User> future = new FutureTask<>(new Callable<User>() {
@@ -176,8 +177,8 @@ public class RemoteTasks {
                             }.execute();
                         }
                     } else {
-                        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
-                        UserResponseErrorProcess(response);
+                        EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides","Inscription échouée",true));
+                        //UserResponseErrorProcess(response);
                     }
                     return user;
                 }
@@ -186,7 +187,7 @@ public class RemoteTasks {
             return future.get();
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté a internet", true));
             return new User();
         }
 
@@ -196,7 +197,7 @@ public class RemoteTasks {
     //Send Login credentials
     public String doLogin(Credential c) throws InterruptedException, ExecutionException {
         if (Constants.isOnline(mContext)) {
-            EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
+            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true));
             FutureTask<String> future = new FutureTask<>(new Callable<String>() {
                 @SuppressLint("StaticFieldLeak")
                 @Override
@@ -230,11 +231,11 @@ public class RemoteTasks {
 
                         } else {
                             Log.e("Error:", response.errorBody().string());
-                            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                            EventBus.getDefault().post(new FailedSignUpEvent("Pas de données correspondantes","Erreur de réponse",true));
                         }
                     } else {
-                        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
-                        UserResponseErrorProcess(response);
+                        EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides","Connexion échouée",true));
+                        //UserResponseErrorProcess(response);
                     }
                     return result;
                 }
@@ -243,7 +244,7 @@ public class RemoteTasks {
             return future.get();
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Pas d'internet", "Vous n'êtes pas connecté a internet", true));
             return null;
         }
     }
