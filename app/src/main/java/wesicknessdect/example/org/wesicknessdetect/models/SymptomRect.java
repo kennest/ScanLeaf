@@ -6,14 +6,20 @@ import com.google.gson.annotations.SerializedName;
 
 import androidx.room.Entity;
 
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity
+import static androidx.room.ForeignKey.CASCADE;
+
+@Entity(foreignKeys = {@ForeignKey(entity = Symptom.class,
+        parentColumns = "id",
+        childColumns = "symptom_id",onUpdate = CASCADE)},indices = {@Index({"picture_id","symptom_id"})})
 public class SymptomRect extends RectF {
 
     @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)
-    private int x;
+    public int x;
 
     @SerializedName(value = "symptom")
     public int symptom_id;
@@ -21,7 +27,7 @@ public class SymptomRect extends RectF {
     @SerializedName(value = "picture")
     public int picture_id;
 
-    public Integer sended;
+    public int sended;
 
     public int getSymptom_id() {
         return symptom_id;
@@ -47,12 +53,11 @@ public class SymptomRect extends RectF {
         this.x = x;
     }
 
-    public Integer getSended() {
+    public int getSended() {
         return sended;
     }
 
-    public void setSended(Integer sended) {
+    public void setSended(int sended) {
         this.sended = sended;
     }
-
 }

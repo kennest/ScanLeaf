@@ -95,6 +95,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
 
                 //Si le telechargement du modele est fini
                 if (cultureParts.get(position).getDownloaded() == cultureParts.get(position).getFilesize()) {
+                    cultureParts.get(position).setModel_downloaded(true);
                     holder.progressBar.setVisibility(View.GONE);
                     holder.imageButton.setVisibility(View.VISIBLE);
                     Log.e("Model Downloaded", "OK");
@@ -107,6 +108,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
                 } else {
                     holder.progressBar.setVisibility(View.VISIBLE);
                     holder.imageButton.setVisibility(View.INVISIBLE);
+                    cultureParts.get(position).setModel_downloaded(false);
                 }
 
                 for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {

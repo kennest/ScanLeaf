@@ -12,9 +12,11 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = User.class, parentColumns = "id", childColumns = "user_id"
+                entity = User.class, parentColumns = "id", childColumns = "user_id",onUpdate = CASCADE,onDelete = CASCADE
         ),
 },indices = {@Index("user_id")})
 public class Diagnostic  {
@@ -32,7 +34,7 @@ public class Diagnostic  {
     private String advancedAnalysis;
     private String disease;
     private boolean finish;
-    private Integer sended;
+    private int sended;
     private float probability=95f;
     @SerializedName(value = "user")
     private long user_id;
@@ -157,11 +159,11 @@ public class Diagnostic  {
         this.finish = finish;
     }
 
-    public Integer getSended() {
+    public int getSended() {
         return sended;
     }
 
-    public void setSended(Integer sended) {
+    public void setSended(int sended) {
         this.sended = sended;
     }
 

@@ -18,8 +18,6 @@ import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +26,7 @@ import java.util.Random;
 import java.util.Set;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,6 +40,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
     private Activity context;
     private Map<Integer, List<Classifier.Recognition>> recognitions_by_part;
     private Map<Integer, Map<Integer, String>> images_by_part;
+    private CulturePart culturePart = new CulturePart();
 
     public PartialResultImageAdapter(Activity context, Map<Integer, List<Classifier.Recognition>> recognitions_by_part, Map<Integer, Map<Integer, String>> images_by_part) {
         this.context = context;
@@ -61,7 +61,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
 
         //Log.e("recognitions imgs 0", "/" + images_by_part.get(position) + "//" + position);
         context.runOnUiThread(new Runnable() {
-            @SuppressLint("DefaultLocale")
+            @SuppressLint({"DefaultLocale", "StaticFieldLeak"})
             @Override
             public void run() {
                 @SuppressLint("UseSparseArrays")
@@ -77,9 +77,18 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
 
                             //Retrieve the culture part image from DB
                             Log.e("part_id", n.getKey() + " ** " + position);
-                            
-                            CulturePart culturePart = AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey());
-                            if (culturePart!=null) {
+
+                            AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey()).observeForever(new Observer<CulturePart>() {
+                                @Override
+                                public void onChanged(CulturePart c) {
+                                    culturePart = c;
+                                    holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
+                                    holder.part_name.setText(culturePart.getNom());
+                                }
+                            });
+
+
+                            if (culturePart != null) {
                                 holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
                                 holder.part_name.setText(culturePart.getNom());
                             }
@@ -104,7 +113,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         LinearLayout line = new LinearLayout(context);
                                         line.setOrientation(LinearLayout.HORIZONTAL);
                                         TextView txt = new TextView(context);
-                                        txt.setPadding(5,5,5,0);
+                                        txt.setPadding(5, 5, 5, 0);
                                         txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
                                         txt.setTextColor(color);
                                         txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
@@ -128,6 +137,8 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
         });
 
     }
+
+
 
     @Override
     public int getItemCount() {

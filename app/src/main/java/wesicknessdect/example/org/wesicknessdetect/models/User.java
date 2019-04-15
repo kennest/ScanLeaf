@@ -11,10 +11,7 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Profile.class,
-        parentColumns = "id",
-        childColumns = "profile_id"),
-        indices = {@Index("profile_id")})
+@Entity(indices = {@Index({"profile_id","email"})})
 public class User {
 
     @SerializedName(value = "id")

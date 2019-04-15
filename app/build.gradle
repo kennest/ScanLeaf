@@ -78,4 +78,6 @@ dependencies {
     implementation 'com.github.jetradarmobile:android-rxlocationsettings:1.1.0'
     implementation "com.github.firdausmaulan:GlideSlider:1.4.0"
     implementation 'com.applandeo:material-calendar-view:1.5.1'
+    debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
+    releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'
 }

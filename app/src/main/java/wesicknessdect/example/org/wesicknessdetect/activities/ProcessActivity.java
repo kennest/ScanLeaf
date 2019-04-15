@@ -98,6 +98,15 @@ public class ProcessActivity extends BaseActivity {
         stopService(offline);
         startService(offline);
 
+        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
+            @Override
+            public void onChanged(List<SymptomRect> symptomRects) {
+                for(SymptomRect r:symptomRects){
+                    Log.e("RectF Infos::",r.getSended()+"/ID->"+r.getX()+"/Picture->"+r.getPicture_id());
+                }
+            }
+        });
+
         //Save RectF to database
         SaveRectFtoDatabase();
 

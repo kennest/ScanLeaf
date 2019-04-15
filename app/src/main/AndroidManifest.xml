@@ -58,7 +58,6 @@
         <activity android:name=".activities.BaseActivity" />
         <activity android:name=".activities.ConversationActivity" />
         <activity android:name=".activities.QuizActivity" />
-        <activity android:name=".activities.ChooseCultureActivity" />
         <activity android:name=".activities.ChooseCulturePartActivity" />
         <activity android:name=".activities.PartialResultActivity" />
         <activity android:name=".activities.AnalysisDetailsActivity" />
@@ -67,7 +66,10 @@
             android:name=".utils.DownloadService"
             android:enabled="true"
             android:exported="false" />
-        <service android:name=".utils.OfflineService" />
+        <service
+            android:name=".utils.OfflineService"
+            android:enabled="true"
+            android:exported="false"/>
 
         <meta-data
             android:name="preloaded_fonts"

@@ -7,12 +7,16 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import static androidx.room.ForeignKey.CASCADE;
+
 @Entity(foreignKeys = {
-        @ForeignKey(
-                entity = CulturePart.class,
-                parentColumns = "id",
-                childColumns = "culture_part_id")
-},indices = {@Index({"culture_part_id","image"})})
+        @ForeignKey(entity = CulturePart.class,
+        parentColumns = "id",
+        childColumns = "culture_part_id",onUpdate = CASCADE,onDelete = CASCADE),
+        @ForeignKey(entity = Diagnostic.class,
+                parentColumns = "x",
+                childColumns = "diagnostic_id",onUpdate = CASCADE)},
+        indices = {@Index({"diagnostic_id","culture_part_id","image"})})
 public class Picture {
 
     @SerializedName(value = "id")
@@ -27,7 +31,7 @@ public class Picture {
     @SerializedName(value = "partCulture")
     private long culture_part_id;
 
-    private Integer sended;
+    public int sended;
 
     @SerializedName(value = "image")
     private String image;
@@ -64,11 +68,11 @@ public class Picture {
         this.image = image;
     }
 
-    public Integer getSended() {
+    public int getSended() {
         return sended;
     }
 
-    public void setSended(Integer sended) {
+    public void setSended(int sended) {
         this.sended = sended;
     }
 
