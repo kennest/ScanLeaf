@@ -32,6 +32,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import androidx.lifecycle.Observer;
+import androidx.room.Transaction;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -83,6 +85,7 @@ public class RemoteTasks {
     List<SymptomRect> symptomRects = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
     Picture picture = new Picture();
+    SymptomRect symptomRect = new SymptomRect();
     User user = new User();
     int downloadId = 0;
     long diagnostic_id = 0;
@@ -111,19 +114,21 @@ public class RemoteTasks {
             APIService service = APIClient.getClient().create(APIService.class);
             Call<List<Country>> countryCall = service.getCountries();
             countryCall.enqueue(new Callback<List<Country>>() {
+                @SuppressLint("StaticFieldLeak")
                 @Override
                 public void onResponse(Call<List<Country>> call, Response<List<Country>> response) {
                     countries = response.body();
-                    new Thread(new Runnable() {
+                    new AsyncTask<Void, Void, Void>() {
                         @Override
-                        public void run() {
+                        protected Void doInBackground(Void... voids) {
                             for (Country c : response.body()) {
                                 DB.countryDao().createCountry(c);
-                                Log.e("Country:", c.getName());
+                               // Log.e("Country:", c.getName());
                             }
+                            return null;
                         }
-                    }).start();
-                    Log.e("Country call Finished:", "Finished Ok!!");
+                    }.execute();
+                    //Log.e("Country call Finished:", "Finished Ok!!");
                 }
 
                 @Override
@@ -133,7 +138,7 @@ public class RemoteTasks {
             });
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             countries = DB.countryDao().getAll().getValue();
         }
         return countries;
@@ -247,7 +252,7 @@ public class RemoteTasks {
     //Send SymptomRect to server
     @SuppressLint("StaticFieldLeak")
     public SymptomRect sendSymptomRect(SymptomRect r) {
-        SymptomRect symptomRect = new SymptomRect();
+
         if (Constants.isOnline(mContext)) {
             JsonObject json = new JsonObject();
             json.addProperty("x_min", r.left);
@@ -263,16 +268,20 @@ public class RemoteTasks {
             try {
                 Response<SymptomRect> response = call.execute();
                 if (response.isSuccessful()) {
-                    Log.e("Succeed:", "OK");
+                    Log.e("SymptomRect ID:", r.getX()+ "");
                     symptomRect = response.body();
+                    response.body().setSended(1);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            r.sended = 1;
-                            DB.symptomRectDao().createSymptomRect(r);
+                            if(r.getX()!=0){
+                                DB.symptomRectDao().deleteSymptomRect(r);
+                            }
+                            DB.symptomRectDao().createSymptomRect(response.body());
                             return null;
                         }
                     }.execute();
+
                     return response.body();
                 } else {
                     Log.e("Error:", response.errorBody().string());
@@ -285,7 +294,7 @@ public class RemoteTasks {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    r.sended = 0;
+                    r.setSended(0);
                     DB.symptomRectDao().createSymptomRect(r);
                     return null;
                 }
@@ -299,37 +308,45 @@ public class RemoteTasks {
     @SuppressLint("StaticFieldLeak")
     public List<SymptomRect> getSymptomsRect() throws IOException {
         if (Constants.isOnline(mContext)) {
-
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
             Call call = service.getSymptomRect("Token " + token);
             Response<List<JsonElement>> response = call.execute();
             if (response.isSuccessful()) {
                 List<JsonElement> symptomRects = response.body();
-                for (JsonElement r : symptomRects) {
-                    SymptomRect s = new SymptomRect();
-                    s.setX(r.getAsJsonObject().get("id").getAsInt());
-                    s.picture_id = r.getAsJsonObject().get("picture").getAsInt();
-                    s.symptom_id = r.getAsJsonObject().get("symptom").getAsInt();
-                    s.left = Float.parseFloat(r.getAsJsonObject().get("x_min").getAsString());
-                    s.bottom = Float.parseFloat(r.getAsJsonObject().get("y_min").getAsString());
-                    s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
-                    s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
-                    //Log.e("RectF Remote:", r.getPicture_id()+"//"+r.left+"//"+r.right);
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            s.sended = 1;
+
+                //Log.e("RectF Remote:", r.getPicture_id()+"//"+r.left+"//"+r.right);
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (JsonElement r : symptomRects) {
+                            SymptomRect s = new SymptomRect();
+                            s.setX(r.getAsJsonObject().get("id").getAsInt());
+                            s.setPicture_id(r.getAsJsonObject().get("picture").getAsInt());
+                            s.setSymptom_id(r.getAsJsonObject().get("symptom").getAsInt());
+                            s.left = Float.parseFloat(r.getAsJsonObject().get("x_min").getAsString());
+                            s.bottom = Float.parseFloat(r.getAsJsonObject().get("y_min").getAsString());
+                            s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
+                            s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
+                            s.setSended(1);
                             DB.symptomRectDao().createSymptomRect(s);
-                            return null;
                         }
-                    }.execute();
-                }
+                        return null;
+                    }
+                }.execute();
+
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
         } else {
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    symptomRects=DB.symptomRectDao().getAllSync();
+                    return null;
+                }
+            }.execute();
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
         return symptomRects;
     }
@@ -344,13 +361,12 @@ public class RemoteTasks {
             Response<DiagnosticResponse> response = call.execute();
             if (response.isSuccessful()) {
                 diagnostics = response.body().getResult();
-
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         for (Diagnostic d : diagnostics) {
                             d.setSended(1);
-                            long id = DB.diagnosticDao().createDiagnostic(d);
+                            DB.diagnosticDao().createDiagnostic(d);
                             try {
                                 getDiagnosticPictures(d.getX());
                             } catch (IOException e) {
@@ -361,13 +377,18 @@ public class RemoteTasks {
                     }
                 }.execute();
 
-
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
         } else {
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            diagnostics = DB.diagnosticDao().getAll().getValue();
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    diagnostics=DB.diagnosticDao().getAllSync();
+                    return null;
+                }
+            }.execute();
             return diagnostics;
         }
         return diagnostics;
@@ -401,8 +422,9 @@ public class RemoteTasks {
                                 String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                                 p.setImage(destination + uri.getLastPathSegment());
                                 p.setDiagnostic_id(diagnostic_id);
+                                p.setSended(1);
                                 DB.pictureDao().createPicture(p);
-                                Log.e("image DB", "CREATED " + p.getX());
+                                Log.e("image DB", "CREATED " + p.getX() + "//" + p.getSended());
                                 return null;
                             }
                         }.execute();
@@ -413,8 +435,16 @@ public class RemoteTasks {
                 Log.e("Error:", response.errorBody().string());
             }
         } else {
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            pictures = DB.pictureDao().getByDiagnosticId(diagnostic_id).getValue();
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    pictures= DB.pictureDao().getByDiagnosticIdSync(diagnostic_id);
+                    return null;
+                }
+            }.execute();
+
             return pictures;
         }
         return pictures;
@@ -423,7 +453,7 @@ public class RemoteTasks {
     //Send Diagnostic to Server
     @SuppressLint("StaticFieldLeak")
     public Diagnostic sendDiagnostic(Diagnostic d) throws IOException {
-        EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
+//        EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", null);
@@ -431,98 +461,143 @@ public class RemoteTasks {
             Response<Diagnostic> response = call.execute();
             if (response.isSuccessful()) {
                 diagnostic = response.body();
+                Log.e("Diagnostic ID:", d.getX()+ "");
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         diagnostic.setSended(1);
+                        if(d.getX()!=0) {
+                            diagnostic_id=d.getX();
+                            DB.diagnosticDao().deleteDiagnostic(d);
+                        }
                         diagnostic_id = DB.diagnosticDao().createDiagnostic(diagnostic);
+
                         return null;
                     }
                 }.execute();
 
                 if (d.getImages_by_parts() != null) {
                     Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
                             for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
                                 try {
-                                    SendDiagnosticPicture(entry.getValue(), entry.getKey(), diagnostic_id);
+                                    Picture p=new Picture();
+                                    p.setDiagnostic_id(diagnostic_id);
+                                    p.setCulture_part_id(entry.getKey());
+                                    p.setImage(entry.getValue());
+                                    SendDiagnosticPicture(p);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
                             }
-                            return null;
-                        }
-                    }.execute();
                 }
 
-                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+                //EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                 EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
             } else {
                 Log.e("Error:", response.errorBody().string());
-                EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+               // EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
             }
         } else {
-            EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
+            //EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    diagnostic.setSended(0);
-                    diagnostic_id = DB.diagnosticDao().createDiagnostic(d);
+                    List<Picture> diagnostic_pictures=new ArrayList<>();
+                    d.setSended(0);
+                    if (d.getImages_by_parts() != null) {
+                        for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
+                            Picture p=new Picture();
+                            p.setCulture_part_id(entry.getKey());
+                            p.setImage(entry.getValue());
+                            diagnostic_pictures.add(p);
+                            //SendDiagnosticPicture(p);
+                        }
+                    }
+                    DB.diagnosticDao().insertDiagnosticWithPicture(d,diagnostic_pictures);
                     return null;
                 }
             }.execute();
 
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
-                        try {
-                            SendDiagnosticPicture(entry.getValue(), entry.getKey(), diagnostic_id);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    return null;
-                }
-            }.execute();
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return null;
         }
         return diagnostic;
     }
 
 
+@SuppressLint("StaticFieldLeak")
+public void SendOfflineDiagnostic(Diagnostic d) throws IOException {
+    if (Constants.isOnline(mContext)) {
+        APIService service = APIClient.getClient().create(APIService.class);
+        String token = FastSave.getInstance().getString("token", null);
+        Call<Diagnostic> call=service.sendDiagnostic("Token "+token,d);
+        Response<Diagnostic> response=call.execute();
+        if(response.isSuccessful()){
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    Log.e("RM diag ID",response.body().getX()+"");
+                    DB.diagnosticDao().deleteDiagnostic(d);
+                    response.body().setSended(1);
+                    long id=DB.diagnosticDao().createDiagnostic(response.body());
+
+                    Log.e("DB diag ID",id+"");
+
+                    pictures=DB.pictureDao().getByDiagnosticIdSync(d.getX());
+                    for(Picture p:pictures){
+                        if(p.getSended()==0){
+                            try {
+                                p.setDiagnostic_id(id);
+                                SendDiagnosticPicture(p);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            symptomRects=DB.symptomRectDao().getByPictureIdSync(p.getX());
+                            for(SymptomRect s:symptomRects){
+                                if(s.getSended()==0){
+                                    sendSymptomRect(s);
+                                }
+                            }
+                        }
+                    }
+                    return null;
+                }
+            }.execute();
+        }else{
+            Log.e("Error:", response.errorBody().string());
+        }
+    }else{
+        Log.e("Network Error:", "No Internet Connection");
+    }
+}
+
     //Send Picture of Diagnostic to Server
     @SuppressLint("StaticFieldLeak")
-    public boolean SendDiagnosticPicture(String image, long part_id, long diagnotic_id) throws IOException {
+    public boolean SendDiagnosticPicture(Picture p) throws IOException {
+        String image=p.getImage();
         if (Constants.isOnline(mContext)) {
-            APIService service = APIClient.getClient().create(APIService.class);
-            Picture p = new Picture();
-            p.setCulture_part_id(part_id);
-            p.setDiagnostic_id(diagnotic_id);
-            String base_64 = new EncodeBase64().encode(image);
 
-            Log.e("Diagnostic picture:", image + "//" + part_id + "//" + diagnotic_id + "//" + base_64);
+            APIService service = APIClient.getClient().create(APIService.class);
+
+            String base_64 = new EncodeBase64().encode(p.getImage());
+
+            Log.e("Picture ID:", p.getX()+"");
             p.setImage(base_64);
 
             String token = FastSave.getInstance().getString("token", null);
             Call<Picture> call = service.sendDiagnosticPictures("Token " + token, p);
             Response<Picture> response = call.execute();
             if (response.isSuccessful()) {
-                picture = response.body();
-//                DownloadFile(picture.getImage());
-//                Uri uri = Uri.parse(picture.getImage());
-//                String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-//                p.setImage(destination + uri.getLastPathSegment());
-//                Log.e("Diagnostic picture X:", destination + uri.getLastPathSegment());
-                p.setImage(image);
+                response.body().setImage(image);
                 new AsyncTask<Void, Void, Void>() {
                     @Override
                     protected Void doInBackground(Void... voids) {
-                        p.setSended(1);
-                        DB.pictureDao().createPicture(p);
+                        response.body().setSended(1);
+                        if(p.getX()!=0) {
+                            DB.pictureDao().deletePicture(p);
+                        }
+                        DB.pictureDao().createPicture(response.body());
                         return null;
                     }
                 }.execute();
@@ -531,19 +606,17 @@ public class RemoteTasks {
             }
 
         } else {
-            Picture p = new Picture();
-            p.setCulture_part_id(part_id);
-            p.setDiagnostic_id(diagnotic_id);
-            p.setImage(image);
-            p.setSended(0);
+
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
+                    p.setImage(image);
+                    p.setSended(0);
                     DB.pictureDao().createPicture(p);
                     return null;
                 }
             }.execute();
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
         return true;
     }
@@ -593,7 +666,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 struggles = response.body().getResult();
                 for (Struggle s : struggles) {
-                    Log.e("Struggles", s.getLink() + "//" + s.getDescription());
+                    //Log.e("Struggles", s.getLink() + "//" + s.getDescription());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
@@ -614,7 +687,7 @@ public class RemoteTasks {
             }
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+           // EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
 
             new AsyncTask<Void, Void, Void>() {
@@ -638,7 +711,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 symptoms = response.body();
                 for (Symptom s : symptoms) {
-                    Log.e("Symptom", s.getName() + "//" + s.getLink());
+                   // Log.e("Symptom", s.getName() + "//" + s.getLink());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
@@ -660,7 +733,7 @@ public class RemoteTasks {
 
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             //return new ArrayList<>();
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -682,7 +755,7 @@ public class RemoteTasks {
             Response<List<CulturePart>> response = call.execute();
             if (response.isSuccessful()) {
                 cultureParts = response.body();
-                Log.e("Cultures Part", cultureParts.size() + "");
+                //Log.e("Cultures Part", cultureParts.size() + "");
 
                 //Download Fake Image Url
 //                String url= "https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg";
@@ -690,7 +763,7 @@ public class RemoteTasks {
 
                 for (CulturePart c : cultureParts) {
                     if (c.getImage() != null) {
-                        Log.e("Culture Image", c.getImage());
+                       // Log.e("Culture Image", c.getImage());
                         DownloadFile(c.getImage());
                         Uri uri = Uri.parse(c.getImage());
                         String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
@@ -752,7 +825,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 diseases = response.body();
                 for (Disease d : diseases) {
-                    Log.e("Disease", d.getName() + "//" + d.getStruggle_id());
+                   // Log.e("Disease", d.getName() + "//" + d.getStruggle_id());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
@@ -803,7 +876,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 questions = response.body();
                 for (Question q : questions) {
-                    Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
+                   // Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
@@ -854,8 +927,8 @@ public class RemoteTasks {
 
                 String modelpath = destination + model_uri.getLastPathSegment();
                 String label_path = destination + label_uri.getLastPathSegment();
-                Log.e("PATHS 0", modelpath);
-                Log.e("PATHS 1", label_path);
+                //Log.e("PATHS 0", modelpath);
+                //Log.e("PATHS 1", label_path);
 
                 File fmodel = new File(modelpath);
                 File flabel = new File(label_path);
@@ -971,4 +1044,5 @@ public class RemoteTasks {
             e.printStackTrace();
         }
     }
+
 }

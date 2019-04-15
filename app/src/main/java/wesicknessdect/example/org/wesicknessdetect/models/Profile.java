@@ -7,10 +7,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Country.class,
-        parentColumns = "id",
-        childColumns = "country_id"),
-        indices = {@Index("country_id")})
+@Entity(indices = {@Index("country_id")})
 public class Profile {
 //    @SerializedName(value = "id")
     @PrimaryKey(autoGenerate = true)

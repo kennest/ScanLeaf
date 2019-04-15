@@ -53,37 +53,40 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 for (DiagnosticPictures dp : diagnosticPictures) {
                     if (dp.diagnostic.getX() == diagnostic_id) {
                         for (Picture p : dp.pictures) {
-                            Bitmap bm = BitmapFactory.decodeFile(p.getImage());
-                            Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
-                            Canvas canvas = new Canvas(bitmap_cropped);
+                            if (new File(p.getImage()).exists()) {
+                                Bitmap bm = BitmapFactory.decodeFile(p.getImage());
 
-                            DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
-                                @Override
-                                public void onChanged(CulturePart culturePart) {
-                                    if(new File(culturePart.getImage()).exists()) {
-                                        Bitmap part_image = BitmapFactory.decodeFile(culturePart.getImage());
-                                    }
-                                }
-                            });
+                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
+                                Canvas canvas = new Canvas(bitmap_cropped);
 
-                            DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
-                                @Override
-                                public void onChanged(List<SymptomRect> symptomRects) {
-                                    for (SymptomRect rect : symptomRects) {
-                                        Random rnd = new Random();
-                                        Paint paint = new Paint();
-                                        Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX());
-                                        paint.setStyle(Paint.Style.STROKE);
-                                        paint.setStrokeWidth(4f);
-                                        int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
-                                        paint.setColor(color);
-                                        paint.setAntiAlias(true);
-                                        canvas.drawRect(rect, paint);
+                                DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
+                                    @Override
+                                    public void onChanged(CulturePart culturePart) {
+                                        if (new File(culturePart.getImage()).exists()) {
+                                            Bitmap part_image = BitmapFactory.decodeFile(culturePart.getImage());
+                                        }
                                     }
-                                }
-                            });
-                            bitmaps.add(bitmap_cropped);
-                            imagePagerAdapter.notifyDataSetChanged();
+                                });
+
+                                DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
+                                    @Override
+                                    public void onChanged(List<SymptomRect> symptomRects) {
+                                        for (SymptomRect rect : symptomRects) {
+                                            Random rnd = new Random();
+                                            Paint paint = new Paint();
+                                            Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX());
+                                            paint.setStyle(Paint.Style.STROKE);
+                                            paint.setStrokeWidth(4f);
+                                            int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+                                            paint.setColor(color);
+                                            paint.setAntiAlias(true);
+                                            canvas.drawRect(rect, paint);
+                                        }
+                                    }
+                                });
+                                bitmaps.add(bitmap_cropped);
+                                imagePagerAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }

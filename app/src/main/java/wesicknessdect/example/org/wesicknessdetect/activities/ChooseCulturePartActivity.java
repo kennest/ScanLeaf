@@ -68,6 +68,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
         DB = AppDatabase.getInstance(this);
 
+
         ButterKnife.bind(this);
         toolbar.setTitle("Choose Culture Part");
 
