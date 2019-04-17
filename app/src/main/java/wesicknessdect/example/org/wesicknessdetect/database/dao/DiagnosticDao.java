@@ -1,5 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.database.dao;
 
+import android.util.Log;
+
 import java.util.List;
 
 import androidx.lifecycle.LiveData;
@@ -25,6 +27,7 @@ public abstract class DiagnosticDao {
 
     @Transaction
     public void insertDiagnosticWithPicture(Diagnostic d, List<Picture> pictures) {
+        Log.e("DAO pic size:",pictures.size()+"");
         final long id = createDiagnostic(d);
         for (Picture p : pictures) {
             p.setDiagnostic_id(id);

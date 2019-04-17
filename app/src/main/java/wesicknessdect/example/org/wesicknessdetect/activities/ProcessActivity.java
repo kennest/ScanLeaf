@@ -94,9 +94,9 @@ public class ProcessActivity extends BaseActivity {
             e.printStackTrace();
         }
 
-        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
-        stopService(offline);
-        startService(offline);
+//        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+//        stopService(offline);
+//        startService(offline);
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
@@ -186,16 +186,14 @@ public class ProcessActivity extends BaseActivity {
             @SuppressLint("StaticFieldLeak")
             @Override
             public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
+
                         for (DiagnosticPictures dp : diagnosticPictures) {
-                            Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
+                            //Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
                             for (Picture p : dp.pictures) {
                                 for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : AppController.getInstance().recognitions_by_part.entrySet()) {
-                                    Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id()+"//"+p.getX());
+                                    //Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id()+"//"+p.getX());
                                     if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
-                                        Log.e("Find Symptom picture", "TRUE");
+                                        //Log.e("Find Symptom picture", "TRUE");
                                         for (Classifier.Recognition r : recognition_entry.getValue()) {
                                             //Check Symptom table for equivalent name
                                             DB.symptomDao().getAll().observe(ProcessActivity.this, new Observer<List<Symptom>>() {
@@ -203,7 +201,7 @@ public class ProcessActivity extends BaseActivity {
                                                 public void onChanged(List<Symptom> symptoms) {
                                                     for (Symptom n : symptoms) {
                                                         if (n.getName().toUpperCase().equals(r.getTitle().toUpperCase())) {
-                                                            Log.e("Find Symptom", "TRUE");
+                                                            //Log.e("Find Symptom", "TRUE");
                                                             SymptomRect sr = new SymptomRect();
                                                             sr.set(r.getLocation());
                                                             sr.picture_id = p.getX();
@@ -228,8 +226,6 @@ public class ProcessActivity extends BaseActivity {
                             }
                         }
                         //AppController.getInstance().setRecognitions_by_part(new HashMap<>());
-                    }
-                });
 
             }
         });

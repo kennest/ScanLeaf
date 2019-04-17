@@ -19,14 +19,14 @@ public class APIClient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         int cacheSize = 40 * 1024 * 1024; // 40 MiB
-        File cacheDirectory=new File(Environment.getDataDirectory().getAbsolutePath()+"/wefly_okhttp_cache/");
+        File cacheDirectory=new File(Environment.getDataDirectory().getAbsolutePath()+"/scanleaf_okhttp_cache/");
         Cache cache = new Cache(cacheDirectory, cacheSize);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .cache(cache)
-                .connectTimeout(10, TimeUnit.MINUTES)
-                .readTimeout(10, TimeUnit.MINUTES)
-                .writeTimeout(10, TimeUnit.MINUTES)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
 
