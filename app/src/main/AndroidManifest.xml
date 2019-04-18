@@ -45,7 +45,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.register.SigninActivity"
+            android:name=".activities.register.SignupActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".MainActivity" />
         <activity

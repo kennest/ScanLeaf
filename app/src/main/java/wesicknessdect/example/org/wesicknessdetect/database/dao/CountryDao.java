@@ -17,6 +17,9 @@ public interface CountryDao {
     @Query("SELECT * FROM Country")
     LiveData<List<Country>> getAll();
 
+    @Query("SELECT * FROM Country")
+    List<Country> getAllSync();
+
     @Query("SELECT * FROM Country WHERE name=:name")
     LiveData<Country> getByName(String name);
 }

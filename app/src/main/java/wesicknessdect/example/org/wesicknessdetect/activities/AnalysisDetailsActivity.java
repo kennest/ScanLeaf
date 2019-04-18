@@ -1,12 +1,16 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,6 +20,7 @@ import java.util.Map;
 import java.util.Random;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.BindView;
@@ -25,17 +30,22 @@ import wesicknessdect.example.org.wesicknessdetect.adapters.ImagePagerAdapter;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class AnalysisDetailsActivity extends BaseActivity {
     int diagnostic_id;
     ImagePagerAdapter imagePagerAdapter;
-    List<Bitmap> bitmaps = new ArrayList<>();
-    List<HashMap<String, Bitmap>> linkedPartImage = new ArrayList<>();
-    String part_image;
+    List<Map<String, Bitmap>> linkedPartImage = new ArrayList<>();
+    List<Symptom> symptoms = new ArrayList<>();
 
     @BindView(R.id.pager)
     public ViewPager viewPager;
+
+    @BindView(R.id.toolbar)
+    public Toolbar toolbar;
+
+    String symtString = "";
 
 
     @Override
@@ -43,6 +53,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
         super.onStart();
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,18 +62,34 @@ public class AnalysisDetailsActivity extends BaseActivity {
 
         diagnostic_id = getIntent().getIntExtra("id", 0);
 
+        new AsyncTask<Void, Void, Void>() {
+            @SuppressLint("WrongThread")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                symptoms = DB.symptomDao().getAllSync();
+                return null;
+            }
+        }.execute();
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
+                    @SuppressLint("StaticFieldLeak")
                     @Override
                     public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
                         for (DiagnosticPictures dp : diagnosticPictures) {
                             if (dp.diagnostic.getX() == diagnostic_id) {
+                                toolbar.setTitle(dp.diagnostic.getDisease());
                                 for (Picture p : dp.pictures) {
+                                    Log.e("Pic exist:", p.getImage());
                                     if (new File(p.getImage()).exists()) {
-                                        HashMap<String, Bitmap> map = new HashMap<>();
+                                        List<String> symptAttrs = new ArrayList<>();
+                                        Map<String, Bitmap> map = new HashMap<>();
+                                        @SuppressLint("UseSparseArrays")
+                                        Map<Integer, SymptomRect> rects = new HashMap<>();
                                         Bitmap bm = BitmapFactory.decodeFile(p.getImage());
+                                        Gson gson = new Gson();
                                         Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
                                         Canvas canvas = new Canvas(bitmap_cropped);
 
@@ -79,19 +106,29 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                                     paint.setColor(color);
                                                     paint.setAntiAlias(true);
                                                     canvas.drawRect(rect, paint);
+                                                    rects.put(color, rect);
                                                 }
                                             }
                                         });
 
                                         DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
+                                            @SuppressLint("StaticFieldLeak")
                                             @Override
                                             public void onChanged(CulturePart culturePart) {
-                                                Log.e("Part Image DB:", culturePart.getImage() + " FOUND");
-                                                part_image = culturePart.getImage();
-                                                map.put(culturePart.getImage(), bitmap_cropped);
-                                                Log.e("Part Image adapter:", part_image + "");
+//                                                Log.e("Part Image DB:", culturePart.getImage() + " FOUND");
+
+                                                for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
+                                                    for (Symptom s : symptoms) {
+                                                        if (s.getId() == n.getValue().getSymptom_id()) {
+                                                            String tmp = s.getName() + ":" + n.getKey();
+                                                            Log.e("Symptom details", tmp);
+                                                            symptAttrs.add(tmp);
+                                                        }
+                                                    }
+                                                }
+                                                symtString = gson.toJson(symptAttrs);
+                                                map.put(culturePart.getImage() + "::" + symtString, bitmap_cropped);
                                                 linkedPartImage.add(map);
-                                                bitmaps.add(bitmap_cropped);
                                                 imagePagerAdapter.notifyDataSetChanged();
                                             }
                                         });
@@ -105,7 +142,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
             }
         });
 
-        imagePagerAdapter = new ImagePagerAdapter(this, bitmaps, linkedPartImage);
+        imagePagerAdapter = new ImagePagerAdapter(this, linkedPartImage);
         viewPager.setAdapter(imagePagerAdapter);
 
     }

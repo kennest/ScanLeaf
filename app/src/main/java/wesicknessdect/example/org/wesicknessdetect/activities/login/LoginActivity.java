@@ -5,8 +5,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
-import wesicknessdect.example.org.wesicknessdetect.activities.register.SigninActivity;
-import wesicknessdect.example.org.wesicknessdetect.events.ShowSignupScreenEvent;
+import wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 
@@ -19,13 +18,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends BaseActivity {
 
-    Animation clignoter;
+    Animation clignoter,slide_up;
     @BindView(R.id.email)
     EditText username;
 
@@ -42,6 +39,9 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         clignoter= AnimationUtils.loadAnimation(this, R.anim.clignotement);
+        slide_up= AnimationUtils.loadAnimation(this, R.anim.item_animation_fall_down);
+
+        getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(slide_up);
 
         signupPageBtn =(Button) findViewById(R.id.gotosign);
         tv=(TextView) findViewById(R.id.tex);
@@ -50,7 +50,7 @@ public class LoginActivity extends BaseActivity {
         signupPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent i2=new Intent(LoginActivity.this, SigninActivity.class);
+                final Intent i2=new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(i2);
             }
         });

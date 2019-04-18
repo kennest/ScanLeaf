@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
@@ -38,6 +40,7 @@ public class CameraFragment extends Fragment {
      RecyclerView culture_lv;
 
     private CultureAdapter cultureAdapter;
+    LayoutAnimationController controller;
 
     @Nullable
     @Override
@@ -53,6 +56,8 @@ public class CameraFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.e("Camera","Initialized");
 
+        controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
+
         AppDatabase.getInstance(getContext()).cultureDao().getAll().observe(this, new Observer<List<Culture>>() {
             @Override
             public void onChanged(List<Culture> cultures) {
@@ -60,6 +65,8 @@ public class CameraFragment extends Fragment {
                 cultureAdapter=new CultureAdapter(cultures,getActivity());
                 culture_lv.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                 culture_lv.setAdapter(cultureAdapter);
+                culture_lv.setLayoutAnimation(controller);
+                culture_lv.scheduleLayoutAnimation();
             }
         });
     }

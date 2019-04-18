@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 
 import java.util.List;
 
@@ -32,11 +34,13 @@ public class MaladiesFragment extends Fragment {
     @BindView(R.id.maladie_rv)
     RecyclerView recyclerView;
     private static AppDatabase DB;
+    LayoutAnimationController controller;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DB = AppDatabase.getInstance(getContext());
+        controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
 
         Log.v("MaladiesFragment ", "onCreateView");
 
@@ -50,8 +54,9 @@ public class MaladiesFragment extends Fragment {
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 recyclerView.setAdapter(new DiseaseAdapter(getContext(),diseases));
+                recyclerView.setLayoutAnimation(controller);
+                recyclerView.scheduleLayoutAnimation();
                 recyclerView.addItemDecoration(decoration);
-
             }
         });
 

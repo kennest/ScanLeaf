@@ -134,7 +134,14 @@ public class RemoteTasks {
         } else {
             //Dispatch show loading event
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            countries = DB.countryDao().getAll().getValue();
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    DB.countryDao().getAllSync();
+                    return null;
+                }
+            }.execute();
+
         }
         return countries;
     }
@@ -357,16 +364,18 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 diagnostics = response.body().getResult();
                 new AsyncTask<Void, Void, Void>() {
+
                     @Override
                     protected Void doInBackground(Void... voids) {
                         for (Diagnostic d : diagnostics) {
+                            List<Picture> pictures=new ArrayList<>();
                             d.setSended(1);
-                            DB.diagnosticDao().createDiagnostic(d);
                             try {
-                                getDiagnosticPictures(d.getX());
+                              pictures=getDiagnosticPictures(d.getX());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                            DB.diagnosticDao().insertDiagnosticWithPicture(d,pictures);
                         }
                         return null;
                     }
@@ -400,7 +409,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 List<Picture> list = response.body();
                 if (response.body().size() > 0) {
-                    for (Picture p : list) {
+                    for (Picture p : response.body()) {
                         Uri uri = Uri.parse(p.getImage());
                         String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                         File f = new File(destination + uri.getLastPathSegment());
@@ -409,6 +418,8 @@ public class RemoteTasks {
                             Log.e("Remote image Exist:", p.getDiagnostic_id() + "//" + p.getX() + "//" + p.getImage());
                         }
 
+                        p.setImage(destination + uri.getLastPathSegment());
+                        p.setDiagnostic_id(diagnostic_id);
                         p.setSended(1);
                         new AsyncTask<Void, Void, Void>() {
                             @Override
@@ -422,10 +433,10 @@ public class RemoteTasks {
                                 Log.e("image DB", "CREATED " + p.getX() + "//" + p.getSended());
                                 return null;
                             }
-                        }.execute();
+                        };
                     }
                 }
-
+                return list;
             } else {
                 Log.e("Error:", response.errorBody().string());
             }

@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.CalendarView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,6 +53,7 @@ public class AnalyseFragment extends Fragment {
     private static AppDatabase DB;
 
     AnalysisAdapter analysisAdapter;
+    LayoutAnimationController controller;
 
     @Nullable
     @Override
@@ -65,6 +68,7 @@ public class AnalyseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         DB = AppDatabase.getInstance(getContext());
         calendarView=new CalendarView(getActivity());
+        controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
        InitView();
     }
 
@@ -95,6 +99,8 @@ public class AnalyseFragment extends Fragment {
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         analysisAdapter=new AnalysisAdapter(getActivity(),diagnosticPictures);
                         recyclerView.setAdapter(analysisAdapter);
+                        recyclerView.setLayoutAnimation(controller);
+                        recyclerView.scheduleLayoutAnimation();
                         //recyclerView.addItemDecoration(decoration);
                     }
                 }else{

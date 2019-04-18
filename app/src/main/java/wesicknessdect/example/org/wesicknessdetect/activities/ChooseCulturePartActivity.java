@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.Toolbar;
 import com.fxn.pix.Pix;
@@ -60,17 +62,25 @@ public class ChooseCulturePartActivity extends BaseActivity {
     Toolbar toolbar;
 
     CulturePartAdapter culturePartAdapter;
+    LayoutAnimationController controller;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_picture);
-
-        DB = AppDatabase.getInstance(this);
-
-
         ButterKnife.bind(this);
+        DB = AppDatabase.getInstance(this);
+        controller=AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down);
+
         toolbar.setTitle("Choose Culture Part");
+
+
+        //Diable AnalysisBtn if no image selected
+        if(images_by_part.size()==0) {
+            disableAnalysisBtn();
+        }else{
+            enableAnalysisBtn();
+        }
 
         DB.culturePartsDao().getAll().observe(this, new Observer<List<CulturePart>>() {
             @Override
@@ -78,7 +88,9 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 culturePartList = cultureParts;
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, new HashMap<>());
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                parts_lv.setLayoutAnimation(controller);
                 parts_lv.setAdapter(culturePartAdapter);
+                parts_lv.scheduleLayoutAnimation();
             }
         });
 
@@ -105,12 +117,28 @@ public class ChooseCulturePartActivity extends BaseActivity {
                         culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, new HashMap<>());
                         parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
                         parts_lv.setAdapter(culturePartAdapter);
+                        parts_lv.setLayoutAnimation(controller);
                         culturePartAdapter.notifyDataSetChanged();
+                        parts_lv.scheduleLayoutAnimation();
                     }
                 });
             }
         });
 
+    }
+
+    private void disableAnalysisBtn(){
+        analysisBtn.setActivated(false);
+        analysisBtn.setClickable(false);
+        analysisBtn.setEnabled(false);
+        analysisBtn.setBackgroundColor(getResources().getColor(R.color.gray));
+    }
+
+    private void enableAnalysisBtn(){
+        analysisBtn.setActivated(true);
+        analysisBtn.setClickable(true);
+        analysisBtn.setEnabled(true);
+        analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
     @Override
@@ -122,12 +150,19 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
                 images_by_part.put((int) c.getId(), returnValue.get(0));
-                Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
+                //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                parts_lv.setLayoutAnimation(controller);
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
+                parts_lv.scheduleLayoutAnimation();
             }
+        }
+        if(images_by_part.size()==0) {
+            disableAnalysisBtn();
+        }else{
+            enableAnalysisBtn();
         }
     }
 
@@ -227,15 +262,20 @@ public class ChooseCulturePartActivity extends BaseActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeletePartPicture(DeletePartPictureEvent event){
         for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
-            Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
+            //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
             if (entry.getKey()==Integer.valueOf((Integer) event.part_id)) {
-                Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
+                //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
                 images_by_part.remove(entry.getKey());
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
             }
+        }
+        if(images_by_part.size()==0) {
+            disableAnalysisBtn();
+        }else{
+            enableAnalysisBtn();
         }
     }
 
@@ -245,7 +285,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         String recognitions=gson.toJson(recognitions_by_part);
         String images=gson.toJson(images_by_part);
 
-        Log.e(getLocalClassName()+" GoToresult:",images);
+        //Log.e(getLocalClassName()+" GoToresult:",images);
         partial.putExtra("recognitions_by_part",recognitions);
         partial.putExtra("images_by_part", images);
 

@@ -13,10 +13,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.appizona.yehiahd.fastsave.FastSave;
-
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +24,6 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
@@ -37,7 +32,7 @@ import wesicknessdect.example.org.wesicknessdetect.mvp.view.ISignupView;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 
-public class SigninActivity extends BaseActivity implements ISignupView {
+public class SignupActivity extends BaseActivity implements ISignupView {
 
     @BindView(R.id.tex1)
     TextView t;
@@ -55,7 +50,7 @@ public class SigninActivity extends BaseActivity implements ISignupView {
     TextView username;
     @BindView(R.id.phone)
     TextView phone;
-    Animation titre;
+    Animation titre,scale_up;
     @BindView(R.id.signinsubmit)
     Button signupBtn;
     @BindView(R.id.gotolog)
@@ -79,6 +74,9 @@ public class SigninActivity extends BaseActivity implements ISignupView {
         signupPresenter = new SignupPresenter(this, v, this);
         ButterKnife.bind(this);
 
+        scale_up= AnimationUtils.loadAnimation(this, R.anim.item_animation_fall_down);
+        getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(scale_up);
+
         final Intent i = new Intent(this, LoginActivity.class);
         final Intent i2 = new Intent(this, LoginActivity.class);
 
@@ -99,7 +97,7 @@ public class SigninActivity extends BaseActivity implements ISignupView {
         String cName = country.getSelectedItem().toString();
         Log.i("Country Selected", cName);
 
-        AppDatabase.getInstance(SigninActivity.this).countryDao().getByName(cName).observe(this, new Observer<Country>() {
+        AppDatabase.getInstance(SignupActivity.this).countryDao().getByName(cName).observe(this, new Observer<Country>() {
             @Override
             public void onChanged(Country country) {
                 User u = new User();
@@ -137,7 +135,7 @@ public class SigninActivity extends BaseActivity implements ISignupView {
                             countryStr.add(c.getName());
                             Log.i("Country in DB::", c.getId() + "/" + c.getName());
                         }
-                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SigninActivity.this, android.R.layout.simple_spinner_item, countryStr);
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignupActivity.this, android.R.layout.simple_spinner_item, countryStr);
                         // Drop down layout style - list view with radio button
                         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         country.setAdapter(dataAdapter);
