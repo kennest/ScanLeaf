@@ -17,7 +17,10 @@
         android:layout_marginEnd="3dp"
         android:orientation="horizontal"
         android:weightSum="3">
-
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
         <com.mikhaellopez.circularimageview.CircularImageView
             app:civ_border_width="0dp"
             android:layout_gravity="center"
@@ -27,7 +30,18 @@
             android:layout_width="60dp"
             android:layout_marginEnd="10dp"
             android:layout_height="60dp" />
-
+            <TextView
+                android:layout_marginStart="5dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/colorPrimary"
+                android:background="@drawable/counter"
+                android:id="@+id/counter"
+                android:text="10"
+                android:gravity="center_horizontal|center_vertical"
+                android:textColor="@android:color/white"
+                android:layout_width="20dp"
+                android:layout_height="20dp" />
+        </RelativeLayout>
         <LinearLayout
             android:padding="8dp"
             android:layout_width="match_parent"
