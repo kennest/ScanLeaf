@@ -13,29 +13,29 @@ import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 @Dao
-public interface SymptomRectDao {
+public abstract class SymptomRectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long createSymptomRect(SymptomRect symptomRect);
+    public abstract long createSymptomRect(SymptomRect symptomRect);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateSymptomRect(SymptomRect symptomRect);
+    public abstract void updateSymptomRect(SymptomRect symptomRect);
 
     @Delete
-    void deleteSymptomRect(SymptomRect symptomRect);
+    public abstract void deleteSymptomRect(SymptomRect symptomRect);
 
     @Query("SELECT * FROM SymptomRect")
-    LiveData<List<SymptomRect>> getAll();
+    public abstract LiveData<List<SymptomRect>> getAll();
 
     @Query("SELECT * FROM SymptomRect")
-    List<SymptomRect> getAllSync();
+    public abstract List<SymptomRect> getAllSync();
 
     @Query("SELECT * FROM SymptomRect WHERE picture_id=:id")
-    LiveData<List<SymptomRect>> getByPictureId(long id);
+    public abstract LiveData<List<SymptomRect>> getByPictureId(long id);
 
     @Query("SELECT * FROM SymptomRect WHERE picture_id=:id")
-    List<SymptomRect> getByPictureIdSync(long id);
+    public abstract List<SymptomRect> getByPictureIdSync(long id);
 
     @Query("SELECT * FROM SymptomRect WHERE symptom_id=:id")
-    LiveData<List<SymptomRect>> getBySymptomId(long id);
+    public abstract LiveData<List<SymptomRect>> getBySymptomId(long id);
 
 }

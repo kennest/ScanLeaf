@@ -19,11 +19,12 @@ import static androidx.room.ForeignKey.CASCADE;
         indices = {@Index({"diagnostic_id","culture_part_id"})})
 public class Picture {
 
-    @SerializedName(value = "id")
+    @SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)
     private int x;
 
-    private long net_id;
+    @SerializedName(value = "id")
+    private long remote_id;
 
     @SerializedName(value = "diagnostic")
     private long diagnostic_id;
@@ -76,11 +77,11 @@ public class Picture {
         this.sended = sended;
     }
 
-    public long getNet_id() {
-        return net_id;
+    public long getRemote_id() {
+        return remote_id;
     }
 
-    public void setNet_id(long net_id) {
-        this.net_id = net_id;
+    public void setRemote_id(long remote_id) {
+        this.remote_id = remote_id;
     }
 }

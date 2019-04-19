@@ -15,8 +15,10 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.stream.JsonReader;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -34,6 +36,7 @@ import java.util.concurrent.FutureTask;
 
 import androidx.lifecycle.Observer;
 import androidx.room.Transaction;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -115,8 +118,8 @@ public class RemoteTasks {
             Log.e("Country call started:", "Started Ok!!");
             APIService service = APIClient.getClient().create(APIService.class);
             Call<List<Country>> countryCall = service.getCountries();
-            Response<List<Country>> response=countryCall.execute();
-            if(response.isSuccessful()){
+            Response<List<Country>> response = countryCall.execute();
+            if (response.isSuccessful()) {
                 countries = response.body();
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -128,7 +131,7 @@ public class RemoteTasks {
                         return null;
                     }
                 }.execute();
-            }else{
+            } else {
                 Log.i("Country getError:", response.errorBody().string());
             }
         } else {
@@ -266,25 +269,25 @@ public class RemoteTasks {
 
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call<SymptomRect> call = service.sendSymptomRect("Token " + token, json);
+            Call<JsonElement> call = service.sendSymptomRect("Token " + token, json);
             try {
-                Response<SymptomRect> response = call.execute();
+                Response<JsonElement> response = call.execute();
                 if (response.isSuccessful()) {
                     Log.e("SymptomRect ID:", r.getX() + "");
-                    symptomRect = response.body();
-                    response.body().setSended(1);
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            if (r.getX() != 0) {
-                                DB.symptomRectDao().deleteSymptomRect(r);
-                            }
-                            DB.symptomRectDao().createSymptomRect(response.body());
-                            return null;
+                    if (response.body().getAsJsonObject().has("statut")) {
+                        if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    r.setSended(1);
+                                    DB.symptomRectDao().createSymptomRect(r);
+                                    return null;
+                                }
+                            }.execute();
                         }
-                    }.execute();
+                    }
 
-                    return response.body();
+                    return null;
                 } else {
                     Log.e("Error:", response.errorBody().string());
                 }
@@ -368,14 +371,14 @@ public class RemoteTasks {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         for (Diagnostic d : diagnostics) {
-                            List<Picture> pictures=new ArrayList<>();
+                            List<Picture> pictures = new ArrayList<>();
                             d.setSended(1);
                             try {
-                              pictures=getDiagnosticPictures(d.getX());
+                                pictures = getDiagnosticPictures(d.getX());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            DB.diagnosticDao().insertDiagnosticWithPicture(d,pictures);
+                            DB.diagnosticDao().insertDiagnosticWithPicture(d, pictures);
                         }
                         return null;
                     }
@@ -462,47 +465,53 @@ public class RemoteTasks {
 //        EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
-            String token = FastSave.getInstance().getString("token", null);
-            Call<Diagnostic> call = service.sendDiagnostic("Token " + token, d);
-            Response<Diagnostic> response = call.execute();
-            if (response.isSuccessful()) {
-                diagnostic = response.body();
-                Log.e("Diagnostic ID:", d.getX() + "");
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        diagnostic.setSended(1);
-                        if (d.getX() != 0) {
-                            diagnostic_id = d.getX();
-                            DB.diagnosticDao().deleteDiagnostic(d);
-                        }
-                        diagnostic_id = DB.diagnosticDao().createDiagnostic(diagnostic);
 
-                        return null;
-                    }
-                }.execute();
-
-
-                if (d.getImages_by_parts() != null) {
-                    Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
-                    new AsyncTask<Void,Void,Void>(){
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
-                                try {
-                                    Picture p = new Picture();
-                                    p.setDiagnostic_id(diagnostic_id);
-                                    p.setCulture_part_id(entry.getKey());
-                                    p.setImage(entry.getValue());
-                                    SendDiagnosticPicture(p);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            return null;
-                        }
-                    }.execute();
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    long id = DB.diagnosticDao().createDiagnostic(d);
+                    d.setX((int) id);
+                    return null;
                 }
+            }.execute();
+
+            String token = FastSave.getInstance().getString("token", null);
+            Call<JsonElement> call = service.sendDiagnostic("Token " + token, d);
+            Response<JsonElement> response = call.execute();
+            if (response.isSuccessful()) {
+                //diagnostic = response.body();
+                Log.e("Diagnostic Response:", response.body().toString() + "");
+                if (response.body().getAsJsonObject().has("statut")) {
+                    if (response.body().getAsJsonObject().get("statut").getAsInt() == (1)) {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+
+                                d.setSended(1);
+                                diagnostic_id = DB.diagnosticDao().createDiagnostic(d);
+                                if (d.getImages_by_parts() != null) {
+                                    Log.e("Diagnostic pictures", d.getImages_by_parts().size() + "");
+                                    for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
+                                        try {
+                                            Picture p = new Picture();
+                                            p.setDiagnostic_id(diagnostic_id);
+                                            p.setCulture_part_id(entry.getKey());
+                                            p.setImage(entry.getValue());
+                                            SendDiagnosticPicture(p);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                }
+                                return null;
+                            }
+                        }.execute();
+
+
+                    }
+                }
+
 
                 //EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                 EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
@@ -518,7 +527,7 @@ public class RemoteTasks {
                     List<Picture> diagnostic_pictures = new ArrayList<>();
                     d.setSended(0);
                     if (d.getImages_by_parts() != null) {
-                        Log.e("Remote pic size",d.getImages_by_parts().size()+"");
+                        Log.e("Remote pic size", d.getImages_by_parts().size() + "");
                         for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
                             Picture p = new Picture();
                             p.setCulture_part_id(entry.getKey());
@@ -536,7 +545,7 @@ public class RemoteTasks {
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
             return null;
         }
-        return diagnostic;
+        return d;
     }
 
 
@@ -545,39 +554,43 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", null);
-            Call<Diagnostic> call = service.sendDiagnostic("Token " + token, d);
-            Response<Diagnostic> response = call.execute();
+            Call<JsonElement> call = service.sendDiagnostic("Token " + token, d);
+            Response<JsonElement> response = call.execute();
             if (response.isSuccessful()) {
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        Log.e("RM diag ID", response.body().getX() + "");
-                        DB.diagnosticDao().deleteDiagnostic(d);
-                        response.body().setSended(1);
-                        long id = DB.diagnosticDao().createDiagnostic(response.body());
+                if (response.body().getAsJsonObject().has("statut")) {
+                    if (response.body().getAsJsonObject().get("statut").getAsInt() == (1)) {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                Log.e("RM diag ID", response.body() + "");
 
-                        Log.e("DB diag ID", id + "");
+                                d.setSended(1);
+                                long id = DB.diagnosticDao().createDiagnostic(d);
 
-                        pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
-                        for (Picture p : pictures) {
-                            if (p.getSended() == 0) {
-                                try {
-                                    p.setDiagnostic_id(id);
-                                    SendDiagnosticPicture(p);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                symptomRects = DB.symptomRectDao().getByPictureIdSync(p.getX());
-                                for (SymptomRect s : symptomRects) {
-                                    if (s.getSended() == 0) {
-                                        sendSymptomRect(s);
+                                Log.e("DB diag ID", id + "");
+
+                                pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
+                                for (Picture p : pictures) {
+                                    if (p.getSended() == 0) {
+                                        try {
+                                            p.setDiagnostic_id(id);
+                                            SendDiagnosticPicture(p);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        symptomRects = DB.symptomRectDao().getByPictureIdSync(p.getX());
+                                        for (SymptomRect s : symptomRects) {
+                                            if (s.getSended() == 0) {
+                                                sendSymptomRect(s);
+                                            }
+                                        }
                                     }
                                 }
+                                return null;
                             }
-                        }
-                        return null;
+                        }.execute();
                     }
-                }.execute();
+                }
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
@@ -591,30 +604,26 @@ public class RemoteTasks {
     public boolean SendDiagnosticPicture(Picture p) throws IOException {
         String image = p.getImage();
         if (Constants.isOnline(mContext)) {
-
             APIService service = APIClient.getClient().create(APIService.class);
-
             String base_64 = new EncodeBase64().encode(p.getImage());
-
             Log.e("Picture ID:", p.getX() + "");
             p.setImage(base_64);
-
             String token = FastSave.getInstance().getString("token", null);
-            Call<Picture> call = service.sendDiagnosticPictures("Token " + token, p);
-            Response<Picture> response = call.execute();
+            Call<JsonElement> call = service.sendDiagnosticPictures("Token " + token, p);
+            Response<JsonElement> response = call.execute();
             if (response.isSuccessful()) {
-                response.body().setImage(image);
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        response.body().setSended(1);
-                        if (p.getX() != 0) {
-                            DB.pictureDao().deletePicture(p);
-                        }
-                        DB.pictureDao().createPicture(response.body());
-                        return null;
+                if (response.body().getAsJsonObject().has("statut")) {
+                    if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                p.setSended(1);
+                                DB.pictureDao().createPicture(p);
+                                return null;
+                            }
+                        }.execute();
                     }
-                }.execute();
+                }
             } else {
                 Log.e("Error:", response.errorBody().string());
             }

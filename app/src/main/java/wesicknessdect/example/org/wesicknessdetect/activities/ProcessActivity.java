@@ -87,12 +87,12 @@ public class ProcessActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         //Init Necessary Data
-        try {
-            RemoteTasks.getInstance(this).getDiagnostics();
-            RemoteTasks.getInstance(this).getSymptomsRect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            RemoteTasks.getInstance(this).getDiagnostics();
+//            RemoteTasks.getInstance(this).getSymptomsRect();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
 //        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
 //        stopService(offline);
