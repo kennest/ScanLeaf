@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.login.LoginActivity"
+            android:name=".activities.ChooseCulturePartActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,7 +58,7 @@
         <activity android:name=".activities.BaseActivity" />
         <activity android:name=".activities.ConversationActivity" />
         <activity android:name=".activities.QuizActivity" />
-        <activity android:name=".activities.ChooseCulturePartActivity" />
+        <activity android:name=".activities.login.LoginActivity" />
         <activity android:name=".activities.PartialResultActivity" />
         <activity android:name=".activities.AnalysisDetailsActivity" />
 
