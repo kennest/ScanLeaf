@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -19,6 +22,11 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CultureAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
+import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Question;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+
+import static wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity.DB;
 
 public class ChooseCultureActivity extends Fragment {
     @BindView(R.id.culture_lv)
@@ -33,6 +41,43 @@ public class ChooseCultureActivity extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v=inflater.inflate(R.layout.activity_choix_culture, null, false);
         ButterKnife.bind(v);
+//        HashMap<Question,List<Symptom>> questionListHashMap=new HashMap<>();
+//        HashMap<CulturePart,List<HashMap<Question,List<Symptom>>>> culturePartListHashMap=new HashMap<>();
+//        List<HashMap<Question,List<Symptom>>> hashMaps=new ArrayList<>();
+//        DB.culturePartsDao().getAll().observe(this, new Observer<List<CulturePart>>() {
+//            @Override
+//            public void onChanged(List<CulturePart> cultureParts) {
+//                for (CulturePart c:cultureParts){
+//
+//                    List<Symptom> symptomsList = new ArrayList<>();
+//                    DB.questionDao().getAll().observe(ChooseCultureActivity.this, new Observer<List<Question>>() {
+//                        @Override
+//                        public void onChanged(List<Question> questions) {
+//                            for (Question q:questions){
+//                                if (q.getPart_culture_id()==c.getId()){
+//                                    DB.symptomDao().getAll().observe(ChooseCultureActivity.this, new Observer<List<Symptom>>() {
+//                                        @Override
+//                                        public void onChanged(List<Symptom> symptoms) {
+//                                            for (Symptom sy:symptoms){
+//                                                if (sy.getQuestion_id()==q.getId()){
+//                                                    symptomsList.add(sy);
+//                                                }
+//                                            }
+//                                            questionListHashMap.put(q,symptomsList);
+//                                        }
+//                                    });
+//                                }
+//                            }
+//                            hashMaps.add(questionListHashMap);
+//                        }
+//                    });
+//                    culturePartListHashMap.put(c,hashMaps);
+//                }
+//
+//            }
+//        });
+//        String all=culturePartListHashMap.toString();
+//        Log.d("questionnaire", all);
         return v;
     }
 
