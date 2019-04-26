@@ -216,7 +216,6 @@ public class ProcessActivity extends BaseActivity {
                 symptomsRects = AppController.getInstance().getSymptomsRects();
                 //Log.e("Rect Partial 2->",symptomsRects.size()+"");
                 for (SymptomRect sr : symptomsRects) {
-
                     for (Symptom s : symptoms) {
                         Log.e("Rect Partial E->",sr.label+"//"+s.getName()+"//"+sr.toShortString());
                         if (s.getName().equals(sr.label.toUpperCase())) {
