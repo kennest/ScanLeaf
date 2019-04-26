@@ -231,7 +231,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @OnClick(R.id.btn_save_diagnostic)
     public void SendDiagnostic() {
-        try {
             try {
                 RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
                 Thread.sleep(1000);
@@ -243,10 +242,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 //                entry.setValue(entry.getValue().subList(0,4));
 //            }
             AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void InitCardSwipe() {

@@ -63,14 +63,14 @@ public interface APIService {
     @POST("api/diagnostic/")
     Call<JsonElement> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
 
-    @POST("api/pixels/")
+    @POST("api/pixel/")
     Call<JsonElement> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
     @GET("api/pixels")
     Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token);
 
-    @POST("api/pictures/")
-    Call<JsonElement> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);
+    @POST("api/picture/")
+    Call<JsonElement> sendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);
 
     @GET("api/questions")
     Call<List<Question>> getQuestion();

@@ -41,7 +41,7 @@ public class ImagePagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        Log.e("SIZE:", linkedPartImage.size() + "");
+        //Log.e("SIZE:", linkedPartImage.size() + "");
         //Log.e("SIZE N:",linkedSymptColor.size()+"");
         return linkedPartImage.size();
     }

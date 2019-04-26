@@ -17,6 +17,9 @@ public abstract class SymptomRectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long createSymptomRect(SymptomRect symptomRect);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract long[] createManySymptomRect(List<SymptomRect> symptomRects);
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     public abstract void updateSymptomRect(SymptomRect symptomRect);
 

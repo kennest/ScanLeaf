@@ -48,8 +48,8 @@ public abstract class PictureDao {
     @Query("SELECT * FROM Picture")
     public abstract List<Picture> getAllSync();
 
-    @Query("SELECT * FROM Picture WHERE diagnostic_id=:id")
-    public abstract LiveData<List<Picture>> getByDiagnosticId(long id);
+    @Query("SELECT * FROM Picture WHERE x=:id")
+    public abstract LiveData<List<Picture>> getById(long id);
 
     @Query("SELECT * FROM Picture WHERE diagnostic_id=:id")
     public abstract List<Picture> getByDiagnosticIdSync(long id);

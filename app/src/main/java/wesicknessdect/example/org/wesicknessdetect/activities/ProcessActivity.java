@@ -24,6 +24,8 @@ import com.google.gson.JsonObject;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +36,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
@@ -46,8 +49,10 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
@@ -65,6 +70,9 @@ public class ProcessActivity extends BaseActivity {
     AppBarLayout appBarLayout;
     FloatingActionButton actionButton;
     Activity myActivity = this;
+    List<Symptom> symptoms = new ArrayList<>();
+    List<SymptomRect> symptomsRects = new ArrayList<>();
+    Map<Integer, List<Classifier.Recognition>> recognitions_map = new HashMap<>();
 
 
     //Fragment Objects
@@ -94,15 +102,16 @@ public class ProcessActivity extends BaseActivity {
 //            e.printStackTrace();
 //        }
 
-//        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
-//        stopService(offline);
-//        startService(offline);
+        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+        stopService(offline);
+        startService(offline);
+
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
-                for(SymptomRect r:symptomRects){
-                    Log.e("RectF Infos::",r.getSended()+"/ID->"+r.getX()+"/Picture->"+r.getPicture_id());
+                for (SymptomRect r : symptomRects) {
+                    Log.e("RectF Infos::", r.getSended() + "/ID->" + r.getX() + "/Picture->" + r.getPicture_id());
                 }
             }
         });
@@ -157,11 +166,12 @@ public class ProcessActivity extends BaseActivity {
                     translateDown();
                     actionButton.setVisibility(View.VISIBLE);
                 }
-                if (position == 1) {
-                    toggleView.setVisibility(View.VISIBLE);
-                } else {
-                    toggleView.setVisibility(View.GONE);
-                }
+
+//                if (position == 1) {
+//                    toggleView.setVisibility(View.VISIBLE);
+//                } else {
+//                    toggleView.setVisibility(View.GONE);
+//                }
             }
 
             @Override
@@ -178,65 +188,55 @@ public class ProcessActivity extends BaseActivity {
                 EventBus.getDefault().post(new ToggleViewEvent(true));
             }
         });
-    }
 
-    //Save the rectf of symptoms to DB
-    private void SaveRectFtoDatabase() {
-        DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
-            @SuppressLint("StaticFieldLeak")
+        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
-            public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-
-                        for (DiagnosticPictures dp : diagnosticPictures) {
-                            //Log.e("Diagnostic DB::" + diagnosticPictures.indexOf(dp), dp.pictures.size() + "");
-                            for (Picture p : dp.pictures) {
-                                for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : AppController.getInstance().recognitions_by_part.entrySet()) {
-                                    //Log.e("Find Symptom picture", recognition_entry.getKey() + "//" + p.getCulture_part_id()+"//"+p.getX());
-                                    if (recognition_entry.getKey().equals((int) p.getCulture_part_id())) {
-                                        //Log.e("Find Symptom picture", "TRUE");
-                                        for (Classifier.Recognition r : recognition_entry.getValue()) {
-                                            //Check Symptom table for equivalent name
-                                            DB.symptomDao().getAll().observe(ProcessActivity.this, new Observer<List<Symptom>>() {
-                                                @Override
-                                                public void onChanged(List<Symptom> symptoms) {
-                                                    for (Symptom n : symptoms) {
-                                                        if (n.getName().toUpperCase().equals(r.getTitle().toUpperCase())) {
-                                                            //Log.e("Find Symptom", "TRUE");
-                                                            SymptomRect sr = new SymptomRect();
-                                                            sr.set(r.getLocation());
-                                                            sr.picture_id = p.getX();
-                                                            sr.symptom_id = n.getId();
-                                                            sr.sended=0;
-                                                            //Store symptom rect in DB
-                                                            new AsyncTask<Void, Void, Void>() {
-                                                                @Override
-                                                                protected Void doInBackground(Void... voids) {
-                                                                    DB.symptomRectDao().createSymptomRect(sr);
-                                                                    return null;
-                                                                }
-                                                            }.execute();
-                                                        }
-                                                    }
-
-                                                }
-                                            });
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        //AppController.getInstance().setRecognitions_by_part(new HashMap<>());
-
+            public void onChanged(List<SymptomRect> symptomRects) {
+                Log.e("Rect DB Size -> ", symptomRects.size() + "");
             }
         });
+    }
+
+
+    //Save the rectf of symptoms to DB
+    @SuppressLint({"StaticFieldLeak", "UseSparseArrays"})
+    private void SaveRectFtoDatabase() {
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                symptoms = DB.symptomDao().getAllSync();
+                return null;
+            }
+        }.execute();
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                symptomsRects = AppController.getInstance().getSymptomsRects();
+                //Log.e("Rect Partial 2->",symptomsRects.size()+"");
+                for (SymptomRect sr : symptomsRects) {
+
+                    for (Symptom s : symptoms) {
+                        Log.e("Rect Partial E->",sr.label+"//"+s.getName()+"//"+sr.toShortString());
+                        if (s.getName().equals(sr.label.toUpperCase())) {
+                            //Log.e("Rect Partial F->",sr.label+"//"+sr.toShortString()+"//"+s.getName());
+                            sr.symptom_id = s.getId();
+                            DB.symptomRectDao().createSymptomRect(sr);
+                        }
+                    }
+                }
+                return null;
+            }
+        }.execute();
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
                 Log.e("Symptoms Rect size::", symptomRects.size() + "");
-                if(symptomRects.size()>0) {
+                if (symptomRects.size() > 0) {
                     for (SymptomRect r : symptomRects) {
-                        Log.e("RectF:", r.left + "->" + r.top + "->" + r.right + "->" + r.bottom);
+                        Log.e("Rect from DB -> ", r.toShortString());
                         //Try to send rect to Server
                     }
                 }

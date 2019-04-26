@@ -82,7 +82,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                             if (dp.diagnostic.getX() == diagnostic_id) {
                                 toolbar.setTitle(dp.diagnostic.getDisease());
                                 for (Picture p : dp.pictures) {
-                                    Log.e("Pic exist:", p.getImage());
+                                    //Log.e("Pic exist:", p.getImage());
                                     if (new File(p.getImage()).exists()) {
                                         List<String> symptAttrs = new ArrayList<>();
                                         Map<String, Bitmap> map = new HashMap<>();
@@ -96,10 +96,11 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                         DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
                                             @Override
                                             public void onChanged(List<SymptomRect> symptomRects) {
+                                                Log.e("Analysis Rects -> ",symptomRects.size()+"");
                                                 for (SymptomRect rect : symptomRects) {
                                                     Random rnd = new Random();
                                                     Paint paint = new Paint();
-                                                    Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX());
+                                                    Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX()+"//"+rect.toShortString());
                                                     paint.setStyle(Paint.Style.STROKE);
                                                     paint.setStrokeWidth(4f);
                                                     int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));

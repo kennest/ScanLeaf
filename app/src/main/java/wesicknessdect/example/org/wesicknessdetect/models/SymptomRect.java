@@ -14,7 +14,7 @@ import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = {@ForeignKey(entity = Symptom.class,
         parentColumns = "id",
-        childColumns = "symptom_id",onUpdate = CASCADE)},indices = {@Index({"picture_id","symptom_id"})})
+        childColumns = "symptom_id",onUpdate = CASCADE)})
 public class SymptomRect extends RectF {
 
     @SerializedName(value = "id_mobile")
@@ -29,6 +29,8 @@ public class SymptomRect extends RectF {
 
     @SerializedName(value = "picture")
     public int picture_id;
+
+    public String label;
 
     public int sended;
 

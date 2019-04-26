@@ -55,45 +55,6 @@ public class OfflineService extends Service {
         return START_STICKY;
     }
 
-    @SuppressLint("StaticFieldLeak")
-    private void SendData() {
-
-        if (diagnostics != null) {
-            for (Diagnostic d : diagnostics) {
-                Log.e("Diag::Size", diagnostics.size() + "");
-                if (d.getSended() == 0) {
-                    Log.e("Offline diag::", d.getX() + "//" + d.getSended());
-                    try {
-                        RemoteTasks.getInstance(getApplicationContext()).sendDiagnostic(d);
-                        for (Picture p : pictures) {
-                            Log.e("Offline pic::", p.getX() + "//" + p.getSended() + "//" + p.getCulture_part_id());
-                            if (p.getDiagnostic_id() == d.getX()) {
-                                if (p.getSended() == 0) {
-                                    Log.e("Offline pic::", p.getX() + "//" + p.getSended());
-                                    try {
-                                        RemoteTasks.getInstance(getApplicationContext()).SendDiagnosticPicture(p);
-                                        for (SymptomRect rect : symptomRects) {
-                                            if (rect.getPicture_id() == p.getX()) {
-                                                //Log.e("Offline RectF::", rect.picture_id+"/ SENDED-> "+rect.getSended()+"/ID-> "+rect.getX());
-                                                if (rect.getSended() == 0) {
-                                                    Log.e("Offline RectF::", rect.picture_id + "/ SENDED-> " + rect.getSended() + "/ID-> " + rect.getX());
-                                                    RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(rect);
-                                                }
-                                            }
-                                        }
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 
     @SuppressLint("StaticFieldLeak")
     private void SendDataOffline() throws IOException {
@@ -102,6 +63,15 @@ public class OfflineService extends Service {
                 Log.e("Diag::Size", diagnostics.size() + "");
                 if (d.getSended() == 0) {
                     RemoteTasks.getInstance(getApplicationContext()).SendOfflineDiagnostic(d);
+                }
+            }
+        }
+
+        if(symptomRects!=null){
+            for(SymptomRect s:symptomRects){
+                Log.e("Diag::Size", symptomRects.size() + "");
+                if (s.getSended() == 0) {
+                    RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(s);
                 }
             }
         }

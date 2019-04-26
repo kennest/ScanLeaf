@@ -17,18 +17,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class AppController extends Application {
     private static final String DATABASE_NAME = "wesickness.db";
     public static AppDatabase appDatabase;
     private static AppController mInstance;
+    @SuppressLint("UseSparseArrays")
     public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
-    public Map<Integer, String> images_by_parts = new HashMap<>();
+    public List<SymptomRect> symptomsRects = new ArrayList<>();
 
     public static synchronized AppController getInstance() {
         if (mInstance == null) { //if there is no instance available... create new one
@@ -44,6 +47,9 @@ public class AppController extends Application {
 
         //Init FastSave
         FastSave.init(getApplicationContext());
+
+        //Init PaperDb
+        Paper.init(getApplicationContext());
 
         //Init PRDownloader
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
@@ -62,6 +68,14 @@ public class AppController extends Application {
 
         //Create data
         InitDBFromServer();
+    }
+
+    public List<SymptomRect> getSymptomsRects() {
+        return symptomsRects;
+    }
+
+    public void setSymptomsRects(List<SymptomRect> symptomsRects) {
+        this.symptomsRects = symptomsRects;
     }
 
     public Map<Integer, List<Classifier.Recognition>> getRecognitions_by_part() {
