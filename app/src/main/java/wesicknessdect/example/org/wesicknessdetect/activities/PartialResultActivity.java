@@ -62,6 +62,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @BindView(R.id.btn_save_diagnostic)
     FloatingActionButton save_diagnostic;
+    FloatingActionButton go_to_quiz_diagnostic;
+
 
     @BindView(R.id.disease_txt)
     TextView disease;

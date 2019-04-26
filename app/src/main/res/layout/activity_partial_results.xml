@@ -14,8 +14,24 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:backgroundTint="#2E7D32"
-        android:src="@drawable/ic_check_circle_white_48dp" />
+        android:backgroundTint="@color/colorPrimaryPix"
+        android:src="@drawable/ic_check_circle_white_48dp"
+        app:layout_anchor="@+id/scrollView2"
+        android:tooltipText="ou Arrêter l'analyse"
+        app:layout_anchorGravity="right|bottom" />
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btn_next_diagnostic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:tint="@color/colorPrimaryPix"
+        android:backgroundTint="@color/standard_white"
+        android:src="@drawable/ic_skip_next_black_24dp"
+        android:tooltipText="Continuer vers le questionnaire"
+        app:layout_anchor="@+id/scrollView2"
+        app:layout_anchorGravity="right|bottom" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -50,7 +66,7 @@
                     android:gravity="center"
                     android:typeface="monospace"
                     android:fontFamily="@font/roboto"
-                    android:text="Images analysées"
+                    android:text="ANALYSE"
                     android:textColor="#ededed"
                     android:textSize="19dp"
                     android:textStyle="bold" />
@@ -98,8 +114,7 @@
                         android:fontFamily="@font/roboto"
                         android:text="Résultat global"
                         android:textColor="@color/white"
-                        android:textSize="19dp"
-                        android:textStyle="bold" />
+                        android:textSize="19dp" />
 
                     <TextView
                         android:id="@+id/disease_txt"
@@ -108,8 +123,8 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text="RECOGNITION"
-                        android:textColor="#FF8F00"
-                        android:textSize="15sp"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="19sp"
                         android:textStyle="bold"
                         android:typeface="monospace" />
                 </LinearLayout>
