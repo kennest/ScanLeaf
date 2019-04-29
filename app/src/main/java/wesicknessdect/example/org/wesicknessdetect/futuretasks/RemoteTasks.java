@@ -419,7 +419,7 @@ public class RemoteTasks {
                         File f = new File(destination + uri.getLastPathSegment());
                         if (!f.exists()) {
                             DownloadFile(p.getImage());
-                            Log.e("Remote image Exist:", p.getDiagnostic_id() + "//" + p.getX() + "//" + p.getImage());
+                           // Log.e("Remote image Exist:", p.getDiagnostic_id() + "//" + p.getX() + "//" + p.getImage());
                         }
 
                         p.setImage(destination + uri.getLastPathSegment());
@@ -471,7 +471,7 @@ public class RemoteTasks {
                 List<Picture> diagnostic_pictures = new ArrayList<>();
                 d.setSended(0);
                 if (d.getImages_by_parts() != null) {
-                    Log.e("Remote pic size", d.getImages_by_parts().size() + "");
+                    //Log.e("Remote pic size", d.getImages_by_parts().size() + "");
                     for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
                         Picture p = new Picture();
                         p.setCulture_part_id(entry.getKey());
@@ -503,7 +503,7 @@ public class RemoteTasks {
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                Log.e("RM diag ID", response.body() + "");
+                                //Log.e("RM diag ID", response.body() + "");
 
                                 d.setSended(1);
                                 DB.diagnosticDao().updateDiagnostic(d);
@@ -553,7 +553,7 @@ public class RemoteTasks {
             JsonObject json = new JsonObject();
             APIService service = APIClient.getClient().create(APIService.class);
             String base_64 = new EncodeBase64().encode(p.getImage());
-            Log.e("Picture ID:", p.getX() + "");
+            //Log.e("Picture ID:", p.getX() + "");
             json.addProperty("image", base_64);
             json.addProperty("id_mobile", p.getX());
             json.addProperty("diagnostic", p.getDiagnostic_id());
@@ -697,7 +697,7 @@ public class RemoteTasks {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            s.setName(s.getName().toUpperCase(Locale.ENGLISH));
+                            s.setName(s.getName().toUpperCase());
                             DB.symptomDao().createSymptom(s);
                             return null;
                         }

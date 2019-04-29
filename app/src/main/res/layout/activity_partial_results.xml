@@ -8,7 +8,6 @@
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_save_diagnostic"
         app:layout_anchorGravity="right|bottom"
-        app:layout_anchor="@id/scrollView2"
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,8 +16,7 @@
         android:backgroundTint="@color/colorPrimaryPix"
         android:src="@drawable/ic_check_circle_white_48dp"
         app:layout_anchor="@+id/scrollView2"
-        android:tooltipText="ou Arrêter l'analyse"
-        app:layout_anchorGravity="right|bottom" />
+        android:tooltipText="ou Arrêter l'analyse"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_next_diagnostic"
         android:layout_width="wrap_content"

@@ -327,7 +327,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @Override
     public void onCardRewound() {
 
-        Log.e("Card Swiped", "Rewind");
+        //Log.e("Card Swiped", "Rewind");
     }
 
     @Override
@@ -337,18 +337,18 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @Override
     public void onCardAppeared(View view, int position) {
-        Log.e("Card Appeared ", position + "");
+        //Log.e("Card Appeared ", position + "");
         if (position == 0) {
-            Log.e("Card Appeared ", position + "");
+            //Log.e("Card Appeared ", position + "");
             progressBar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onCardDisappeared(View view, int position) {
-        Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
+        //Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
         if (position == (partialResultImageAdapter.getItemCount() - 1)) {
-            Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
+           // Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
             progressBar.setVisibility(View.VISIBLE);
         }
     }

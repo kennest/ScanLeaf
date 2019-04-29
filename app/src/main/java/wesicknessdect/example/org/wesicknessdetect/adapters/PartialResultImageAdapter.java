@@ -77,13 +77,13 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                 //holder.symptoms_txt=new LinearLayout(context);
                 Set<String> symptoms = new HashSet<>();
                 for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
-                    Log.e("recognitions imgs", entry.getKey() + " ** " + images_by_part.get(position) + " ** " + entry.getValue() + " ** " + position);
+                    //Log.e("recognitions imgs", entry.getKey() + " ** " + images_by_part.get(position) + " ** " + entry.getValue() + " ** " + position);
 
                     if (entry.getKey().equals(position)) {
                         for (Map.Entry<Integer, String> n : entry.getValue().entrySet()) {
 
                             //Retrieve the culture part image from DB
-                            Log.e("part_id", n.getKey() + " ** " + position);
+                           // Log.e("part_id", n.getKey() + " ** " + position);
 
                             AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey()).observeForever(new Observer<CulturePart>() {
                                 @Override
@@ -94,7 +94,6 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                 }
                             });
 
-
                             if (culturePart != null) {
                                 holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
                                 holder.part_name.setText(culturePart.getNom());
@@ -102,20 +101,19 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
 
                             for (Map.Entry<Integer, List<Classifier.Recognition>> recognitionEntry : recognitions_by_part.entrySet()) {
                                 if (n.getKey().equals(recognitionEntry.getKey())) {
+
                                     Bitmap bitmap = BitmapFactory.decodeFile(n.getValue());
                                     Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                                    List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
+                                    //List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
                                     Canvas canvas = new Canvas(bitmap_cropped);
 
-
                                     //recognitions = recognitions.subList(0, 4);
-
-                                    for (Classifier.Recognition r : recognitions) {
+                                    for (Classifier.Recognition r : recognitionEntry.getValue()) {
                                         symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
 
                                         SymptomRect sr=new SymptomRect();
+                                        sr.picture_id=recognitionEntry.getKey();
                                         sr.set(r.getLocation());
-                                        sr.picture_id=n.getKey();
                                         sr.symptom_id=0;
                                         sr.label=r.getTitle();
                                         sr.sended = 0;
@@ -138,14 +136,12 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                         txt.setTextSize(15);
                                         line.addView(txt);
                                         holder.symptoms_txt.addView(line);
-
                                         recognition_legend.put(color, r.getTitle());
                                         paint.setColor(color);
                                         paint.setAntiAlias(true);
                                         canvas.drawRect(r.getLocation(), paint);
                                     }
-
-                                    Log.e("Rect Partial ->",symptomsRects.size()+"");
+                                    Log.e("Rect Partial 0 ->",symptomsRects.size()+"");
                                     AppController.getInstance().setSymptomsRects(symptomsRects);
                                     holder.image.setImageBitmap(bitmap_cropped);
                                 }

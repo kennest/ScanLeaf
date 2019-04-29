@@ -7,6 +7,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 import android.content.Intent;
@@ -123,6 +124,13 @@ public class SplashActivity extends BaseActivity {
                 }
             }
         }, SPLASH_TIME_OUT);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SystemTasks.getInstance(SplashActivity.this).ensureLocationSettings();
+            }
+        });
 
         }
 

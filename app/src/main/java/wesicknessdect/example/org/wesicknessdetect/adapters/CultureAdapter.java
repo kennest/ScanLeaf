@@ -47,7 +47,7 @@ public class CultureAdapter extends RecyclerView.Adapter<CultureAdapter.CultureH
                 holder.name.setText(cultures.get(position).getName());
                 Uri uri = Uri.parse(cultures.get(position).getImage());
                 String imagePath = context.getExternalFilesDir(null) + File.separator + uri.getLastPathSegment();
-                Log.d("image path", imagePath);
+                //Log.d("image path", imagePath);
                 File f = new File(imagePath);
                 if (f.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(imagePath);

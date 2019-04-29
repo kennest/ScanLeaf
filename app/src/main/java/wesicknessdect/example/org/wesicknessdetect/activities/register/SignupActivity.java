@@ -95,7 +95,7 @@ public class SignupActivity extends BaseActivity implements ISignupView {
     @OnClick(R.id.signinsubmit)
     public void SignupTask() {
         String cName = country.getSelectedItem().toString();
-        Log.i("Country Selected", cName);
+        //Log.i("Country Selected", cName);
 
         AppDatabase.getInstance(SignupActivity.this).countryDao().getByName(cName).observe(this, new Observer<Country>() {
             @Override
@@ -133,7 +133,7 @@ public class SignupActivity extends BaseActivity implements ISignupView {
                     public void onChanged(List<Country> countries) {
                         for (Country c : countries) {
                             countryStr.add(c.getName());
-                            Log.i("Country in DB::", c.getId() + "/" + c.getName());
+                            //Log.i("Country in DB::", c.getId() + "/" + c.getName());
                         }
                         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(SignupActivity.this, android.R.layout.simple_spinner_item, countryStr);
                         // Drop down layout style - list view with radio button

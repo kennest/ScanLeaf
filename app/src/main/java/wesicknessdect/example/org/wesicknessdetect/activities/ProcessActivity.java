@@ -192,7 +192,7 @@ public class ProcessActivity extends BaseActivity {
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
-                Log.e("Rect DB Size -> ", symptomRects.size() + "");
+                //Log.e("Rect DB Size -> ", symptomRects.size() + "");
             }
         });
     }
@@ -202,22 +202,23 @@ public class ProcessActivity extends BaseActivity {
     @SuppressLint({"StaticFieldLeak", "UseSparseArrays"})
     private void SaveRectFtoDatabase() {
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                symptoms = DB.symptomDao().getAllSync();
-                return null;
-            }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... voids) {
+//
+//                return null;
+//            }
+//        }.execute();
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 symptomsRects = AppController.getInstance().getSymptomsRects();
-                //Log.e("Rect Partial 2->",symptomsRects.size()+"");
+                symptoms = DB.symptomDao().getAllSync();
+                Log.e("Rect Partial 1 ->",symptomsRects.size()+"");
                 for (SymptomRect sr : symptomsRects) {
                     for (Symptom s : symptoms) {
-                        Log.e("Rect Partial E->",sr.label+"//"+s.getName()+"//"+sr.toShortString());
+                        Log.e("Rect Partial E->",sr.x+"//"+sr.label.toUpperCase()+"//"+s.getName()+"//"+sr.toShortString());
                         if (s.getName().equals(sr.label.toUpperCase())) {
                             //Log.e("Rect Partial F->",sr.label+"//"+sr.toShortString()+"//"+s.getName());
                             sr.symptom_id = s.getId();
@@ -225,6 +226,7 @@ public class ProcessActivity extends BaseActivity {
                         }
                     }
                 }
+                AppController.getInstance().setSymptomsRects(new ArrayList<>());
                 return null;
             }
         }.execute();
@@ -319,7 +321,7 @@ public class ProcessActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("Req code", requestCode + "");
+       // Log.e("Req code", requestCode + "");
     }
 
     private class MainAdapter extends FragmentStatePagerAdapter {

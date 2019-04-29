@@ -12,9 +12,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = {@ForeignKey(entity = Symptom.class,
-        parentColumns = "id",
-        childColumns = "symptom_id",onUpdate = CASCADE)})
+@Entity
 public class SymptomRect extends RectF {
 
     @SerializedName(value = "id_mobile")
