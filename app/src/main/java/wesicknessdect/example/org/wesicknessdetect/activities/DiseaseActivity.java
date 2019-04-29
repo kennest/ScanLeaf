@@ -23,7 +23,7 @@ public class DiseaseActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maladie_page);
-        Log.v(" DiseaseActivity ", " onCreate ");
+        //Log.v(" DiseaseActivity ", " onCreate ");
         Bundle b = null;
         b= getIntent().getExtras();
         if(Constants.isOnline(getApplicationContext())){
@@ -33,7 +33,7 @@ public class DiseaseActivity extends BaseActivity {
             }
             else {
                 Toast.makeText(getApplicationContext(), "Impossible de charger l'url", Toast.LENGTH_LONG).show();
-                Log.v(" DiseaseActivity ", " onCreate vide ");
+                //Log.v(" DiseaseActivity ", " onCreate vide ");
             }
         }else{
             Toast.makeText(getApplicationContext(), "pas de connexion", Toast.LENGTH_LONG).show();

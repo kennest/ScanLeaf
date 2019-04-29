@@ -52,7 +52,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
     @SuppressLint("NewApi")
     @Override
     public void onBindViewHolder(@NonNull ChatHolder c, int position) {
-        Log.v("DiseaseAdapter ", "onBindViewHolder position "+position);
+        //Log.v("DiseaseAdapter ", "onBindViewHolder position "+position);
                 c.maladieImage.setImageResource(R.drawable.swollen);
                 c.maladieName.setText(diseases.get(position).getName());
                 if(diseases.get(position).getDescription().length()>35) {

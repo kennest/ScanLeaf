@@ -2,8 +2,6 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import androidx.room.Entity;
@@ -18,19 +16,16 @@ import static androidx.room.ForeignKey.CASCADE;
         @ForeignKey(
                 entity = User.class, parentColumns = "id", childColumns = "user_id",onUpdate = CASCADE,onDelete = CASCADE
         ),
-},indices = {@Index("user_id")})
+},indices = {@Index({"user_id"})})
 public class Diagnostic  {
-    @SerializedName(value = "id")
+    @SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)
     private int x;
 
-    private int net_id;
+    @SerializedName(value = "id")
+    private int remote_id;
 
-    private double longitude;
-    private double latitude;
     private String localisation;
-    private String date;
-    private String hour;
     private String advancedAnalysis;
     private String disease;
     private boolean finish;
@@ -55,37 +50,6 @@ public class Diagnostic  {
         this.x = x;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getHour() {
-        return hour;
-    }
-
-    public void setHour(String hour) {
-        this.hour = hour;
-    }
 
     public float getProbability() {
         return probability;
@@ -175,11 +139,11 @@ public class Diagnostic  {
         this.images_by_parts = images_by_parts;
     }
 
-    public int getNet_id() {
-        return net_id;
+    public int getRemote_id() {
+        return remote_id;
     }
 
-    public void setNet_id(int net_id) {
-        this.net_id = net_id;
+    public void setRemote_id(int remote_id) {
+        this.remote_id = remote_id;
     }
 }

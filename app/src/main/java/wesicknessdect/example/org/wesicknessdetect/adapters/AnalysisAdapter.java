@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -55,10 +56,12 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         Log.e("XXXX 0 " + position, diagnosticPictures.get(position).pictures.size() + "");
                 if(diagnosticPictures.get(position).pictures.size()>0){
+                    holder.counter.setText(Integer.toString(diagnosticPictures.get(position).pictures.size()));
                     for (Picture s : diagnosticPictures.get(position).pictures) {
                         Log.e("XXXX N " + position, s.getImage());
                     }
@@ -73,16 +76,13 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             .apply(new RequestOptions().placeholder(R.drawable.restart))
                             .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                             .into(holder.image);
-
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
                 holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
                 holder.analyseTime.setText("1 min Ago");
-
                 //holder.slideview.addOnPageChangeListener(this);
-
     }
 
     @Override
@@ -94,10 +94,15 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
         @BindView(R.id.image)
         CircularImageView image;
+
         @BindView(R.id.user_name)
         TextView userName;
+
         @BindView(R.id.analyse_time)
         TextView analyseTime;
+
+        @BindView(R.id.counter)
+        TextView counter;
 
         public StatusHolder(View itemView) {
             super(itemView);

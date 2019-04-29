@@ -2,12 +2,13 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_save_diagnostic"
+        app:layout_anchorGravity="right|bottom"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
@@ -15,8 +16,7 @@
         android:backgroundTint="@color/colorPrimaryPix"
         android:src="@drawable/ic_check_circle_white_48dp"
         app:layout_anchor="@+id/scrollView2"
-        android:tooltipText="ou Arrêter l'analyse"
-        app:layout_anchorGravity="right|bottom" />
+        android:tooltipText="ou Arrêter l'analyse"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_next_diagnostic"
         android:layout_width="wrap_content"
@@ -82,15 +82,10 @@
                     android:layout_height="450dp"
                     android:layout_above="@+id/button_container"
                     android:clipToPadding="false"
-                    android:padding="4dp"></com.yuyakaido.android.cardstackview.CardStackView>
+                    android:padding="4dp">
 
+                </com.yuyakaido.android.cardstackview.CardStackView>
 
-                <!--androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/analysed_img"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp">
-
-                </androidx.recyclerview.widget.RecyclerView-->
             </LinearLayout>
 
             <LinearLayout
@@ -130,14 +125,13 @@
                         android:textSize="19sp"
                         android:textStyle="bold"
                         android:typeface="monospace" />
-
-
                 </LinearLayout>
 
             </LinearLayout>
         </LinearLayout>
 
     </ScrollView>
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -100,7 +100,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 DB.modelDao().getAll().observe(ChooseCulturePartActivity.this, new Observer<List<Model>>() {
                     @Override
                     public void onChanged(List<Model> models) {
-                        Log.e("Number of models", models.size() + "");
+                        //Log.e("Number of models", models.size() + "");
 //                        models_List = models;
                         for (Model m : models) {
                             for (CulturePart c : culturePartList) {
@@ -144,7 +144,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("Req code", requestCode + "");
+        //Log.e("Req code", requestCode + "");
         for (CulturePart c : culturePartList) {
             if (resultCode == Activity.RESULT_OK && requestCode == c.getId()) {
                 assert data != null;
@@ -182,7 +182,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 public void onChanged(Model model) {
 
                     // modele = model;
-                    Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
+                    //Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
                     File modelfile=new File(model.getPb());
                     File labelpath=new File(model.getLabel());
                     if(modelfile.exists() && labelpath.exists()){
@@ -193,7 +193,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                             protected Void doInBackground(Void... voids) {
                                 List<Classifier.Recognition> recognitions = new ArrayList<>();
                                 recognitions = SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
-                                Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
+                                //Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
                                 return null;
                             }
                         }.execute();
@@ -208,14 +208,14 @@ public class ChooseCulturePartActivity extends BaseActivity {
     //Get Culture part downloadd infos for supply progressbar
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     public void getModelDownloadBytes(ModelDownloadEvent event) {
-        Log.e("Download started", event.part_id + "/" + event.downloaded + "/" + event.filesize);
+        //Log.e("Download started", event.part_id + "/" + event.downloaded + "/" + event.filesize);
         for (CulturePart c : culturePartList) {
             if ((c.getId() == event.part_id)) {
                 if (event.downloaded == event.filesize) {
                     c.setModel_downloaded(true);
                     c.setDownloaded(event.downloaded);
                     c.setFilesize(event.filesize);
-                    Log.e("Download Finished", event.part_id + "/" + event.downloaded + "/" + event.filesize);
+                    //Log.e("Download Finished", event.part_id + "/" + event.downloaded + "/" + event.filesize);
                 } else {
                     c.setDownloaded(event.downloaded);
                     c.setFilesize(event.filesize);

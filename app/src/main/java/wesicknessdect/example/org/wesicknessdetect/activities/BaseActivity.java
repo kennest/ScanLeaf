@@ -73,8 +73,10 @@ public class BaseActivity extends AppCompatActivity {
     //Show the loading Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadingEvent(ShowLoadingEvent event){
-        if(dialog.isShowing() && dialogIsCancelable) {
-            dialog.dismiss();
+        if(dialog!=null) {
+            if (dialog.isShowing() && dialogIsCancelable) {
+                dialog.dismiss();
+            }
         }
         dialogIsCancelable=event.cancelable;
         dialog=LoaderProgress(event.title,event.content,event.cancelable);

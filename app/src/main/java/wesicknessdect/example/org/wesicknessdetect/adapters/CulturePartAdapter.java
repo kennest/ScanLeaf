@@ -60,7 +60,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
             public void run() {
                 Uri uri = Uri.parse(cultureParts.get(position).getImage());
                 String imagePath = context.getExternalFilesDir(null) + File.separator + uri.getLastPathSegment();
-                Log.d("image path", imagePath);
+                //Log.d("image path", imagePath);
                 File f = new File(imagePath);
 
                 holder.progressBar.setMaximum(cultureParts.get(position).getFilesize());
@@ -98,7 +98,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
                     cultureParts.get(position).setModel_downloaded(true);
                     holder.progressBar.setVisibility(View.GONE);
                     holder.imageButton.setVisibility(View.VISIBLE);
-                    Log.e("Model Downloaded", "OK");
+                    //Log.e("Model Downloaded", "OK");
                     holder.imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -112,9 +112,9 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
                 }
 
                 for (Map.Entry<Integer, String> entry : culturePart_image.entrySet()) {
-                    Log.e("adapter entry", entry.getKey() + "/" + entry.getValue() + "//" + cultureParts.get(position).getId());
+                    //Log.e("adapter entry", entry.getKey() + "/" + entry.getValue() + "//" + cultureParts.get(position).getId());
                     if (entry.getKey() == cultureParts.get(position).getId()) {
-                        Log.e("image added", entry.getKey() + "");
+                       // Log.e("image added", entry.getKey() + "");
                         Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
                         Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
                         holder.imageButton.setImageBitmap(bitmap_cropped);

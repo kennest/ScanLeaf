@@ -61,16 +61,16 @@ public interface APIService {
     Call<Model> getModels(@Header("Authorization") String token);
 
     @POST("api/diagnostic/")
-    Call<Diagnostic> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
+    Call<JsonElement> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
 
-    @POST("api/pixels/")
-    Call<SymptomRect> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
+    @POST("api/pixel/")
+    Call<JsonElement> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
     @GET("api/pixels")
     Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token);
 
-    @POST("api/pictures/")
-    Call<Picture> sendDiagnosticPictures(@Header("Authorization") String token, @Body Picture picture);
+    @POST("api/picture/")
+    Call<JsonElement> sendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);
 
     @GET("api/questions")
     Call<List<Question>> getQuestion();

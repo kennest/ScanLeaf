@@ -117,16 +117,12 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         String location = FastSave.getInstance().getString("location", "0.0:0.0");
         String[] locpart = location.split(":");
 
-        diagnostic.setLatitude(Double.parseDouble(locpart[0]));
-        diagnostic.setLongitude(Double.parseDouble(locpart[1]));
         diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[1] + " " + locpart[0] + ")");
 
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String date = df.format(c.getTime());
         Log.e("Time:", date);
         String[] parts = date.split(" ");
-        diagnostic.setDate(parts[0]);
-        diagnostic.setHour(parts[1]);
 
         diagnostic.setProbability(95f);
         long user_id = Long.parseLong(FastSave.getInstance().getString("user_id", "1"));
@@ -237,7 +233,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @OnClick(R.id.btn_save_diagnostic)
     public void SendDiagnostic() {
-        try {
             try {
                 RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
                 Thread.sleep(1000);
@@ -249,10 +244,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 //                entry.setValue(entry.getValue().subList(0,4));
 //            }
             AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void InitCardSwipe() {
@@ -336,7 +327,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @Override
     public void onCardRewound() {
 
-        Log.e("Card Swiped", "Rewind");
+        //Log.e("Card Swiped", "Rewind");
     }
 
     @Override
@@ -346,18 +337,18 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @Override
     public void onCardAppeared(View view, int position) {
-        Log.e("Card Appeared ", position + "");
+        //Log.e("Card Appeared ", position + "");
         if (position == 0) {
-            Log.e("Card Appeared ", position + "");
+            //Log.e("Card Appeared ", position + "");
             progressBar.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void onCardDisappeared(View view, int position) {
-        Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
+        //Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
         if (position == (partialResultImageAdapter.getItemCount() - 1)) {
-            Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
+           // Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
             progressBar.setVisibility(View.VISIBLE);
         }
     }

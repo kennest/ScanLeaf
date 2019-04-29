@@ -46,8 +46,6 @@ public class AnalyseFragment extends Fragment {
     @BindView(R.id.calendarView)
     CalendarView calendarView;
 
-
-
     public boolean is_calendar_view_shown =false;
 
     private static AppDatabase DB;

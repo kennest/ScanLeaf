@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/bordershadow"
-    android:backgroundTint="#ededed"
+    android:background="#F8F8ED"
     android:orientation="vertical">
 
     <LinearLayout
@@ -14,9 +13,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="3dp"
-        android:orientation="horizontal"
-        android:weightSum="3">
+        android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,22 +33,21 @@
                 android:background="@drawable/counter"
                 android:id="@+id/counter"
                 android:text="10"
+                android:textStyle="bold"
                 android:gravity="center_horizontal|center_vertical"
                 android:textColor="@android:color/white"
                 android:layout_width="20dp"
                 android:layout_height="20dp" />
         </RelativeLayout>
         <LinearLayout
-            android:padding="8dp"
+            android:padding="15dp"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="75dp"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:fontFamily="@font/roboto"
                 android:gravity="top"
                 android:text="Disease"

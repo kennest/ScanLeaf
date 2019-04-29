@@ -7,6 +7,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
+import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.moshi.JsonAdapter;
@@ -76,10 +76,10 @@ public class SplashActivity extends BaseActivity {
         }).start();
 
         //*****************CHECK IF USER IS AUTHENTICATED****************/
-        pulse=findViewById(R.id.pulse);
-        pulse.loadUrl("file:///android_asset/boonnnn.gif");
-        pulse.getSettings().setLoadWithOverviewMode(true);
-        pulse.getSettings().setUseWideViewPort(true);
+//        pulse=findViewById(R.id.pulse);
+//        pulse.loadUrl("file:///android_asset/boonnnn.gif");
+//        pulse.getSettings().setLoadWithOverviewMode(true);
+//        pulse.getSettings().setUseWideViewPort(true);
         out=AnimationUtils.loadAnimation(this, R.anim.splashtransitionout);
         fromLeft = AnimationUtils.loadAnimation(this, R.anim.lefttoright);
         fromRight =AnimationUtils.loadAnimation(this, R.anim.rightoleft);
@@ -93,7 +93,7 @@ public class SplashActivity extends BaseActivity {
         ImageView left = findViewById(R.id.left);
         ImageView iv3 = findViewById(R.id.plantation);
         ImageView right= findViewById(R.id.right);
-        pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(3000);
+        //pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(3000);
         left.startAnimation(fromLeft);
         right.startAnimation(fromRight);
         iv3.startAnimation(dubas);
@@ -124,6 +124,13 @@ public class SplashActivity extends BaseActivity {
                 }
             }
         }, SPLASH_TIME_OUT);
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SystemTasks.getInstance(SplashActivity.this).ensureLocationSettings();
+            }
+        });
 
         }
 
