@@ -8,6 +8,8 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.appizona.yehiahd.fastsave.FastSave;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -112,6 +114,13 @@ public class OfflineService extends Service {
         @Override
         public void run() {
 
+            String location= FastSave.getInstance().getString("location","0.0:0.0");
+            String[] split=location.split(":");
+
+            Double lat= Double.valueOf(split[0]);
+            Double longi= Double.valueOf(split[1]);
+
+            Log.d("Mes coordonnées", "Lat: "+lat+", Longi: "+longi);
             //Toast.makeText(getApplicationContext(), "Offline Really Started", Toast.LENGTH_LONG).show();
             new AsyncTask<Void, Void, Void>() {
                 @Override
