@@ -102,9 +102,9 @@ public class ProcessActivity extends BaseActivity {
 //            e.printStackTrace();
 //        }
 
-        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
-        stopService(offline);
-        startService(offline);
+//        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+//        stopService(offline);
+//        startService(offline);
 
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
@@ -117,7 +117,7 @@ public class ProcessActivity extends BaseActivity {
         });
 
         //Save RectF to database
-        SaveRectFtoDatabase();
+        //SaveRectFtoDatabase();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -202,25 +202,24 @@ public class ProcessActivity extends BaseActivity {
     @SuppressLint({"StaticFieldLeak", "UseSparseArrays"})
     private void SaveRectFtoDatabase() {
 
-//        new AsyncTask<Void, Void, Void>() {
-//            @Override
-//            protected Void doInBackground(Void... voids) {
-//
-//                return null;
-//            }
-//        }.execute();
-
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 symptomsRects = AppController.getInstance().getSymptomsRects();
                 symptoms = DB.symptomDao().getAllSync();
+                return null;
+            }
+        }.execute();
+
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
                 Log.e("Rect Partial 1 ->",symptomsRects.size()+"");
                 for (SymptomRect sr : symptomsRects) {
                     for (Symptom s : symptoms) {
-                        Log.e("Rect Partial E->",sr.x+"//"+sr.label.toUpperCase()+"//"+s.getName()+"//"+sr.toShortString());
+                        //Log.e("Rect Partial E->",sr.getX()+"//"+sr.label+"//"+sr.getPicture_id()+"//"+sr.toShortString());
                         if (s.getName().equals(sr.label.toUpperCase())) {
-                            //Log.e("Rect Partial F->",sr.label+"//"+sr.toShortString()+"//"+s.getName());
+                            Log.e("Rect Partial F->",sr.getX()+"//"+sr.label+"//"+sr.getPicture_id()+"//"+sr.toShortString());
                             sr.symptom_id = s.getId();
                             DB.symptomRectDao().createSymptomRect(sr);
                         }

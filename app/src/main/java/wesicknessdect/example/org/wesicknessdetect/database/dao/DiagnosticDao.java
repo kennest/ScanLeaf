@@ -15,6 +15,8 @@ import androidx.room.Update;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 @Dao
 public abstract class DiagnosticDao {
@@ -26,14 +28,24 @@ public abstract class DiagnosticDao {
 
 
     @Transaction
-    public void insertDiagnosticWithPicture(Diagnostic d, List<Picture> pictures) {
+    public void insertDiagnosticWithPictureAndRect(Diagnostic d, List<Picture> pictures) {
         Log.e("DAO pic size:",pictures.size()+"");
         final long id = createDiagnostic(d);
         for (Picture p : pictures) {
             p.setDiagnostic_id(id);
-            insertPicture(p);
+            final long pic_ic=insertPicture(p);
+            for(SymptomRect sr:p.getSymptomRects()){
+                sr.setPicture_id((int) pic_ic);
+                createSymptomRect(sr);
+            }
         }
     }
+
+    @Query("SELECT * FROM Symptom WHERE name = :name")
+    public abstract Symptom getByNameSync(String name);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract long createSymptomRect(SymptomRect symptomRect);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long insertPicture(Picture picture);
@@ -41,8 +53,6 @@ public abstract class DiagnosticDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     public abstract void updateDiagnostic(Diagnostic diagnostic);
 
-    @Delete
-    public abstract void deleteDiagnostic(Diagnostic diagnostic);
 
     @Query("SELECT * FROM Diagnostic")
     public abstract LiveData<List<Diagnostic>> getAll();

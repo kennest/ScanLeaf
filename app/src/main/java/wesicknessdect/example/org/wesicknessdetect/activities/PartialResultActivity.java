@@ -119,10 +119,10 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[1] + " " + locpart[0] + ")");
 
+        @SuppressLint("SimpleDateFormat")
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         String date = df.format(c.getTime());
         Log.e("Time:", date);
-        String[] parts = date.split(" ");
 
         diagnostic.setProbability(95f);
         long user_id = Long.parseLong(FastSave.getInstance().getString("user_id", "1"));
@@ -234,7 +234,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @OnClick(R.id.btn_save_diagnostic)
     public void SendDiagnostic() {
             try {
+                diagnostic.setPictures(AppController.getInstance().getPictures());
                 RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
+                finish();
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -256,22 +258,22 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         String recognitions_json = getIntent().getStringExtra("recognitions_by_part");
         String images_json = getIntent().getStringExtra("images_by_part");
 
-        Log.e(getLocalClassName() + " InitCard:", images_json);
+        //Log.e(getLocalClassName() + " InitCard:", images_json);
 
         recognitions_by_part = gson.fromJson(recognitions_json, typeOfHashMap);
         images_by_parts = gson.fromJson(images_json, typeOfHashMap2);
 
-        Log.e(TAG + " map size 0", images_by_parts.size() + "");
+        //Log.e(TAG + " map size 0", images_by_parts.size() + "");
 
         for (Map.Entry<Integer, String> entry : images_by_parts.entrySet()) {
             Map<Integer, String> map = new HashMap<>();
             map.put(entry.getKey(), entry.getValue());
             images_by_part_adapter.put(index, map);
             index = index + 1;
-            Log.e(getLocalClassName() + " Index:", index + "");
+            //Log.e(getLocalClassName() + " Index:", index + "");
         }
 
-        Log.e(TAG + " map size", images_by_part_adapter.size() + "");
+        //Log.e(TAG + " map size", images_by_part_adapter.size() + "");
         manager = new CardStackLayoutManager(this, this);
         manager.setDirections(Direction.HORIZONTAL);
         manager.setCanScrollHorizontal(true);

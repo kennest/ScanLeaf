@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey;
 @Entity(foreignKeys = {@ForeignKey(entity = Question.class,
 parentColumns = "id",
 childColumns = "question_id")},
-        indices = {@Index("question_id")})
+        indices = {@Index({"question_id","name"})})
 public class Symptom {
     @SerializedName(value = "id")
     @PrimaryKey

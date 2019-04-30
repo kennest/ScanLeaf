@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.system.ErrnoException;
 import android.util.Log;
 
 import com.downloader.Error;
@@ -17,10 +18,12 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.gmail.samehadar.iosdialog.IOSDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -50,7 +53,11 @@ public class DownloadService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         String downloadPath = intent.getStringExtra(DOWNLOAD_PATH);
         int part_id = intent.getIntExtra(PART_ID,0);
-        startDownload(getApplicationContext(),downloadPath,part_id);
+        try {
+            startDownload(getApplicationContext(), downloadPath, part_id);
+        }catch (ErrnoException e){
+                EventBus.getDefault().post(new ShowLoadingEvent("No Space Left", "Please Free Memory", true));
+        }
     }
 
     @Override
@@ -59,7 +66,7 @@ public class DownloadService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startDownload(Context context,String url,@Nullable int part_id) {
+    public void startDownload(Context context,String url,@Nullable int part_id) throws ErrnoException {
         if (Constants.isOnline(context)) {
             Uri uri = Uri.parse(url);
             String destination = Objects.requireNonNull(context.getExternalFilesDir(null)).getPath() + File.separator;
@@ -88,7 +95,7 @@ public class DownloadService extends IntentService {
                     .setOnProgressListener(new OnProgressListener() {
                         @Override
                         public void onProgress(Progress progress) {
-                            //Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
+                            Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
                             currentBytes = progress.currentBytes;
                             totalBytes = progress.totalBytes;
                             EventBus.getDefault().post(new ModelDownloadEvent(progress.currentBytes, progress.totalBytes, part_id));

@@ -15,10 +15,8 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -26,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -35,15 +32,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import androidx.lifecycle.Observer;
-import androidx.room.Transaction;
-
 import io.paperdb.Paper;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
@@ -55,7 +46,6 @@ import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
-import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
@@ -69,7 +59,6 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
-import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 import wesicknessdect.example.org.wesicknessdetect.utils.DownloadService;
 import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
@@ -379,7 +368,7 @@ public class RemoteTasks {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            DB.diagnosticDao().insertDiagnosticWithPicture(d, pictures);
+                            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, pictures);
                         }
                         return null;
                     }
@@ -468,21 +457,16 @@ public class RemoteTasks {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                List<Picture> diagnostic_pictures = new ArrayList<>();
                 d.setSended(0);
-                if (d.getImages_by_parts() != null) {
-                    //Log.e("Remote pic size", d.getImages_by_parts().size() + "");
-                    for (Map.Entry<Integer, String> entry : d.getImages_by_parts().entrySet()) {
-                        Picture p = new Picture();
-                        p.setCulture_part_id(entry.getKey());
-                        p.setImage(entry.getValue());
-                        diagnostic_pictures.add(p);
+                for(Picture p:d.getPictures()){
+                    for(SymptomRect sr:p.getSymptomRects()){
+                        Symptom s=AppDatabase.getInstance(mContext).symptomDao().getByNameSync(sr.label.toUpperCase());
+                        sr.setSymptom_id(s.getId());
                     }
                 }
-                DB.diagnosticDao().insertDiagnosticWithPicture(d, diagnostic_pictures);
+                DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
                 return null;
             }
-
         }.execute();
         EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
         return d;
