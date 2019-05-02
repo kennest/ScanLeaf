@@ -94,16 +94,15 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(this);
 
-//        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
-//        stopService(offline);
-//        startService(offline);
+        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+        stopService(offline);
+        startService(offline);
 
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
                     Log.e("RectF lenght->", symptomRects.size()+"");
-
             }
         });
 

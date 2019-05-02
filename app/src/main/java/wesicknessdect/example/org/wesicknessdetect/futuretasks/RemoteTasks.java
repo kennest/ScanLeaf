@@ -83,7 +83,7 @@ public class RemoteTasks {
     List<Country> countries = new ArrayList<>();
     List<Diagnostic> diagnostics = new ArrayList<>();
     List<Picture> pictures = new ArrayList<>();
-    List<SymptomRect> symptomRects = new ArrayList<>();
+
     List<Model> models = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
     Picture picture = new Picture();
@@ -281,10 +281,10 @@ public class RemoteTasks {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    if(!sync) {
+                                    if (!sync) {
                                         r.setSended(1);
                                         DB.symptomRectDao().updateSymptomRect(r);
-                                    }else{
+                                    } else {
                                         DB.symptomRectDao().delete(r);
                                     }
                                     return null;
@@ -308,41 +308,34 @@ public class RemoteTasks {
     //Get SymptomRect from server
     @SuppressLint("StaticFieldLeak")
     public List<SymptomRect> getSymptomsRect(int picture_id) throws IOException {
+        List<SymptomRect> symptomRects = new ArrayList<>();
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call call = service.getSymptomRect("Token " + token,picture_id);
+            Call call = service.getSymptomRect("Token " + token, picture_id);
             Response<List<JsonElement>> response = call.execute();
             if (response.isSuccessful()) {
                 List<JsonElement> symptomRectsDB = response.body();
                 //Log.e("RectF Remote:", r.getPicture_id()+"//"+r.left+"//"+r.right);
                 assert symptomRectsDB != null;
                 for (JsonElement r : symptomRectsDB) {
-                            SymptomRect s = new SymptomRect();
-                            //s.setX(r.getAsJsonObject().get("id").getAsInt());
-                            //s.setPicture_id(r.getAsJsonObject().get("picture").getAsInt());
-                            s.setSymptom_id(r.getAsJsonObject().get("symptom").getAsInt());
-                            s.left = Float.parseFloat(r.getAsJsonObject().get("x_min").getAsString());
-                            s.bottom = Float.parseFloat(r.getAsJsonObject().get("y_min").getAsString());
-                            s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
-                            s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
-                            s.setSended(1);
-                           symptomRects.add(s);
-                        }
-
+                    SymptomRect s = new SymptomRect();
+                    //s.setX(r.getAsJsonObject().get("id").getAsInt());
+                    //s.setPicture_id(r.getAsJsonObject().get("picture").getAsInt());
+                    s.setSymptom_id(r.getAsJsonObject().get("symptom").getAsInt());
+                    s.left = Float.parseFloat(r.getAsJsonObject().get("x_min").getAsString());
+                    s.bottom = Float.parseFloat(r.getAsJsonObject().get("y_min").getAsString());
+                    s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
+                    s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
+                    s.setSended(1);
+                    symptomRects.add(s);
+                }
+                Log.e("Sync RectF length -> ", symptomRects.size() + " -> "+picture_id);
                 return symptomRects;
             } else {
                 Log.e("Error:", response.errorBody().string());
+                return null;
             }
-        } else {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    symptomRects = DB.symptomRectDao().getAllSync();
-                    return null;
-                }
-            }.execute();
-            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
         return symptomRects;
     }
@@ -404,8 +397,8 @@ public class RemoteTasks {
                 List<Picture> list = response.body();
                 if (response.body().size() > 0) {
                     for (Picture p : response.body()) {
-                        List<SymptomRect> list1=new ArrayList<>();
-                        list1=getSymptomsRect((int) p.getRemote_id());
+                        List<SymptomRect> list1 = new ArrayList<>();
+                        list1 = getSymptomsRect((int) p.getRemote_id());
                         p.setSymptomRects(list1);
                         Uri uri = Uri.parse(p.getImage());
                         String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
@@ -481,25 +474,26 @@ public class RemoteTasks {
                                 } else {
                                     DB.diagnosticDao().delete(d);
                                 }
-                                pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
-                                for (Picture p : pictures) {
-                                    List<SymptomRect> list=new ArrayList<>();
-                                    if (p.getSended() == 0) {
-                                        try {
-                                            p.setDiagnostic_id(d.getX());
-                                            SendDiagnosticPicture(p, sync);
-                                            list = DB.symptomRectDao().getByPictureIdSync(p.getX());
-                                            for (SymptomRect s : list) {
-                                                if (s.getSended() == 0) {
-                                                    sendSymptomRect(s, sync);
-                                                }
-                                            }
-                                        } catch (IOException e) {
-                                            e.printStackTrace();
-                                        }
-
-                                    }
-                                }
+//                                pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
+//                                for (Picture p : pictures) {
+//                                    if (p.getSended() == 0) {
+//                                        try {
+//                                            List<SymptomRect> list=new ArrayList<>();
+//                                            p.setDiagnostic_id(d.getX());
+//                                            SendDiagnosticPicture(p, sync);
+//                                            list = DB.symptomRectDao().getByPictureIdSync(p.getX());
+//                                            Log.e("Offline Rect lenght->",list.size()+"");
+//                                            for (SymptomRect s : list) {
+//                                                if (s.getSended() == 0) {
+//                                                    sendSymptomRect(s, sync);
+//                                                }
+//                                            }
+//                                        } catch (IOException e) {
+//                                            e.printStackTrace();
+//                                        }
+//
+//                                    }
+//                                }
                                 return null;
                             }
                         }.execute();
