@@ -13,9 +13,12 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
@@ -66,8 +69,9 @@ public interface APIService {
     @POST("api/pixel/")
     Call<JsonElement> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
 
+
     @GET("api/pixels")
-    Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token);
+    Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token, @Query("picture") int picture_id);
 
     @POST("api/picture/")
     Call<JsonElement> sendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);

@@ -6,9 +6,8 @@ import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
 import java.util.List;
-import java.util.Set;
+
 
 import static androidx.room.ForeignKey.CASCADE;
 
@@ -38,7 +37,7 @@ public class Picture {
     private String image;
 
     @Ignore
-    Set<SymptomRect> symptomRects;
+    List<SymptomRect> symptomRects;
 
     public int getX() {
         return x;
@@ -88,11 +87,11 @@ public class Picture {
         this.remote_id = remote_id;
     }
 
-    public Set<SymptomRect> getSymptomRects() {
+    public List<SymptomRect> getSymptomRects() {
         return symptomRects;
     }
 
-    public void setSymptomRects(Set<SymptomRect> symptomRects) {
+    public void setSymptomRects(List<SymptomRect> symptomRects) {
         this.symptomRects = symptomRects;
     }
 }

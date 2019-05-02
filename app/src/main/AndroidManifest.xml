@@ -25,8 +25,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.DiseaseActivity"></activity>
-        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.SettingsActivity"></activity>
+        <activity android:name=".activities.DiseaseActivity" />
+        <activity android:name=".activities.ProfileActivity" />
         <activity android:name=".activities.CommunityActivity" />
         <activity android:name=".activities.SplashActivity">
             <intent-filter>
@@ -69,7 +70,7 @@
         <service
             android:name=".utils.OfflineService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

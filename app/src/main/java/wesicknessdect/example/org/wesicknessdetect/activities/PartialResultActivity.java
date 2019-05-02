@@ -235,7 +235,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void SendDiagnostic() {
             try {
                 diagnostic.setPictures(AppController.getInstance().getPictures());
-                RemoteTasks.getInstance(this).sendDiagnostic(diagnostic);
+                RemoteTasks.getInstance(this).sendDiagnostic(diagnostic,false);
                 finish();
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

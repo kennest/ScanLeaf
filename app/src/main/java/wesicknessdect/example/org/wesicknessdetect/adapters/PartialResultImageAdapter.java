@@ -38,6 +38,7 @@ import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classif
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
@@ -49,6 +50,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
     private Map<Integer, Map<Integer, String>> images_by_part;
     private CulturePart culturePart = new CulturePart();
     private List<Symptom> symptomsList = new ArrayList<>();
+    private Question question =new Question();
 
     List<Picture> pictures = new ArrayList<>();
 
@@ -71,13 +73,20 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
     @Override
     public void onBindViewHolder(@NonNull ImageHolder holder, int position) {
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                symptomsList = AppDatabase.getInstance(context).symptomDao().getAllSync();
-                return null;
+        for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
+            if (entry.getKey().equals(position)) {
+                for (Map.Entry<Integer, String> n : entry.getValue().entrySet()) {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            question=AppDatabase.getInstance(context).questionDao().getByPartSync(n.getKey());
+                            symptomsList = AppDatabase.getInstance(context).symptomDao().getByQuestion(question.getId());
+                            return null;
+                        }
+                    }.execute();
+                }
             }
-        }.execute();
+        }
 
         //Log.e("recognitions imgs 0", "/" + images_by_part.get(position) + "//" + position);
         context.runOnUiThread(new Runnable() {
@@ -86,10 +95,9 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
             public void run() {
                 @SuppressLint("UseSparseArrays")
                 Map<Integer, String> recognition_legend = new HashMap<>();
-
                 //holder.symptoms_txt=new LinearLayout(context);
                 Set<String> symptoms = new HashSet<>();
-                Set<SymptomRect> symptomsRects = new HashSet<>();
+                List<SymptomRect> symptomsRects = new ArrayList<>();
                 Picture p = new Picture();
                 for (Map.Entry<Integer, Map<Integer, String>> entry : images_by_part.entrySet()) {
                     //Log.e("recognitions imgs", entry.getKey() + " ** " + images_by_part.get(position) + " ** " + entry.getValue() + " ** " + position);

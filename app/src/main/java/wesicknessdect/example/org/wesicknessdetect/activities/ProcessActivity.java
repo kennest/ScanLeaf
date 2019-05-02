@@ -94,14 +94,6 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(this);
 
-        //Init Necessary Data
-//        try {
-//            RemoteTasks.getInstance(this).getDiagnostics();
-//            RemoteTasks.getInstance(this).getSymptomsRect();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
 //        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
 //        stopService(offline);
 //        startService(offline);
@@ -110,14 +102,12 @@ public class ProcessActivity extends BaseActivity {
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
-                for (SymptomRect r : symptomRects) {
-                    Log.e("RectF Infos::", r.getSended() + "/ID->" + r.getX() + "/Picture->" + r.getPicture_id());
-                }
+                    Log.e("RectF lenght->", symptomRects.size()+"");
+
             }
         });
 
-        //Save RectF to database
-        //SaveRectFtoDatabase();
+
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -197,53 +187,6 @@ public class ProcessActivity extends BaseActivity {
         });
     }
 
-
-    //Save the rectf of symptoms to DB
-    @SuppressLint({"StaticFieldLeak", "UseSparseArrays"})
-    private void SaveRectFtoDatabase() {
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                symptomsRects = AppController.getInstance().getSymptomsRects();
-                symptoms = DB.symptomDao().getAllSync();
-                return null;
-            }
-        }.execute();
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                Log.e("Rect Partial 1 ->",symptomsRects.size()+"");
-                for (SymptomRect sr : symptomsRects) {
-                    for (Symptom s : symptoms) {
-                        //Log.e("Rect Partial E->",sr.getX()+"//"+sr.label+"//"+sr.getPicture_id()+"//"+sr.toShortString());
-                        if (s.getName().equals(sr.label.toUpperCase())) {
-                            Log.e("Rect Partial F->",sr.getX()+"//"+sr.label+"//"+sr.getPicture_id()+"//"+sr.toShortString());
-                            sr.symptom_id = s.getId();
-                            DB.symptomRectDao().createSymptomRect(sr);
-                        }
-                    }
-                }
-                AppController.getInstance().setSymptomsRects(new ArrayList<>());
-                return null;
-            }
-        }.execute();
-
-        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
-            @Override
-            public void onChanged(List<SymptomRect> symptomRects) {
-                Log.e("Symptoms Rect size::", symptomRects.size() + "");
-                if (symptomRects.size() > 0) {
-                    for (SymptomRect r : symptomRects) {
-                        Log.e("Rect from DB -> ", r.toShortString());
-                        //Try to send rect to Server
-                    }
-                }
-            }
-        });
-    }
-
     private void setupTabLayout() {
         LinearLayout layout = ((LinearLayout) ((LinearLayout) tabLayout.getChildAt(0)).getChildAt(0));
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) layout.getLayoutParams();
@@ -310,6 +253,8 @@ public class ProcessActivity extends BaseActivity {
                 break;
 
             case R.id.menu_settings:
+                Intent settings = new Intent(this, SettingsActivity.class);
+                startActivity(settings);
                 break;
 
         }

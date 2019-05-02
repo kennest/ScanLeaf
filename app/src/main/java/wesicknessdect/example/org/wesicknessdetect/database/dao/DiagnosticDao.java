@@ -26,6 +26,8 @@ public abstract class DiagnosticDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertDiagnostics(Diagnostic... diagnostics);
 
+    @Delete
+    public abstract void delete(Diagnostic diagnostic);
 
     @Transaction
     public void insertDiagnosticWithPictureAndRect(Diagnostic d, List<Picture> pictures) {
@@ -59,6 +61,9 @@ public abstract class DiagnosticDao {
 
     @Query("SELECT * FROM Diagnostic")
     public abstract List<Diagnostic> getAllSync();
+
+    @Query("SELECT * FROM Diagnostic WHERE sended=0")
+    public abstract List<Diagnostic> getNotSendedSync();
 
     @Transaction
     @Query("SELECT * FROM Diagnostic")

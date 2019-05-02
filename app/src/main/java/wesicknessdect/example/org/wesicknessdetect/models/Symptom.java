@@ -23,6 +23,7 @@ public class Symptom {
     @SerializedName(value = "question")
     private long question_id;
 
+
     public int getId() {
         return id;
     }

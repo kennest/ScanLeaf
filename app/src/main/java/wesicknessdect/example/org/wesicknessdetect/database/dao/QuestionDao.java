@@ -20,4 +20,7 @@ public interface QuestionDao {
 
     @Query("SELECT * FROM Question WHERE part_culture_id=:id")
     LiveData<Question> getByPart(long id);
+
+    @Query("SELECT * FROM Question WHERE part_culture_id=:id")
+    Question getByPartSync(long id);
 }

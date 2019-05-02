@@ -48,6 +48,9 @@ public abstract class PictureDao {
     @Query("SELECT * FROM Picture")
     public abstract List<Picture> getAllSync();
 
+    @Query("SELECT * FROM Picture WHERE sended=0")
+    public abstract List<Picture> getNotSendedSync();
+
     @Query("SELECT * FROM Picture WHERE x=:id")
     public abstract LiveData<List<Picture>> getById(long id);
 
