@@ -10,63 +10,85 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
 
 /**
  * Created by Jordan Adopo on 10/02/2019.
  */
 
-public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
 
-    Context context;
+    private List<Post> mData = null;
+    private Context context;
 
-    public ChatAdapter(Context context) {
+
+
+    public ChatAdapter(Context context, List<Post> list) {
+        this.mData = list;
         this.context = context;
     }
-
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ChatHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_layout,
-                parent,false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.chat_item_layout,
+                viewGroup,false);
 
         return new ChatHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ChatHolder holder, int position) {
 
-        ((ChatHolder) holder).userName.setText("Vieux kouakou");
-        ((ChatHolder) holder).unreadCnt.setText("7");
-        ((ChatHolder) holder).latestTime.setText("Hier");
-        ((ChatHolder) holder).latestMessage.setText("message Text!");
+        Post post=mData.get(position);
+        holder.bind(post);
+
+
         //Glide.with(context).load(R.drawable.vieuxkouakou).into(((ChatHolder) holder).userImage);
     }
 
     @Override
     public int getItemCount() {
-        return 50;
+        return mData.size();
     }
 
-    private class ChatHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ChatHolder extends RecyclerView.ViewHolder {
 
         ImageView userImage;
         TextView userName,latestMessage,latestTime,unreadCnt;
 
-        public ChatHolder(View itemView) {
+        public ChatHolder(final View itemView) {
             super(itemView);
             userImage = itemView.findViewById(R.id.user_image);
             latestMessage = itemView.findViewById(R.id.latest_message);
             userName = itemView.findViewById(R.id.my_status);
             latestTime = itemView.findViewById(R.id.latest_time);
-            unreadCnt = itemView.findViewById(R.id.unread_messages);
-        }
-
-        @Override
-        public void onClick(View v) {
+            //unreadCnt = itemView.findViewById(R.id.unread_messages);
 
         }
+
+        public void bind(final Post post){
+            userImage.setImageDrawable(itemView.getResources().getDrawable(R.drawable.swollen));
+            String f=post.getDiseaseName();
+            userName.setText(f);
+
+
+            latestTime.setText(post.getTime());
+
+//            long di= Long.parseLong(post.getDistance());
+//            int dis;
+//            dis= (int) (di/1000);
+            String d="Détecté à "+post.getDistance()+" m de vous";
+            latestMessage.setText(d);
+        }
+
+
     }
 
 }

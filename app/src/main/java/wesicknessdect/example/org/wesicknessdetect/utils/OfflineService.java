@@ -16,10 +16,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class OfflineService extends Service {
@@ -30,7 +33,7 @@ public class OfflineService extends Service {
     List<SymptomRect> symptomRects;
     List<Diagnostic> diagnostics;
     List<Picture> pictures;
-
+    Post p;
     public OfflineService() {
     }
 
@@ -91,6 +94,48 @@ public class OfflineService extends Service {
             Double longi= Double.valueOf(split[1]);
 
             Log.d("Mes coordonnées", "Lat: "+lat+", Longi: "+longi);
+            Location l=new Location();
+            l.setLat(lat.toString());
+            l.setLongi(longi.toString());
+
+            //recuperation du dernier id du serveur
+            //code de ça ▲
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    Log.e("Pre Task", "Started");
+                   p=DB.postDao().getLastPost();
+                    Log.d("dernier_post_data"," | "+p.getId()+" | "+p.getDiseaseName()+" | "+p.getDistance()+" | "+p.getIdServeur()+" | "+p.getTime());
+                    String idServeur=""+0;
+                    Log.d("dernier_post",""+p.getIdServeur());
+                    if (p.getIdServeur()!=null) {
+                        Post a = p;
+                        idServeur = a.getIdServeur();
+                    }else{
+                        idServeur=""+0;
+                    }
+
+                    l.setIdServeur(idServeur);
+                    Log.d("envoye", "Lat:"+l.getLat()+", Long:"+l.getLongi()+", idServeur:"+l.getIdServeur());
+                    RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
+
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    try {
+                        SendDataOffline();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.e("Pre Task", "Finished");
+                }
+            }.execute();
+
+
             //Toast.makeText(getApplicationContext(), "Offline Really Started", Toast.LENGTH_LONG).show();
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -119,6 +164,8 @@ public class OfflineService extends Service {
                     Log.e("Pre Task", "Finished");
                 }
             }.execute();
+
+
         }
 
     }

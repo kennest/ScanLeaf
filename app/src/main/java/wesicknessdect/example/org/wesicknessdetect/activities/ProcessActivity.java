@@ -107,6 +107,7 @@ public class ProcessActivity extends BaseActivity {
         startService(offline);
 
 
+
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
             public void onChanged(List<SymptomRect> symptomRects) {
