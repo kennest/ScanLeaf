@@ -1,10 +1,15 @@
 package wesicknessdect.example.org.wesicknessdetect.database;
 
 import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+
+import java.io.File;
+
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CountryDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CultureDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CulturePartsDao;
@@ -95,14 +100,16 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract StruggleDao struggleDao();
     public abstract PictureDao pictureDao();
     private static AppDatabase INSTANCE;
-    private static final String DATABASE_NAME = "wesickness.db";
+    private static final String DATABASE_NAME = "scanleaf.db";
     private Context context;
     public static AppDatabase getInstance(Context context){
         if(appDatabase == null){
-            appDatabase = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DATABASE_NAME)
+            appDatabase = Room.databaseBuilder(context, AppDatabase.class, context.getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME)
                     .allowMainThreadQueries()
                     .build();
         }
+        String currentDBPath=context.getDatabasePath(context.getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME).getAbsolutePath();
+        Log.e("DATABASE PATH ::",currentDBPath);
         return appDatabase;
     }
 

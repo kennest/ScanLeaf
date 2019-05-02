@@ -15,22 +15,26 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 @Dao
 public abstract class SymptomRectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract long createSymptomRect(SymptomRect symptomRect);
+    public abstract long create(SymptomRect symptomRect);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract long[] createManySymptomRect(List<SymptomRect> symptomRects);
+    public abstract long[] createMany(List<SymptomRect> symptomRects);
+
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     public abstract void updateSymptomRect(SymptomRect symptomRect);
 
     @Delete
-    public abstract void deleteSymptomRect(SymptomRect symptomRect);
+    public abstract void delete(SymptomRect symptomRect);
 
     @Query("SELECT * FROM SymptomRect")
     public abstract LiveData<List<SymptomRect>> getAll();
 
     @Query("SELECT * FROM SymptomRect")
     public abstract List<SymptomRect> getAllSync();
+
+    @Query("SELECT * FROM SymptomRect WHERE sended=0")
+    public abstract List<SymptomRect> getNotSendedSync();
 
     @Query("SELECT * FROM SymptomRect WHERE picture_id=:id")
     public abstract LiveData<List<SymptomRect>> getByPictureId(long id);

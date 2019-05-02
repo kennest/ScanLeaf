@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.models;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
 import java.util.Map;
 
 import androidx.room.Entity;
@@ -41,6 +42,9 @@ public class Diagnostic  {
 
     @Ignore
     private Map<Integer, String> images_by_parts;
+
+    @Ignore
+    private List<Picture> pictures;
 
     public int getX() {
         return x;
@@ -145,5 +149,13 @@ public class Diagnostic  {
 
     public void setRemote_id(int remote_id) {
         this.remote_id = remote_id;
+    }
+
+    public List<Picture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<Picture> pictures) {
+        this.pictures = pictures;
     }
 }

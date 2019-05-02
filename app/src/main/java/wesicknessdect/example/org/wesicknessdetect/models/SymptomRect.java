@@ -71,4 +71,12 @@ public class SymptomRect extends RectF {
     public void setRemote_id(int remote_id) {
         this.remote_id = remote_id;
     }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
 }

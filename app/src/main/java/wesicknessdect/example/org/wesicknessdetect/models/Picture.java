@@ -1,21 +1,20 @@
 package wesicknessdect.example.org.wesicknessdetect.models;
 
 import com.google.gson.annotations.SerializedName;
-
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import java.util.List;
+
 
 import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = {
         @ForeignKey(entity = CulturePart.class,
         parentColumns = "id",
-        childColumns = "culture_part_id",onUpdate = CASCADE,onDelete = CASCADE),
-        @ForeignKey(entity = Diagnostic.class,
-                parentColumns = "x",
-                childColumns = "diagnostic_id",onUpdate = CASCADE)},
+        childColumns = "culture_part_id",onUpdate = CASCADE,onDelete = CASCADE)},
         indices = {@Index({"diagnostic_id","culture_part_id"})})
 public class Picture {
 
@@ -36,6 +35,9 @@ public class Picture {
 
     @SerializedName(value = "image")
     private String image;
+
+    @Ignore
+    List<SymptomRect> symptomRects;
 
     public int getX() {
         return x;
@@ -83,5 +85,13 @@ public class Picture {
 
     public void setRemote_id(long remote_id) {
         this.remote_id = remote_id;
+    }
+
+    public List<SymptomRect> getSymptomRects() {
+        return symptomRects;
+    }
+
+    public void setSymptomRects(List<SymptomRect> symptomRects) {
+        this.symptomRects = symptomRects;
     }
 }

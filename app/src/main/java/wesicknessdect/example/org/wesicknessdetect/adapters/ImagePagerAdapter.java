@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import androidx.viewpager.widget.PagerAdapter;
 import wesicknessdect.example.org.wesicknessdetect.R;
@@ -79,7 +80,7 @@ public class ImagePagerAdapter extends PagerAdapter {
                         //Split to get symptoms infos
                         Type typeOfHashMap = new TypeToken<List<String>>() {}.getType();
                         symptoms_txt.removeAllViews();
-                        List<String> symptAttrs=gson.fromJson(str[1],typeOfHashMap);
+                        Set<String> symptAttrs=new HashSet<>(gson.fromJson(str[1],typeOfHashMap));
                         Log.e("Attrs Size -> "+position+" -> ",symptAttrs.size()+"");
                         for(String s:symptAttrs){
                             str2=s.split(":");

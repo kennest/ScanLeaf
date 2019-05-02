@@ -67,7 +67,15 @@ public class OfflineService extends Service {
             for (Diagnostic d : diagnostics) {
                 Log.e("Diag::Size", diagnostics.size() + "");
                 if (d.getSended() == 0) {
-                    RemoteTasks.getInstance(getApplicationContext()).SendOfflineDiagnostic(d);
+                    RemoteTasks.getInstance(getApplicationContext()).SendOfflineDiagnostic(d,false);
+                }
+            }
+        }
+
+        if(pictures!=null){
+            for(Picture p:pictures){
+                if(p.getSended()==0){
+                    RemoteTasks.getInstance(getApplicationContext()).SendDiagnosticPicture(p,false);
                 }
             }
         }
@@ -76,7 +84,7 @@ public class OfflineService extends Service {
             for(SymptomRect s:symptomRects){
                 Log.e("Diag::Size", symptomRects.size() + "");
                 if (s.getSended() == 0) {
-                    RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(s);
+                    RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(s,false);
                 }
             }
         }

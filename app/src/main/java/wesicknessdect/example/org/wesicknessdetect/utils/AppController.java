@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.PRDownloader;
@@ -23,15 +24,17 @@ import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class AppController extends Application {
-    private static final String DATABASE_NAME = "wesickness.db";
+    private static final String DATABASE_NAME = "scanleaf.db";
     public static AppDatabase appDatabase;
     private static AppController mInstance;
     @SuppressLint("UseSparseArrays")
     public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     public List<SymptomRect> symptomsRects = new ArrayList<>();
+    public List<Picture> pictures = new ArrayList<>();
 
     public static synchronized AppController getInstance() {
         if (mInstance == null) { //if there is no instance available... create new one
@@ -61,10 +64,10 @@ public class AppController extends Application {
         //RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
 
         //Delete the Database
-       getApplicationContext().deleteDatabase(DATABASE_NAME);
+        getApplicationContext().deleteDatabase(getApplicationContext().getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME);
 
         //Create the database
-        appDatabase = AppDatabase.getInstance(getApplicationContext());
+        //appDatabase = AppDatabase.getInstance(getApplicationContext());
 
         //Create data
         InitDBFromServer();
@@ -84,6 +87,14 @@ public class AppController extends Application {
 
     public void setRecognitions_by_part(Map<Integer, List<Classifier.Recognition>> recognitions_by_part) {
         this.recognitions_by_part = recognitions_by_part;
+    }
+
+    public List<Picture> getPictures() {
+        return pictures;
+    }
+
+    public void setPictures(List<Picture> pictures) {
+        this.pictures = pictures;
     }
 
     @SuppressLint("StaticFieldLeak")

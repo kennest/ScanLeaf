@@ -15,9 +15,11 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -38,6 +40,8 @@ public class AnalysisDetailsActivity extends BaseActivity {
     ImagePagerAdapter imagePagerAdapter;
     List<Map<String, Bitmap>> linkedPartImage = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
+    List<SymptomRect> symptomRects = new ArrayList<>();
+    List<DiagnosticPictures> diagnosticPictures = new ArrayList<>();
 
     @BindView(R.id.pager)
     public ViewPager viewPager;
@@ -67,13 +71,13 @@ public class AnalysisDetailsActivity extends BaseActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 symptoms = DB.symptomDao().getAllSync();
+                diagnosticPictures=DB.diagnosticDao().getDiagnosticWithPicturesSync();
+                symptomRects=DB.symptomRectDao().getAllSync();
                 return null;
             }
         }.execute();
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+
                 DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
                     @SuppressLint("StaticFieldLeak")
                     @Override
@@ -84,7 +88,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                 for (Picture p : dp.pictures) {
                                     //Log.e("Pic exist:", p.getImage());
                                     if (new File(p.getImage()).exists()) {
-                                        List<String> symptAttrs = new ArrayList<>();
+                                        Set<String> symptAttrs = new HashSet<>();
                                         Map<String, Bitmap> map = new HashMap<>();
                                         @SuppressLint("UseSparseArrays")
                                         Map<Integer, SymptomRect> rects = new HashMap<>();
@@ -133,16 +137,12 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                                 imagePagerAdapter.notifyDataSetChanged();
                                             }
                                         });
-
                                     }
                                 }
                             }
                         }
                     }
                 });
-            }
-        });
-
         imagePagerAdapter = new ImagePagerAdapter(this, linkedPartImage);
         viewPager.setAdapter(imagePagerAdapter);
 

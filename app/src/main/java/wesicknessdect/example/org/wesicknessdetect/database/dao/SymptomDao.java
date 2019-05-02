@@ -22,7 +22,7 @@ public interface SymptomDao {
     List<Symptom> getAllSync();
 
     @Query("SELECT * FROM Symptom WHERE question_id=:id")
-    LiveData<Symptom> getByQuestion(long id);
+    List<Symptom> getByQuestion(long id);
 
     @Query("SELECT * FROM Symptom WHERE id=:id")
     LiveData<Symptom> getById(long id);

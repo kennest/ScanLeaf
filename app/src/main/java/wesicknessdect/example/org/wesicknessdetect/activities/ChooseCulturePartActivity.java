@@ -206,7 +206,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
     }
 
     //Get Culture part downloadd infos for supply progressbar
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    @Subscribe(threadMode = ThreadMode.POSTING)
     public void getModelDownloadBytes(ModelDownloadEvent event) {
         //Log.e("Download started", event.part_id + "/" + event.downloaded + "/" + event.filesize);
         for (CulturePart c : culturePartList) {
