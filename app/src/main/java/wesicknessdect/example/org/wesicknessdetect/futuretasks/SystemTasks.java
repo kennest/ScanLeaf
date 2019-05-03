@@ -37,8 +37,10 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import rx.functions.Action1;
@@ -115,24 +117,50 @@ public class SystemTasks {
         return future.get();
     }
 
-    @SuppressLint("CheckResult")
+    @SuppressLint({"CheckResult", "MissingPermission"})
     public void getLocation() {
-        new RxGps(mContext).locationLowPower()
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(location -> {
-                    //you've got the location
-                    Log.d("Location", location.getLatitude() + "//" + location.getLongitude());
-                    FastSave.getInstance().saveString("location",location.getLatitude()+":"+location.getLongitude());
-                }, throwable -> {
-                    if (throwable instanceof RxGps.PermissionException) {
-                        //the user does not allow the permission
-                    } else if (throwable instanceof RxGps.PlayServicesNotAvailableException) {
-                        //the user do not have play services
-                        Log.e("Location", "No play services");
-                    }
-                });
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                Log.d("Location", location.getLatitude() + "//" + location.getLongitude());
+                FastSave.getInstance().saveString("location", location.getLatitude() + ":" + location.getLongitude());
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+// Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
+//        new RxGps(mContext).locationBalancedPowerAcuracy()
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(location -> {
+//                    //you've got the location
+//                    Log.d("Location", location.getLatitude() + "//" + location.getLongitude());
+//                    FastSave.getInstance().saveString("location",location.getLatitude()+":"+location.getLongitude());
+//                }, throwable -> {
+//                    if (throwable instanceof RxGps.PermissionException) {
+//                        //the user does not allow the permission
+//                        Log.e("Location", "No permissions");
+//                    } else if (throwable instanceof RxGps.PlayServicesNotAvailableException) {
+//                        //the user do not have play services
+//                        Log.e("Location", "No play services");
+//                    }
+//                });
     }
+
     public void ensureLocationSettings() {
         LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
                 .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
@@ -164,14 +192,14 @@ public class SystemTasks {
 
                 cropSize = TF_OD_API_INPUT_SIZE;
 
-                LOGGER.e("Model loaded infos", model + "//" + label+"//"+detector.getStatString());
+                LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
 
                 recognitions = detector.recognizeImage(bitmap);
                 Log.e("Recognitions", recognitions.toString());
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0,4)));
+                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
 
             } catch (final IOException e) {
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0,4)));
+                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
                 LOGGER.e("Exception initializing classifier!", e);
             }
 

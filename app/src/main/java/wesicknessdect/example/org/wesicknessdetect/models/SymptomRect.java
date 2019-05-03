@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity
+@Entity(indices = @Index("uuid"))
 public class SymptomRect extends RectF {
 
     @SerializedName(value = "id_mobile")
@@ -21,6 +21,12 @@ public class SymptomRect extends RectF {
 
     @SerializedName(value = "id")
     private int remote_id;
+
+    @SerializedName(value = "uuid")
+    private String uuid;
+
+    @SerializedName(value = "picture_uuid")
+    private String picture_uuid;
 
     @SerializedName(value = "symptom")
     public int symptom_id;
@@ -78,5 +84,21 @@ public class SymptomRect extends RectF {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getPicture_uuid() {
+        return picture_uuid;
+    }
+
+    public void setPicture_uuid(String picture_uuid) {
+        this.picture_uuid = picture_uuid;
     }
 }

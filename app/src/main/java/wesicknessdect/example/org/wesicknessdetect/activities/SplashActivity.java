@@ -10,7 +10,10 @@ import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +23,15 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appizona.yehiahd.fastsave.FastSave;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 
@@ -41,11 +53,28 @@ public class SplashActivity extends BaseActivity {
     @BindView(R.id.welcome_txt)
     TextView welcome;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
+
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_NETWORK_STATE
+                ).withListener(new MultiplePermissionsListener() {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+               Log.e("PERMISSIONS","ALL CHECKED");
+                SystemTasks.getInstance(SplashActivity.this).ensureLocationSettings();
+            }
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+        }).check();
         //*****************CHECK IF USER IS AUTHENTICATED****************/
         new Thread(new Runnable() {
             @Override
@@ -108,6 +137,7 @@ public class SplashActivity extends BaseActivity {
         }
         welcome.startAnimation(appear);
 
+
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -125,12 +155,7 @@ public class SplashActivity extends BaseActivity {
             }
         }, SPLASH_TIME_OUT);
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SystemTasks.getInstance(SplashActivity.this).ensureLocationSettings();
-            }
-        });
+
 
         }
 

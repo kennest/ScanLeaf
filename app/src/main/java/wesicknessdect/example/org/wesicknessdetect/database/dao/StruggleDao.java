@@ -11,13 +11,13 @@ import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 
 @Dao
-public interface StruggleDao {
+public abstract class StruggleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void createStruggle(Struggle struggle);
+    public abstract void createStruggle(Struggle struggle);
 
     @Query("SELECT * FROM Struggle")
-    LiveData<List<Struggle>> getAll();
+    public abstract LiveData<List<Struggle>> getAll();
 
     @Query("SELECT * FROM Struggle WHERE id=:id")
-    LiveData<Struggle> getById(long id);
+    public abstract Struggle getByIdSync(long id);
 }

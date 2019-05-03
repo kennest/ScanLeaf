@@ -94,7 +94,7 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(this);
 
-        Intent offline = new Intent(getApplicationContext(), OfflineService.class);
+        Intent offline = new Intent(this, OfflineService.class);
         stopService(offline);
         startService(offline);
 

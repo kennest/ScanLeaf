@@ -265,7 +265,8 @@ public class RemoteTasks {
             json.addProperty("y_min", r.bottom);
             json.addProperty("x_max", r.right);
             json.addProperty("y_max", r.top);
-            json.addProperty("picture", r.picture_id);
+            json.addProperty("picture_uuid", r.getPicture_uuid());
+            json.addProperty("uuid", r.getUuid());
             json.addProperty("symptom", r.symptom_id);
             json.addProperty("id_mobile", r.x);
 
@@ -441,7 +442,7 @@ public class RemoteTasks {
                 d.setSended(0);
                 for (Picture p : d.getPictures()) {
                     for (SymptomRect sr : p.getSymptomRects()) {
-                        Symptom s = DB.symptomDao().getByNameSync(sr.label.toUpperCase());
+                        Symptom s = DB.symptomDao().getByNameSync(sr.label);
                         sr.setSymptom_id(s.getId());
                     }
                 }
@@ -519,7 +520,9 @@ public class RemoteTasks {
             //Log.e("Picture ID:", p.getX() + "");
             json.addProperty("diagnostic", p.getDiagnostic_id());
             json.addProperty("image", base_64);
-            json.addProperty("id_mobile", p.getX());
+            json.addProperty("diagnostic_uuid", p.getDiagnostic_uuid());
+            json.addProperty("uuid", p.getUuid());
+            //json.addProperty("id_mobile", p.getX());
             json.addProperty("partCulture", p.getCulture_part_id());
 
             String token = FastSave.getInstance().getString("token", null);
@@ -664,7 +667,6 @@ public class RemoteTasks {
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            s.setName(s.getName().toUpperCase());
                             DB.symptomDao().createSymptom(s);
                             return null;
                         }

@@ -15,15 +15,21 @@ import static androidx.room.ForeignKey.CASCADE;
         @ForeignKey(entity = CulturePart.class,
         parentColumns = "id",
         childColumns = "culture_part_id",onUpdate = CASCADE,onDelete = CASCADE)},
-        indices = {@Index({"diagnostic_id","culture_part_id"})})
+        indices = {@Index({"diagnostic_id","culture_part_id","uuid"})})
 public class Picture {
 
-    @SerializedName(value = "id_mobile")
+    //@SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)
     private int x;
 
     @SerializedName(value = "id")
     private long remote_id;
+
+    @SerializedName(value = "uuid")
+    private String uuid;
+
+    @SerializedName(value = "diagnostic_uuid")
+    private String diagnostic_uuid;
 
     @SerializedName(value = "diagnostic")
     private long diagnostic_id;
@@ -93,5 +99,21 @@ public class Picture {
 
     public void setSymptomRects(List<SymptomRect> symptomRects) {
         this.symptomRects = symptomRects;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getDiagnostic_uuid() {
+        return diagnostic_uuid;
+    }
+
+    public void setDiagnostic_uuid(String diagnostic_uuid) {
+        this.diagnostic_uuid = diagnostic_uuid;
     }
 }

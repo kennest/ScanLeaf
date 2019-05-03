@@ -35,9 +35,11 @@ public abstract class DiagnosticDao {
         final long id = createDiagnostic(d);
         for (Picture p : pictures) {
             p.setDiagnostic_id(id);
+            p.setDiagnostic_uuid(d.getUuid());
             final long pic_ic=insertPicture(p);
             for(SymptomRect sr:p.getSymptomRects()){
                 sr.setPicture_id((int) pic_ic);
+                sr.setPicture_uuid(p.getUuid());
                 createSymptomRect(sr);
             }
         }
@@ -55,7 +57,6 @@ public abstract class DiagnosticDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     public abstract void updateDiagnostic(Diagnostic diagnostic);
 
-
     @Query("SELECT * FROM Diagnostic")
     public abstract LiveData<List<Diagnostic>> getAll();
 
@@ -70,6 +71,6 @@ public abstract class DiagnosticDao {
     public abstract LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures();
 
     @Transaction
-    @Query("SELECT * FROM Diagnostic")
-    public abstract List<DiagnosticPictures> getDiagnosticWithPicturesSync();
+    @Query("SELECT * FROM Diagnostic WHERE x=:id")
+    public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }

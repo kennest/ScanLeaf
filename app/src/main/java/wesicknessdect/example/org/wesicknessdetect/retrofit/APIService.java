@@ -1,6 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.retrofit;
 
 
+import androidx.room.Update;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -15,6 +17,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -93,5 +96,8 @@ public interface APIService {
 
     @GET("api/pictures/")
     Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic,@Header("Authorization") String token);
+
+    @PUT("api/users/")
+    Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
 }
