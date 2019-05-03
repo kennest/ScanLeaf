@@ -1,9 +1,12 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -246,24 +249,62 @@ public class QuizActivity extends BaseActivity {
                                     public void onChanged(List<Symptom> symptoms) {
                                         List<Integer> integers=new ArrayList<>();
                                         List<CheckBox> checkBoxes=new ArrayList<>();
+                                        List<Button> inforbulles=new ArrayList<>();
                                         for (Symptom s:symptoms){
                                             if (s.getQuestion_id()==q.getId()){
                                                 CheckBox ch=new CheckBox(QuizActivity.this);
                                                 ch.setText(s.getName());
                                                 ch.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightPix));
                                                 ch.setPadding(5,5,5,5);
-
                                                 ch.setTextSize(14);
                                                 ch.setTextColor(getResources().getColor(R.color.white));
+//                                                infos.setOnClickListener();
+                                                ch.setOnLongClickListener(new View.OnLongClickListener() {
+                                                    @Override
+                                                    public boolean onLongClick(View v) {
+                                                        WebView webView = new WebView(QuizActivity.this);
+//                                                        webView.loadUrl(s.getLink());
+                                                        webView.loadData("<p style=\"background-color:#00574B; color:white \" align=\"center\">Voici comment se présente <br/><b>"+s.getName()+"</b><br/><br/>(A remplacer ce text par la page web correspondante...) !</p>", "text/html", "utf-8");
+
+                                                        AlertDialog.Builder builder = new AlertDialog.Builder(QuizActivity.this);
+                                                        builder.setTitle("Infos sur "+s.getName())
+                                                                .setView(webView)
+                                                                .setNeutralButton("OK", null)
+                                                                .show();
+                                                        return false;
+                                                    }
+                                                });
                                                 ch.setId(s.getId());
+
+//                                                Button infos=new Button(QuizActivity.this);
+//                                                infos.setId(s.getId());
+//                                                infos.setText("i");
+//                                                infos.setBackgroundColor(getResources().getColor(R.color.colorPrimaryLightPix));
+//                                                infos.setTextColor(getResources().getColor(R.color.white));
+//                                                infos.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//                                                infos.setOnClickListener(new View.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(View v) {
+//                                                        WebView webView = new WebView(QuizActivity.this);
+//                                                        webView.loadUrl(s.getLink());
+//                                                        AlertDialog.Builder builder = new AlertDialog.Builder(QuizActivity.this);
+//                                                        builder.setTitle("Infos sur "+s.getName())
+//                                                                .setView(webView)
+//                                                                .setNeutralButton("OK", null)
+//                                                                .show();
+//                                                    }
+//                                                });
+
                                                 if (integers.isEmpty()){
                                                     integers.add(ch.getId());
                                                     checkBoxes.add(ch);
+                                                    //inforbulles.add(infos);
                                                 }else {
 
                                                     if (!integers.contains(ch.getId())) {
                                                         integers.add(ch.getId());
                                                         checkBoxes.add(ch);
+                                                       // inforbulles.add(infos);
                                                     }
                                                 }
 
@@ -278,8 +319,21 @@ public class QuizActivity extends BaseActivity {
                                         for (Symptom s:symptoms) {
                                             ll.removeAllViews();
                                             for (CheckBox c : checkBoxes) {
+
+//                                                LinearLayout l = new LinearLayout(QuizActivity.this);
+//                                                l.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//                                                l.setOrientation(LinearLayout.HORIZONTAL);
                                                 ll.removeView(c);
+//                                                l.removeView(c);
+//                                                l.addView(c);
+//                                                for (Button button: inforbulles){
+//                                                    if (button.getId()==c.getId()){
+//                                                        l.addView(button);
+//                                                    }
+//                                                }
+
                                                 ll.addView(c);
+
                                                 c.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                     @Override
                                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

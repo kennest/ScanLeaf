@@ -1,101 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="5dp"
+    android:background="#ededed"
+    tools:targetApi="o">
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/pbrune"
+        android:layout_marginRight="20dp"/>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ededed"
-    android:layout_margin="3dp"
-    >
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="205dp"
-        app:srcCompat="@drawable/cacao"
-        />
+    android:layout_margin="3dp"
+    android:padding="3dp"
+android:layout_gravity="center_vertical"    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:textSize="18dp"
+        android:layout_gravity="left"
+        android:id="@+id/detectedMaladie"
+        android:text="Swollen Shoot détecté" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/profile"
-            android:layout_margin="20dp"/>
-        <LinearLayout
-            android:layout_margin="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                >
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Adopo Jordan"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textStyle="bold"
-                    android:textSize="18dp"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_height="wrap_content"
-                    android:text="Côte d'Ivoire"
-                    android:textStyle="bold"
-                    android:textColor="#555555"
-                    android:textSize="18dp"/>
-            </LinearLayout>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="normal"
-                android:layout_marginTop="10dp"
-                android:text="18 Fevrier 2019"
-                android:textColor="#777777"/>
-        </LinearLayout>
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        android:weightSum="3"
+        >
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="start"
+            android:src="@drawable/ic_history_black_24dp"
+            android:tint="@color/dark_gray"/>
+        <TextView
+            android:id="@+id/heureMaladie"
+            android:layout_width="wrap_content"
+            android:gravity="start"
+            android:layout_weight="1"
+            android:layout_height="20dp"
+            android:textStyle="bold"
 
+            android:textColor="@color/dark_gray"
+            android:textSize="15dp"
+            android:text="1h" />
+        <TextView
+            android:id="@+id/distanceMaladie"
+            android:layout_width="wrap_content"
+            android:gravity="right"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16dp"
+            android:text="7 Km de vous"
+            android:layout_weight="1"/>
 
     </LinearLayout>
 
-    <TextView
-        android:layout_marginStart="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:textColor="#222222"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:text="Lorem ipsum dolor vieux kouakou effectue hgfgfgfhghg " />
-    <TextView
-        android:id="@+id/textView"
-        android:layout_marginStart="30dp"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimary"
-        android:textSize="18dp"
-        android:text="Que devons-nous faire ? " />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center_vertical" android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_gravity="center_vertical"
-            android:text="Traduire"
-            android:layout_weight="0.9"
-            android:textColor="@color/colorPrimary"
-            android:layout_marginStart="30dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_weight="0.1"
-            android:layout_gravity="center_vertical"
-            android:text="4 réponses"
-            android:textColor="@color/colorPrimary"
-            />
-    </LinearLayout>
 
+</LinearLayout>
 </LinearLayout>

@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,7 +25,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -35,6 +38,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 import io.paperdb.Paper;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
@@ -51,8 +56,10 @@ import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
+import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
@@ -120,7 +127,7 @@ public class RemoteTasks {
             if (response.isSuccessful()) {
                 countries = response.body();
                 //Store country to paperDB
-                Paper.book().write("countries", countries);
+                //Paper.book().write("countries", countries);
 
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -305,6 +312,7 @@ public class RemoteTasks {
         }
         return symptomRect;
     }
+
 
     //Get SymptomRect from server
     @SuppressLint("StaticFieldLeak")
@@ -588,7 +596,7 @@ public class RemoteTasks {
                         }
                     }.execute();
                     //Store culture to paperDB
-                    Paper.book().write("cultures", cultures);
+
                 }
             } else {
                 Log.e("Error:", response.errorBody().string());
@@ -622,7 +630,7 @@ public class RemoteTasks {
                     }.execute();
                 }
                 //Store culture pars to paperDB
-                Paper.book().write("struggles", struggles);
+                //Paper.book().write("struggles", struggles);
             } else {
                 Log.e("Error:", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {
@@ -660,7 +668,7 @@ public class RemoteTasks {
                 symptoms = response.body();
 
                 //Store symptoms to paperDB
-                Paper.book().write("symptoms", symptoms);
+                //Paper.book().write("symptoms", symptoms);
 
                 for (Symptom s : symptoms) {
                     // Log.e("Symptom", s.getName() + "//" + s.getLink());
@@ -709,7 +717,7 @@ public class RemoteTasks {
                 cultureParts = response.body();
 
                 //Store culture pars to paperDB
-                Paper.book().write("culture_parts", cultureParts);
+                //Paper.book().write("culture_parts", cultureParts);
 
                 //Log.e("Cultures Part", cultureParts.size() + "");
 
@@ -748,10 +756,10 @@ public class RemoteTasks {
 
 
                 //Store culture pars to paperDB
-                Paper.book().write("culture_parts", cultureParts);
+               // Paper.book().write("culture_parts", cultureParts);
 
                 //Store culture pars to paperDB
-                Paper.book().write("models", models);
+                //Paper.book().write("models", models);
 
             } else {
                 Log.e("Error Body", response.errorBody().toString());
@@ -808,7 +816,7 @@ public class RemoteTasks {
                     }.execute();
                 }
                 //Store diseases to paperDB
-                Paper.book().write("diseases", diseases);
+               // Paper.book().write("diseases", diseases);
             } else {
                 Log.e("Error Body", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {
@@ -845,7 +853,7 @@ public class RemoteTasks {
                 questions = response.body();
 
                 //Store questions to paperDB
-                Paper.book().write("questions", questions);
+                //Paper.book().write("questions", questions);
 
                 for (Question q : questions) {
                     // Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
@@ -1002,6 +1010,82 @@ public class RemoteTasks {
 
     //Do Stuffs if response is Error
     public void OfflineSynchronSending() {
+
+    }
+    private void insertPost(Post popo){
+        List<Post> Alerts=DB.postDao().getAllPost();
+        Log.d("Alert_list",Alerts.toString());
+        Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
+//                        List<Post> getAlert=Alerts.getValue();
+//        if (Alerts.size()==0){
+            new AsyncTask<Void,Void,Void>(){
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    DB.postDao().createPost(popo);
+                    return null;
+                }
+            }.execute();
+        }
+//        else {
+//            for (Post po: Alerts){
+//                if (popo.getIdServeur().equals(po.getIdServeur())){
+//                    new AsyncTask<Void,Void,Void>(){
+//                        @Override
+//                        protected Void doInBackground(Void... voids) {
+//                            DB.postDao().updatePost(popo.getDiseaseName(),popo.getDistance(),popo.getIdServeur());
+//                            return null;
+//                        }
+//                    }.execute();
+//                }
+//            }
+//        }
+//    }
+
+    //Send My Location to server
+    @SuppressLint("StaticFieldLeak")
+    public void sendLocation(Location l) {
+
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            //String params ="{\"lat\":\""+l.getLat()+"\",\"longi\":\""+l.getLongi()+"\",\"idServeur\":\""+l.getLongi()+"\"}";
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("lat", l.getLat())
+                    .addFormDataPart("longi", l.getLongi())
+                    .addFormDataPart("idServeur", l.getIdServeur())
+                    .build();
+            Call<List<JsonElement>> call = service.sendMyLocation("Token " + token, requestBody);
+            try {
+                Response<List<JsonElement>> response = call.execute();
+
+                if (response.isSuccessful()) {
+                    Log.d("data_recu:",response.body().toString());
+                    Post p=new Post();
+                    if (response.body().size()!=0) {
+                        for (JsonElement json : response.body()) {
+
+
+                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                            long millis = new Date().getTime();
+                            String t = dateFormat.format(millis);
+                            p.setTime(t);
+                            //insertPost(p);
+
+                        }
+                        insertPost(p);
+                    }
+                } else {
+                    Log.e("Error:", response.errorBody().string());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 

@@ -18,6 +18,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseSymptomsDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ModelDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.PictureDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.PostDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ProfileDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.StruggleDao;
@@ -37,6 +38,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.FavorableCondition;
 import wesicknessdect.example.org.wesicknessdetect.models.Message;
 import wesicknessdect.example.org.wesicknessdetect.models.MessagePicture;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Parcel;
@@ -67,6 +69,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
         DiagnosticCulture.class,
         Diagnostic.class,
         Model.class,
+        Post.class,
         Parcel.class,
         Picture.class,
         PictureSymptom.class,
@@ -93,6 +96,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract QuestionDao questionDao();
     public abstract DiseaseDao diseaseDao();
     public abstract DiseaseSymptomsDao diseaseSymptomsDao();
+    public abstract PostDao postDao();
     public abstract StruggleDao struggleDao();
     public abstract PictureDao pictureDao();
     private static AppDatabase INSTANCE;

@@ -147,9 +147,9 @@ public class SplashActivity extends BaseActivity {
                     startActivity(intent);
                    finish();
                 }else{
-                    EventBus.getDefault().post(new UserAuthenticatedEvent(token));
-//                    Intent intent = new Intent(getApplicationContext(), QuizActivity.class);
-//                    startActivity(intent);
+//                    EventBus.getDefault().post(new UserAuthenticatedEvent(token));
+                    Intent intent = new Intent(getApplicationContext(), QuizActivity.class);
+                    startActivity(intent);
                     finish();
                 }
             }

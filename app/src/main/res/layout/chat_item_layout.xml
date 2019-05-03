@@ -42,18 +42,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <ImageView
-                    android:layout_marginTop="4dp"
-                    android:id="@+id/tick"
-                    android:src="@drawable/ic_check"
-                    android:background="@drawable/circular_button"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp" />
-
                 <TextView
                     android:layout_marginStart="4dp"
-                    android:layout_toEndOf="@id/tick"
                     android:id="@+id/latest_message"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,19 +64,6 @@
                 android:textSize="12sp" />
 
 
-            <TextView
-                android:id="@+id/unread_messages"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/green_circle_bg"
-                android:gravity="center"
-                android:text="48"
-                android:layout_margin="2dp"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/latest_time"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif"/>
         </RelativeLayout>
 
     </LinearLayout>

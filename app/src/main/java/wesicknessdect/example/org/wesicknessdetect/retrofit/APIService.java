@@ -8,10 +8,12 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
@@ -30,13 +32,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
+import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
-import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 public interface APIService {
@@ -50,6 +51,16 @@ public interface APIService {
     @Headers({"Content-Type:application/json","Accept:application/json"})
     @POST("api/users/")
     Call<User> doSignup(@Body User user);
+
+    //@Multipart
+
+    //@Headers({"Content-Type:application/json","Accept:application/json"})
+//    @FormUrlEncoded
+    //@Multipart
+    @POST("api/post/")
+    Call<List<JsonElement>> sendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
+
+
 
     @GET("api/country/")
     Call<List<Country>> getCountries();
