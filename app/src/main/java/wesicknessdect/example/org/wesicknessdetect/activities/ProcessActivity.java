@@ -31,6 +31,8 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -52,6 +54,7 @@ import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
@@ -86,8 +89,9 @@ public class ProcessActivity extends BaseActivity {
     FloatingActionButton toggleView;
 
     boolean flag = false;
+    List<Post> Posters=new ArrayList<>();
 
-
+    @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +101,29 @@ public class ProcessActivity extends BaseActivity {
         Intent offline = new Intent(getApplicationContext(), OfflineService.class);
         stopService(offline);
         startService(offline);
+
+        new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                Posters=DB.postDao().getAllPost();
+                Log.e("Posts->",Posters.size()+"");
+                for (Post pos:Posters){
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(ProcessActivity.this)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentTitle("Nouvelle maladie détecté")
+                            .setContentText(pos.getDiseaseName()+"à "+pos.getDistance()+" m de vous ...")
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText("Much longer text that cannot fit one line..."))
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ProcessActivity.this);
+
+// notificationId is a unique int for each notification that you must define
+                    notificationManager.notify((int) pos.getId(), builder.build());
+                }
+                return null;
+            }
+        }.execute();
+
 
 
 

@@ -1011,19 +1011,8 @@ public class RemoteTasks {
 
     }
     private void insertPost(Post popo){
-        List<Post> Alerts=DB.postDao().getAllPost();
-        Log.d("Alert_list",Alerts.toString());
-        Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
-//                        List<Post> getAlert=Alerts.getValue();
-//        if (Alerts.size()==0){
-            new AsyncTask<Void,Void,Void>(){
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    DB.postDao().createPost(popo);
-                    return null;
-                }
-            }.execute();
-        }
+
+    }
 //        else {
 //            for (Post po: Alerts){
 //                if (popo.getIdServeur().equals(po.getIdServeur())){
@@ -1059,22 +1048,82 @@ public class RemoteTasks {
 
                 if (response.isSuccessful()) {
                     Log.d("data_recu:",response.body().toString());
-                    Post p=new Post();
                     if (response.body().size()!=0) {
                         for (JsonElement json : response.body()) {
-
-
-                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                            Post p=new Post();
                             SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
                             long millis = new Date().getTime();
                             String t = dateFormat.format(millis);
+                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                             p.setTime(t);
-                            //insertPost(p);
+                            //List<Post> Alerts=DB.postDao().getAllPost();
+                            //if (Alerts.isEmpty()){
+                                new AsyncTask<Void,Void,Void>(){
+                                    @Override
+                                    protected Void doInBackground(Void... voids) {
+                                        DB.postDao().createPost(p);
+                                        return null;
+                                    }
+                                }.execute();
+
+//                            }
+//                            else{
+//                                for (Post pi : Alerts) {
+//                                    Log.d("post" + pi.getId(), "idServeur: " + pi.getIdServeur());
+//                                    if (!pi.getIdServeur().equals(json.getAsJsonObject().get("id").getAsString())) {
+//                                        new AsyncTask<Void,Void,Void>(){
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//                                                DB.postDao().createPost(p);
+//                                                return null;
+//                                            }
+//                                        }.execute();
+//                                    }
+//                                    //Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
+//                                }
+//                            }
+
+//                            if (!DB.postDao().getAllPost().contains(p)) {
+//                                DB.postDao().createPost(p);
+//                            }
+                            Log.d("post_recu", "idServeur: "+json.getAsJsonObject().get("id").getAsString());
+
+
+//                            insertPost(p);
+//                            List<Post> Alerts=DB.postDao().getAllPost();
+//                            Log.d("Alert_list",Alerts.toString());
+//                            Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
+////                        List<Post> getAlert=Alerts.getValue();
+//                            if (Alerts.size()==0){
+//                                new AsyncTask<Void,Void,Void>(){
+//                                    @Override
+//                                    protected Void doInBackground(Void... voids) {
+//                                        DB.postDao().createPost(p);
+//                                        return null;
+//                                    }
+//                                }.execute();
+//                            }else {
+//                                for (Post pi:Alerts) {
+//                                    Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
+//                                }
+//
+//                                for (Post pi:Alerts) {
+//                                    if (!pi.getIdServeur().equals(p.getIdServeur())) {
+//                                        new AsyncTask<Void, Void, Void>() {
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//                                                DB.postDao().createPost(p);
+//                                                return null;
+//                                            }
+//                                        }.execute();
+//                                    }
+//                                }
+//                            }
 
                         }
-                        insertPost(p);
+                        //insertPost(p);
                     }
                 } else {
                     Log.e("Error:", response.errorBody().string());

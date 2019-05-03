@@ -16,7 +16,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.lifecycle.Observer;
+
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
@@ -33,7 +36,7 @@ public class OfflineService extends Service {
     List<SymptomRect> symptomRects;
     List<Diagnostic> diagnostics;
     List<Picture> pictures;
-    Post p;
+    List<Post> posti;
     public OfflineService() {
     }
 
@@ -50,7 +53,7 @@ public class OfflineService extends Service {
         DB = AppDatabase.getInstance(this);
         Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
-        mTimer.schedule(new TimerTaskOffline(), 1, 60000);
+        mTimer.schedule(new TimerTaskOffline(), 0, 60000);
         intent = new Intent(str_receiver);
     }
 
@@ -101,7 +104,7 @@ public class OfflineService extends Service {
             Double lat= Double.valueOf(split[0]);
             Double longi= Double.valueOf(split[1]);
 
-            Log.d("Mes coordonnées", "Lat: "+lat+", Longi: "+longi);
+            Log.e("mes_coordonnées", "Lat: "+lat+", Longi: "+longi);
             Location l=new Location();
             l.setLat(lat.toString());
             l.setLongi(longi.toString());
@@ -113,20 +116,38 @@ public class OfflineService extends Service {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     Log.e("Pre Task", "Started");
-                   p=DB.postDao().getLastPost();
-                    Log.d("dernier_post_data"," | "+p.getId()+" | "+p.getDiseaseName()+" | "+p.getDistance()+" | "+p.getIdServeur()+" | "+p.getTime());
                     String idServeur=""+0;
-                    Log.d("dernier_post",""+p.getIdServeur());
-                    if (p.getIdServeur()!=null) {
-                        Post a = p;
-                        idServeur = a.getIdServeur();
-                    }else{
-                        idServeur=""+0;
-                    }
+                   posti=DB.postDao().getAllPost();
+                   Log.e("tous_posts", posti.toString());
+                   if (posti.size()==0){
+                       idServeur=""+0;
+                       l.setIdServeur(idServeur);
+                       Log.d("envoye", "Lat:"+l.getLat()+", Long:"+l.getLongi()+", idServeur:"+l.getIdServeur());
+                       RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
 
-                    l.setIdServeur(idServeur);
-                    Log.d("envoye", "Lat:"+l.getLat()+", Long:"+l.getLongi()+", idServeur:"+l.getIdServeur());
-                    RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
+                   }
+                   else {
+//                       for (Post pos:posti){
+//                           NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+//                                   .setSmallIcon(R.drawable.ic_launcher)
+//                                   .setContentTitle("Nouvelle maladie détecté")
+//                                   .setContentText(pos.getDiseaseName()+"à "+pos.getDistance()+" m de vous ...")
+//                                   .setStyle(new NotificationCompat.BigTextStyle()
+//                                           .bigText("Much longer text that cannot fit one line..."))
+//                                   .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+//                       }
+
+                           Post p = posti.get(posti.size() - 1);
+                               Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
+
+                                   idServeur = p.getIdServeur();
+                                   l.setIdServeur(idServeur);
+                                   Log.d("envoye", "Lat:"+l.getLat()+", Long:"+l.getLongi()+", idServeur:"+l.getIdServeur());
+                                   RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
+
+
+
+                   }
 
                     return null;
                 }
