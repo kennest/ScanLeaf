@@ -18,7 +18,6 @@ public class User {
     @PrimaryKey
     private int id;
 
-
     @SerializedName(value = "first_name")
     private String nom;
 
@@ -42,6 +41,7 @@ public class User {
     private String token;
 
     private long profile_id;
+
 
     public int getId() {
         return id;

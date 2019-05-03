@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
@@ -107,6 +108,8 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                         p.setCulture_part_id(n.getKey());
                         p.setImage(n.getValue());
                         p.setSended(0);
+                        String uuid= UUID.randomUUID().toString();
+                        p.setUuid(uuid);
                         //Retrieve the culture part image from DB
                         // Log.e("part_id", n.getKey() + " ** " + position);
 
@@ -137,12 +140,14 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                     symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
 
                                     for (Symptom s : symptomsList) {
-                                        if (s.getName().equals(r.getTitle().toUpperCase())) {
+                                        if (s.getName().equals(r.getTitle())) {
                                             SymptomRect sr = new SymptomRect();
                                             sr.set(r.getLocation());
                                             sr.setSymptom_id(s.getId());
                                             sr.setLabel(r.getTitle());
                                             sr.setSended(0);
+                                            String ruuid= UUID.randomUUID().toString();
+                                            sr.setUuid(ruuid);
                                             symptomsRects.add(sr);
                                         }
                                     }

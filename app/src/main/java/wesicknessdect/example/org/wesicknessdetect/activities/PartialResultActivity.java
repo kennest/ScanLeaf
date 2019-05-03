@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -235,6 +236,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void SendDiagnostic() {
             try {
                 diagnostic.setPictures(AppController.getInstance().getPictures());
+                String uuid=UUID.randomUUID().toString();
+                diagnostic.setUuid(uuid);
                 RemoteTasks.getInstance(this).sendDiagnostic(diagnostic,false);
                 finish();
                 Thread.sleep(1000);

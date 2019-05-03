@@ -10,10 +10,14 @@ public class Struggle {
     @SerializedName(value = "id")
     @PrimaryKey
     private long id;
+
     @SerializedName(value = "description")
     private String description;
-@SerializedName(value = "link")
+
+    @SerializedName(value = "link")
     private String link;
+
+
 
     public long getId() {
         return id;

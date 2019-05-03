@@ -17,14 +17,17 @@ import static androidx.room.ForeignKey.CASCADE;
         @ForeignKey(
                 entity = User.class, parentColumns = "id", childColumns = "user_id",onUpdate = CASCADE,onDelete = CASCADE
         ),
-},indices = {@Index({"user_id"})})
+},indices = {@Index({"user_id","uuid"})})
 public class Diagnostic  {
-    @SerializedName(value = "id_mobile")
+    //@SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)
     private int x;
 
     @SerializedName(value = "id")
     private int remote_id;
+
+    @SerializedName(value = "uuid")
+    private String uuid;
 
     private String localisation;
     private String advancedAnalysis;
@@ -157,5 +160,13 @@ public class Diagnostic  {
 
     public void setPictures(List<Picture> pictures) {
         this.pictures = pictures;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }

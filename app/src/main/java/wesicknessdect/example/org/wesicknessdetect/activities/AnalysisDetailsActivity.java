@@ -9,9 +9,13 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
 
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
@@ -31,7 +34,9 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.ImagePagerAdapter;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
@@ -41,7 +46,9 @@ public class AnalysisDetailsActivity extends BaseActivity {
     List<Map<String, Bitmap>> linkedPartImage = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
     List<SymptomRect> symptomRects = new ArrayList<>();
-    List<DiagnosticPictures> diagnosticPictures = new ArrayList<>();
+    DiagnosticPictures diagnosticPictures = new DiagnosticPictures();
+    Struggle struggle = new Struggle();
+    Disease disease = new Disease();
 
     @BindView(R.id.pager)
     public ViewPager viewPager;
@@ -50,7 +57,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
     public Toolbar toolbar;
 
     String symtString = "";
-
 
     @Override
     public void onStart() {
@@ -65,19 +71,24 @@ public class AnalysisDetailsActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         diagnostic_id = getIntent().getIntExtra("id", 0);
+        Log.e("Details diagnostic", diagnostic_id + "");
 
         new AsyncTask<Void, Void, Void>() {
             @SuppressLint("WrongThread")
             @Override
             protected Void doInBackground(Void... voids) {
                 symptoms = DB.symptomDao().getAllSync();
-                diagnosticPictures=DB.diagnosticDao().getDiagnosticWithPicturesSync();
-                symptomRects=DB.symptomRectDao().getAllSync();
+                diagnosticPictures = DB.diagnosticDao().getDiagnosticWithPicturesSync(diagnostic_id);
+                disease = DB.diseaseDao().getByName(diagnosticPictures.diagnostic.getDisease());
+                struggle = DB.struggleDao().getByIdSync(disease.getId());
+                symptomRects = DB.symptomRectDao().getAllSync();
                 return null;
             }
         }.execute();
 
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
                 DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
                     @SuppressLint("StaticFieldLeak")
                     @Override
@@ -85,6 +96,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                         for (DiagnosticPictures dp : diagnosticPictures) {
                             if (dp.diagnostic.getX() == diagnostic_id) {
                                 toolbar.setTitle(dp.diagnostic.getDisease());
+
                                 for (Picture p : dp.pictures) {
                                     //Log.e("Pic exist:", p.getImage());
                                     if (new File(p.getImage()).exists()) {
@@ -100,11 +112,11 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                         DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
                                             @Override
                                             public void onChanged(List<SymptomRect> symptomRects) {
-                                                Log.e("Analysis Rects -> ",symptomRects.size()+"");
+                                                Log.e("Analysis Rects -> ", symptomRects.size() + "");
                                                 for (SymptomRect rect : symptomRects) {
                                                     Random rnd = new Random();
                                                     Paint paint = new Paint();
-                                                    Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX()+"//"+rect.toShortString());
+                                                    Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
                                                     paint.setStyle(Paint.Style.STROKE);
                                                     paint.setStrokeWidth(4f);
                                                     int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
@@ -143,8 +155,11 @@ public class AnalysisDetailsActivity extends BaseActivity {
                         }
                     }
                 });
-        imagePagerAdapter = new ImagePagerAdapter(this, linkedPartImage);
-        viewPager.setAdapter(imagePagerAdapter);
+                imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
+                viewPager.setAdapter(imagePagerAdapter);
+            }
+        });
+
 
     }
 }
