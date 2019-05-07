@@ -340,7 +340,7 @@ public class ProcessActivity extends BaseActivity {
             if (position == 2)
                 return "Maladies";
             if (position == 3)
-                return "Communites";
+                return "Alertes";
             return null;
         }
 
