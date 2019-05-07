@@ -2,8 +2,8 @@
 <selector
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:constantSize="true"
-    android:enterFadeDuration="@android:integer/config_shortAnimTime"
-    android:exitFadeDuration="@android:integer/config_shortAnimTime"
+    android:enterFadeDuration="1000"
+    android:exitFadeDuration="1000"
     android:radius="25dp">
 
     <item android:state_activated="true" android:drawable="@color/selected_comment_background" />
