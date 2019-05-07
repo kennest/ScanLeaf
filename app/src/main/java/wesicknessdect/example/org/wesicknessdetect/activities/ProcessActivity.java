@@ -2,6 +2,12 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +31,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +50,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Response;
+import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.events.ToggleViewEvent;
@@ -89,7 +97,7 @@ public class ProcessActivity extends BaseActivity {
     FloatingActionButton toggleView;
 
     boolean flag = false;
-    List<Post> Posters=new ArrayList<>();
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -102,27 +110,17 @@ public class ProcessActivity extends BaseActivity {
         stopService(offline);
         startService(offline);
 
-        new AsyncTask<Void,Void,Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                Posters=DB.postDao().getAllPost();
-                Log.e("Posts->",Posters.size()+"");
-                for (Post pos:Posters){
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(ProcessActivity.this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("Nouvelle maladie détecté")
-                            .setContentText(pos.getDiseaseName()+"à "+pos.getDistance()+" m de vous ...")
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText("Much longer text that cannot fit one line..."))
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                    NotificationManagerCompat notificationManager = NotificationManagerCompat.from(ProcessActivity.this);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
-// notificationId is a unique int for each notification that you must define
-                    notificationManager.notify((int) pos.getId(), builder.build());
-                }
-                return null;
-            }
-        }.execute();
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+        PendingIntent broadcast = PendingIntent.getBroadcast(this, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, 5);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+
+
+
 
 
 

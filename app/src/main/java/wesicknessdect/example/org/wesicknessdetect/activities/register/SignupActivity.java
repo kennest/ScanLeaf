@@ -65,6 +65,8 @@ public class SignupActivity extends BaseActivity implements ISignupView {
     APIService service;
     SignupPresenter signupPresenter;
 
+    Button gotolog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +91,24 @@ public class SignupActivity extends BaseActivity implements ISignupView {
         getCountryFromDBandFillSpinner();
         titre = AnimationUtils.loadAnimation(this, R.anim.clignotement);
         t.startAnimation(titre);
+
+        gotolog=(Button) findViewById(R.id.gotolog);
+        gotolog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
+//    @SuppressLint("StaticFieldLeak")
+//    @OnClick(R.id.gotolog)
+//    public void Gotolog() {
+//        Intent intent = new Intent(this, LoginActivity.class);
+//        startActivity(intent);
+//
+//    }
+
 
     @SuppressLint("StaticFieldLeak")
     @OnClick(R.id.signinsubmit)

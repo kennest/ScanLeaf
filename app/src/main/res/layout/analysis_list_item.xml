@@ -1,90 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#F8F8ED"
-    android:orientation="vertical">
+    android:layout_marginTop="8dp">
 
-    <LinearLayout
+
+    <RelativeLayout
+        android:paddingBottom="16dp"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:orientation="horizontal">
-        <RelativeLayout
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:background="@drawable/card_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp">
-        <com.mikhaellopez.circularimageview.CircularImageView
-            app:civ_border_width="0dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="5dp"
-            app:civ_border_color="@color/colorPrimary"
-            android:id="@+id/image"
-            android:layout_width="60dp"
-            android:layout_height="60dp" />
-            <TextView
-                android:layout_marginStart="5dp"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/colorPrimary"
-                android:background="@drawable/counter"
-                android:id="@+id/counter"
-                android:text="10"
-                android:textStyle="bold"
-                android:gravity="center_horizontal|center_vertical"
-                android:textColor="@android:color/white"
-                android:layout_width="20dp"
-                android:layout_height="20dp" />
-        </RelativeLayout>
-        <LinearLayout
-            android:padding="15dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:text="Simple Title Text "
+            android:textColor="@color/title_text_color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/analyse_time"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/user_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto"
-                android:gravity="top"
-                android:text="Disease"
-                android:textColor="@color/colorPrimaryPix"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="2">
-                <TextView
-                    android:id="@+id/analyse_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:text="53 minute ago"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="15sp"
-                    tools:ignore="RtlCompat" />
-                <ImageButton
-                    android:id="@+id/seeAnalysis"
-                    android:visibility="gone"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_info"
-                    android:tint="@color/colorPrimaryPix"
-                    android:layout_weight="1"
-                    android:backgroundTint="#ededed"
-                    android:foregroundGravity="right"
-                    android:background="@drawable/bordershadow"
-                    android:layout_marginStart="60dp"
-                    android:layout_gravity="right"/>
-            </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_below="@id/user_name"
+            android:layout_alignStart="@+id/user_name"
+            android:layout_alignLeft="@id/user_name"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:lineSpacingExtra="8dp"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+            android:textColor="@color/content_text_color" />
 
-        </LinearLayout>
+        <TextView
+            android:id="@+id/now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="TextView"
+            android:textColor="@color/content_text_color"
 
-    </LinearLayout>
+            />
+    </RelativeLayout>
+
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toTopOf="@+id/container"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <TextView
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        android:background="@drawable/counter"
+        android:id="@+id/counter"
+        android:text="10"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:gravity="center_horizontal|center_vertical"
+        android:textColor="@android:color/white"
+        android:layout_width="15dp"
+        android:layout_height="15dp" />
 </RelativeLayout>
