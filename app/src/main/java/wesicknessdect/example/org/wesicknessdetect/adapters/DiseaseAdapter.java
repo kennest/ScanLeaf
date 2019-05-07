@@ -73,12 +73,20 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
         });
                 c.maladieImage.setImageResource(R.drawable.swollen);
                 c.maladieName.setText(diseases.get(position).getName());
-                if(diseases.get(position).getDescription().length()>35) {
+                if(diseases.get(position).getDescription().length()>55) {
                     c.maladie_desc.setText(String.format("%s...", diseases.get(position).getDescription().substring(0, 35)));
                 }else{
                     c.maladie_desc.setText(diseases.get(position).getDescription());
                 }
                 c.itemView.setTag(diseases.get(position).getLink());
+        Log.d("WebView Url",diseases.get(position).getLink() );
+                c.imbt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        LancerWeb(diseases.get(position).getLink());
+                    }
+                });
     }
 
     @Override
@@ -90,7 +98,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
 
         ImageView maladieImage;
         TextView maladieName, maladie_desc, maladie_url;
-        MaterialCardView rl;
+        RelativeLayout rl;
         ImageButton imbt;
         LinearLayout descri;
 
@@ -100,14 +108,10 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
             maladieName = itemView.findViewById(R.id.maladie_name);
             maladie_desc = itemView.findViewById(R.id.maladie_desc);
 //            maladie_url= itemView.findViewById(R.id.maladie_icon);
+            imbt=itemView.findViewById(R.id.btnplus);
+            descri=itemView.findViewById(R.id.descri);
             rl=itemView.findViewById(R.id.disease);
-            imbt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("WebView Url", (String) v.getTag());
-                    LancerWeb((String) v.getTag());
-                }
-            });
+
 
             Log.v("DiseaseAdapter ", "ChatHolder position ");
 

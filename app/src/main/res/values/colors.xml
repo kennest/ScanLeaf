@@ -15,4 +15,7 @@
     <color name="title_text_color">#008577</color>
     <color name="content_text_color">#999da4</color>
 
+    <color name="selected_comment_background">#ededed</color>
+    <color name="comment_background">#ededed</color>
+
 </resources>

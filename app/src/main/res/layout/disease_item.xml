@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView android:layout_height="wrap_content"
+<RelativeLayout android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_gravity="center"
     android:backgroundTint="#ededed"
-    android:background="@drawable/radius"
     android:elevation="10dp"
     android:layout_margin="15dp"
     android:padding="8dp"
     android:id="@+id/disease"
+    android:background="@drawable/comment_background"
+    android:stateListAnimator="@animator/comment_selection"
     >
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:src="@drawable/plante"
-        android:elevation="8dp"
-        android:id="@+id/maladie_image"
-        android:layout_marginBottom="30dp"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="180dp">
+        >
 
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:src="@drawable/plante"
+            android:background="#ededed"
+            android:id="@+id/maladie_image"
+            android:layout_marginBottom="30dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,11 +39,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:id="@+id/descri"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"
-            android:weightSum="2">
+            >
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -52,7 +54,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textSize="20dp"
-        android:layout_weight="1.7"/>
+       />
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -60,11 +62,10 @@
                 android:id="@+id/btnplus"
                 android:src="@drawable/plus_circle"
                 android:tint="@color/colorPrimary"
-                android:layout_weight="0.3"
                 android:background="@drawable/radius"
                 android:backgroundTint="#ededed"
                 />
         </LinearLayout>
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</RelativeLayout>
