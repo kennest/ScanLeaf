@@ -4,6 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
    >
+    <TextView
+        android:id="@+id/recent_updates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:paddingBottom="2dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="2dp"
+        android:text="Documentation des maladies"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/maladie_rv"
