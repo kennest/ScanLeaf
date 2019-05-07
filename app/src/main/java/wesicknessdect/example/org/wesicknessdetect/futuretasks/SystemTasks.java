@@ -148,23 +148,6 @@ public class SystemTasks {
 
 // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-
-//        new RxGps(mContext).locationBalancedPowerAcuracy()
-//                .subscribeOn(Schedulers.newThread())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(location -> {
-//                    //you've got the location
-//                    Log.d("Location", location.getLatitude() + "//" + location.getLongitude());
-//                    FastSave.getInstance().saveString("location",location.getLatitude()+":"+location.getLongitude());
-//                }, throwable -> {
-//                    if (throwable instanceof RxGps.PermissionException) {
-//                        //the user does not allow the permission
-//                        Log.e("Location", "No permissions");
-//                    } else if (throwable instanceof RxGps.PlayServicesNotAvailableException) {
-//                        //the user do not have play services
-//                        Log.e("Location", "No play services");
-//                    }
-//                });
     }
 
     public void ensureLocationSettings() {

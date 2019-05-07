@@ -12,25 +12,22 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.SystemClock;
-import android.util.Log;
-
 import androidx.core.app.NotificationCompat;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import wesicknessdect.example.org.wesicknessdetect.activities.NotificationActivity;
+import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
 
 import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
-import static wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity.DB;
 
 public class AlarmReceiver extends BroadcastReceiver{
     private static final String CHANNEL_ID = "com.singhajit.notificationDemo.channelId";
-
+    public static AppDatabase DB;
     @Override
     public void onReceive(Context context, Intent intent) {
         Intent notificationIntent = new Intent(context, NotificationActivity.class);
+        DB=AppDatabase.getInstance(context);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(NotificationActivity.class);

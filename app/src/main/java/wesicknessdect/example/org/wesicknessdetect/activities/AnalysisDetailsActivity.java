@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +17,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 
 import com.google.gson.Gson;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,12 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.ImagePagerAdapter;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
@@ -56,10 +61,10 @@ public class AnalysisDetailsActivity extends BaseActivity {
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
 
-    String symtString = "";
+    @BindView(R.id.btnStruggle)
+    Button btnStruggle;
 
-    @BindView(R.id.webview)
-    WebView webView;
+    String symtString = "";
 
     @Override
     public void onStart() {
@@ -87,7 +92,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 symptomRects = DB.symptomRectDao().getAllSync();
                 return null;
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -161,10 +166,19 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 });
                 imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
                 viewPager.setAdapter(imagePagerAdapter);
-                webView.loadUrl(struggle.getLink());
+
             }
         });
+    }
 
-
+    @OnClick(R.id.btnStruggle)
+    public void LancerWeb(){
+        if(struggle!=null){
+            String url = struggle.getLink();
+            Intent i = new Intent(getApplicationContext(), DiseaseActivity.class);
+            Log.e("page URL->", url);
+            i.putExtra("page", url);
+            startActivity(i);
+        }
     }
 }
