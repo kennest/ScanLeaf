@@ -15,18 +15,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIClient {
     private static final String BASE_URL = "http://178.33.130.202:8000/";
     public static Retrofit getClient() {
-
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         int cacheSize = 40 * 1024 * 1024; // 40 MiB
-        File cacheDirectory=new File(Environment.getDataDirectory().getAbsolutePath()+"/scanleaf_okhttp_cache/");
+        File cacheDirectory=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/scanleaf_okhttp_cache/");
         Cache cache = new Cache(cacheDirectory, cacheSize);
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .cache(cache)
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
+                .connectTimeout(25, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
 

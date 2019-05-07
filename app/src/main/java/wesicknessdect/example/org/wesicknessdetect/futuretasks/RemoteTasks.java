@@ -1064,8 +1064,6 @@ public class RemoteTasks {
                     Post p=new Post();
                     if (response.body().size()!=0) {
                         for (JsonElement json : response.body()) {
-
-
                             p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
                             p.setDistance(json.getAsJsonObject().get("distance").getAsString());
                             p.setIdServeur(json.getAsJsonObject().get("id").getAsString());

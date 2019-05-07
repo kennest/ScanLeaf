@@ -112,6 +112,9 @@ public class OfflineService extends Service {
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
+                    diagnostics = DB.diagnosticDao().getAllSync();
+                    pictures = DB.pictureDao().getAllSync();
+                    symptomRects = DB.symptomRectDao().getAllSync();
                     Log.e("Pre Task", "Started");
                    p=DB.postDao().getLastPost();
                     Log.d("dernier_post_data"," | "+p.getId()+" | "+p.getDiseaseName()+" | "+p.getDistance()+" | "+p.getIdServeur()+" | "+p.getTime());
@@ -142,37 +145,6 @@ public class OfflineService extends Service {
                     Log.e("Pre Task", "Finished");
                 }
             }.execute();
-
-
-            //Toast.makeText(getApplicationContext(), "Offline Really Started", Toast.LENGTH_LONG).show();
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected void onPreExecute() {
-                    super.onPreExecute();
-                }
-
-
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    Log.e("Pre Task", "Started");
-                    diagnostics = DB.diagnosticDao().getAllSync();
-                    pictures = DB.pictureDao().getAllSync();
-                    symptomRects = DB.symptomRectDao().getAllSync();
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
-                    try {
-                        SendDataOffline();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e("Pre Task", "Finished");
-                }
-            }.execute();
-
 
         }
 

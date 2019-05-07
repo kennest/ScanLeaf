@@ -93,19 +93,16 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         ButterKnife.bind(this);
         InitCardSwipe();
 
+        //Get Location
+        SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
+
+        //Init Diagnostic infos
         InitDiagnosticData();
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 InitScoreData();
-            }
-        });
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
             }
         });
 
