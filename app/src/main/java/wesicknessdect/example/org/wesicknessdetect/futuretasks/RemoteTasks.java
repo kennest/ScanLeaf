@@ -1060,29 +1060,31 @@ public class RemoteTasks {
                 if (response.isSuccessful()) {
                     Log.d("data_recu:",response.body().toString());
                     if (response.body().size()!=0) {
-                        for (JsonElement json : response.body()) {
-                            Post p=new Post();
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-                            long millis = new Date().getTime();
-                            String t = dateFormat.format(millis);
-                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
-                            p.setTime(t);
                             //List<Post> Alerts=DB.postDao().getAllPost();
                             //if (Alerts.isEmpty()){
                                 new AsyncTask<Void,Void,Void>(){
                                     @Override
                                     protected Void doInBackground(Void... voids) {
-                                        DB.postDao().createPost(p);
-                                        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                                        for (JsonElement json : response.body()) {
+                                            Post p = new Post();
+                                            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                                            long millis = new Date().getTime();
+                                            String t = dateFormat.format(millis);
+                                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                                            p.setTime(t);
+                                            DB.postDao().createPost(p);
+                                            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
-                                        Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                                        PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                            Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                            PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                                        Calendar cal = Calendar.getInstance();
-                                        cal.add(Calendar.SECOND, 5);
-                                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                            Calendar cal = Calendar.getInstance();
+                                            cal.add(Calendar.SECOND, 5);
+                                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                            Log.d("post_recu", "idServeur: "+json.getAsJsonObject().get("id").getAsString());
+                                        }
                                         return null;
                                     }
                                 }.execute();
@@ -1108,7 +1110,7 @@ public class RemoteTasks {
 //                            if (!DB.postDao().getAllPost().contains(p)) {
 //                                DB.postDao().createPost(p);
 //                            }
-                            Log.d("post_recu", "idServeur: "+json.getAsJsonObject().get("id").getAsString());
+
 
 
 //                            insertPost(p);
@@ -1142,7 +1144,7 @@ public class RemoteTasks {
 //                                }
 //                            }
 
-                        }
+
                         //insertPost(p);
                     }
                 } else {
