@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class MaladiesFragment extends Fragment {
     RecyclerView recyclerView;
     private static AppDatabase DB;
     LayoutAnimationController controller;
+    Context mContext=getContext();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,16 +49,16 @@ public class MaladiesFragment extends Fragment {
         DB.diseaseDao().getAll().observe(this, new Observer<List<Disease>>() {
             @Override
             public void onChanged(List<Disease> diseases) {
-                SeparatorDecoration decoration = new SeparatorDecoration(
-                        getContext(),
-                        Color.parseColor("#EAEAEA"),
-                        0.5f);
+//                SeparatorDecoration decoration = new SeparatorDecoration(
+//                        mContext,
+//                        Color.parseColor("#EAEAEA"),
+//                        0.5f);
                 recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                recyclerView.setAdapter(new DiseaseAdapter(getContext(),diseases));
+                recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                recyclerView.setAdapter(new DiseaseAdapter(mContext,diseases));
                 recyclerView.setLayoutAnimation(controller);
                 recyclerView.scheduleLayoutAnimation();
-                recyclerView.addItemDecoration(decoration);
+                //recyclerView.addItemDecoration(decoration);
             }
         });
 

@@ -1,57 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?selectableItemBackground"
-    android:layout_margin="4dp"
-    android:padding="4dp"
-    android:id="@+id/disease">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_gravity="center"
+    android:backgroundTint="#ededed"
+    android:elevation="10dp"
+    android:layout_margin="15dp"
+    android:padding="8dp"
+    android:id="@+id/disease"
+    android:background="@drawable/comment_background"
+    android:stateListAnimator="@animator/comment_selection"
+    >
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/maladie_image"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/plante" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        >
 
-    <RelativeLayout
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:src="@drawable/plante"
+            android:background="#ededed"
+            android:id="@+id/maladie_image"
+            android:layout_marginBottom="30dp"/>
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_toEndOf="@id/maladie_image">
-
-        <TextView
-            android:id="@+id/maladie_name"
+        android:id="@+id/maladie_name"
+        android:text="Swollen Shoot"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:textSize="24dp"/>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:gravity="top"
-            android:text="Swollen shoot"
-            android:textColor="@android:color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <RelativeLayout
-            android:id="@+id/maladie_status"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/maladie_name">
-
-
-
-            <TextView
-                android:id="@+id/maladie_desc"
-                android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/descri"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/maladie_desc"
+        android:text="Swollen Shoot"
+        android:textColor="#3d3d3d"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="20dp"
+       />
+            <ImageButton
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:fontFamily="@font/roboto"
-                android:text="Le swollen shoot est une maladie qui agit ..."
-                android:textColor="#444444"
-                android:textSize="14sp"
-                android:textStyle="normal" />
+                android:layout_gravity="end"
+                android:id="@+id/btnplus"
+                android:src="@drawable/plus_circle"
+                android:tint="@color/colorPrimary"
+                android:background="@drawable/radius"
+                android:backgroundTint="#ededed"
+                />
+        </LinearLayout>
 
-        </RelativeLayout>
-
-    </RelativeLayout>
+    </LinearLayout>
 </RelativeLayout>
