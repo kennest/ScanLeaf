@@ -46,6 +46,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
 
     public void LancerWeb(String url){
         Intent i = new Intent(context, DiseaseActivity.class);
+        Log.e("page URL->",url);
         i.putExtra("page", url);
         context.startActivity(i);
     }

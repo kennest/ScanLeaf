@@ -58,6 +58,9 @@ public class AnalysisDetailsActivity extends BaseActivity {
 
     String symtString = "";
 
+    @BindView(R.id.webview)
+    WebView webView;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -89,6 +92,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
                     @SuppressLint("StaticFieldLeak")
                     @Override
@@ -157,6 +161,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 });
                 imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
                 viewPager.setAdapter(imagePagerAdapter);
+                webView.loadUrl(struggle.getLink());
             }
         });
 

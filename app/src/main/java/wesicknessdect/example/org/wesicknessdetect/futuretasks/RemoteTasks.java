@@ -306,7 +306,7 @@ public class RemoteTasks {
                                     }
                                     return null;
                                 }
-                            }.execute();
+                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         }
                     }
 
@@ -348,7 +348,7 @@ public class RemoteTasks {
                     s.setSended(1);
                     symptomRects.add(s);
                 }
-                Log.e("Sync RectF length -> ", symptomRects.size() + " -> "+picture_id);
+                Log.e("Sync RectF length -> ", symptomRects.size() + " -> " + picture_id);
                 return symptomRects;
             } else {
                 Log.e("Error:", response.errorBody().string());
@@ -384,7 +384,7 @@ public class RemoteTasks {
                         }
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
             } else {
                 Log.e("Error:", response.errorBody().string());
@@ -466,7 +466,7 @@ public class RemoteTasks {
                 DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
                 return null;
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
         return d;
     }
@@ -492,29 +492,9 @@ public class RemoteTasks {
                                 } else {
                                     DB.diagnosticDao().delete(d);
                                 }
-//                                pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
-//                                for (Picture p : pictures) {
-//                                    if (p.getSended() == 0) {
-//                                        try {
-//                                            List<SymptomRect> list=new ArrayList<>();
-//                                            p.setDiagnostic_id(d.getX());
-//                                            SendDiagnosticPicture(p, sync);
-//                                            list = DB.symptomRectDao().getByPictureIdSync(p.getX());
-//                                            Log.e("Offline Rect lenght->",list.size()+"");
-//                                            for (SymptomRect s : list) {
-//                                                if (s.getSended() == 0) {
-//                                                    sendSymptomRect(s, sync);
-//                                                }
-//                                            }
-//                                        } catch (IOException e) {
-//                                            e.printStackTrace();
-//                                        }
-//
-//                                    }
-//                                }
                                 return null;
                             }
-                        }.execute();
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     }
                 }
             } else {
@@ -559,7 +539,7 @@ public class RemoteTasks {
                                 }
                                 return null;
                             }
-                        }.execute();
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     }
                 }
             } else {
@@ -591,22 +571,21 @@ public class RemoteTasks {
             Response<List<Culture>> response = call.execute();
             if (response.isSuccessful()) {
                 cultures = response.body();
-                for (Culture c : cultures) {
-                    //Uri uri = Uri.parse("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
-                    Uri uri = Uri.parse(c.getImage());
-                    DownloadFile(c.getImage());
-                    String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                    c.setImage(destination + uri.getLastPathSegment());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            DB.cultureDao().createCulture(c);
+                            for (Culture c : cultures) {
+                                //Uri uri = Uri.parse("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+                                Uri uri = Uri.parse(c.getImage());
+                                DownloadFile(c.getImage());
+                                String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                                c.setImage(destination + uri.getLastPathSegment());
+                                DB.cultureDao().createCulture(c);
+                            }
                             return null;
                         }
-                    }.execute();
+                    }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     //Store culture to paperDB
-
-                }
             } else {
                 Log.e("Error:", response.errorBody().string());
             }
@@ -628,16 +607,16 @@ public class RemoteTasks {
             Response<StruggleResponse> response = call.execute();
             if (response.isSuccessful()) {
                 struggles = response.body().getResult();
-                for (Struggle s : struggles) {
                     //Log.e("Struggles", s.getLink() + "//" + s.getDescription());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            DB.struggleDao().createStruggle(s);
+                            for (Struggle s : struggles) {
+                                DB.struggleDao().createStruggle(s);
+                            }
                             return null;
                         }
                     }.execute();
-                }
                 //Store culture pars to paperDB
                 //Paper.book().write("struggles", struggles);
             } else {
@@ -648,7 +627,7 @@ public class RemoteTasks {
                         struggles = DB.struggleDao().getAll().getValue();
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
         } else {
             //Dispatch show loading event
@@ -675,20 +654,16 @@ public class RemoteTasks {
             Response<List<Symptom>> response = call.execute();
             if (response.isSuccessful()) {
                 symptoms = response.body();
-
-                //Store symptoms to paperDB
-                //Paper.book().write("symptoms", symptoms);
-
-                for (Symptom s : symptoms) {
-                    // Log.e("Symptom", s.getName() + "//" + s.getLink());
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            DB.symptomDao().createSymptom(s);
+                            for (Symptom s : symptoms) {
+                                DB.symptomDao().createSymptom(s);
+                            }
                             return null;
                         }
                     }.execute();
-                }
+
             } else {
                 Log.e("Error Body", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {
@@ -697,7 +672,7 @@ public class RemoteTasks {
                         symptoms = DB.symptomDao().getAll().getValue();
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
 
         } else {
@@ -724,28 +699,18 @@ public class RemoteTasks {
             Response<List<CulturePart>> response = call.execute();
             if (response.isSuccessful()) {
                 cultureParts = response.body();
-
-                //Store culture pars to paperDB
-                //Paper.book().write("culture_parts", cultureParts);
-
-                //Log.e("Cultures Part", cultureParts.size() + "");
-
-                //Download Fake Image Url
-//                String url= "https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg";
-//                DownloadFile(url);
-
-                for (CulturePart c : cultureParts) {
-                    if (c.getImage() != null) {
-                        // Log.e("Culture Image", c.getImage());
-                        DownloadFile(c.getImage());
-                        Uri uri = Uri.parse(c.getImage());
-                        String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                        c.setImage(destination + uri.getLastPathSegment());
-                    }
-                    c.setCulture_id(id);
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
+                            for (CulturePart c : cultureParts) {
+                                if (c.getImage() != null) {
+                                    // Log.e("Culture Image", c.getImage());
+                                    DownloadFile(c.getImage());
+                                    Uri uri = Uri.parse(c.getImage());
+                                    String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                                    c.setImage(destination + uri.getLastPathSegment());
+                                }
+                                c.setCulture_id(id);
                             DB.culturePartsDao().createCulturePart(c);
                             //get the model
                             Model m = null;
@@ -758,14 +723,15 @@ public class RemoteTasks {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
+                        }
                             return null;
                         }
-                    }.execute();
-                }
+                    }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+
 
 
                 //Store culture pars to paperDB
-               // Paper.book().write("culture_parts", cultureParts);
+                // Paper.book().write("culture_parts", cultureParts);
 
                 //Store culture pars to paperDB
                 //Paper.book().write("models", models);
@@ -805,14 +771,11 @@ public class RemoteTasks {
             Response<List<Disease>> response = call.execute();
             if (response.isSuccessful()) {
                 diseases = response.body();
-
-                for (Disease d : diseases) {
-                    d.setLink(Constants.base_url + d.getLink());
-                    // Log.e("Disease", d.getName() + "//" + d.getStruggle_id());
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            d.setLink(Constants.base_url + d.getLink());
+                // Log.e("Disease", d.getName() + "//" + d.getStruggle_id());
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (Disease d : diseases) {
                             DB.diseaseDao().createDisease(d);
                             for (Integer i : d.getSymptoms()) {
                                 DiseaseSymptom ds = new DiseaseSymptom();
@@ -820,12 +783,13 @@ public class RemoteTasks {
                                 ds.setSymptom_id(i);
                                 DB.diseaseSymptomsDao().createDiseaseSymptom(ds);
                             }
-                            return null;
                         }
-                    }.execute();
-                }
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+
                 //Store diseases to paperDB
-               // Paper.book().write("diseases", diseases);
+                // Paper.book().write("diseases", diseases);
             } else {
                 Log.e("Error Body", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {
@@ -860,20 +824,20 @@ public class RemoteTasks {
             Response<List<Question>> response = call.execute();
             if (response.isSuccessful()) {
                 questions = response.body();
-
                 //Store questions to paperDB
                 //Paper.book().write("questions", questions);
 
-                for (Question q : questions) {
-                    // Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
-                    new AsyncTask<Void, Void, Void>() {
-                        @Override
-                        protected Void doInBackground(Void... voids) {
+                // Log.e("Question", q.getQuestion() + "//" + q.getPart_culture_id());
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        for (Question q : questions) {
                             DB.questionDao().createQuestion(q);
-                            return null;
                         }
-                    }.execute();
-                }
+                        return null;
+                    }
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+
             } else {
                 Log.e("Error Body", response.errorBody().toString());
                 new AsyncTask<Void, Void, Void>() {
@@ -882,7 +846,7 @@ public class RemoteTasks {
                         questions = DB.questionDao().getAll().getValue();
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
         } else {
             //Dispatch show loading event
@@ -894,7 +858,7 @@ public class RemoteTasks {
                     questions = DB.questionDao().getAll().getValue();
                     return null;
                 }
-            }.execute();
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
         return questions;
     }
@@ -942,7 +906,7 @@ public class RemoteTasks {
                         model = DB.modelDao().getByPart(part_id).getValue();
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
             return model;
         } else {
@@ -1016,33 +980,9 @@ public class RemoteTasks {
 
     }
 
-
-    //Do Stuffs if response is Error
-    public void OfflineSynchronSending() {
-
-    }
-    private void insertPost(Post popo){
-
-    }
-//        else {
-//            for (Post po: Alerts){
-//                if (popo.getIdServeur().equals(po.getIdServeur())){
-//                    new AsyncTask<Void,Void,Void>(){
-//                        @Override
-//                        protected Void doInBackground(Void... voids) {
-//                            DB.postDao().updatePost(popo.getDiseaseName(),popo.getDistance(),popo.getIdServeur());
-//                            return null;
-//                        }
-//                    }.execute();
-//                }
-//            }
-//        }
-//    }
-
     //Send My Location to server
     @SuppressLint("StaticFieldLeak")
     public void sendLocation(Location l) {
-
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
@@ -1056,96 +996,38 @@ public class RemoteTasks {
             Call<List<JsonElement>> call = service.sendMyLocation("Token " + token, requestBody);
             try {
                 Response<List<JsonElement>> response = call.execute();
-
                 if (response.isSuccessful()) {
-                    Log.d("data_recu:",response.body().toString());
-                    if (response.body().size()!=0) {
-                            //List<Post> Alerts=DB.postDao().getAllPost();
-                            //if (Alerts.isEmpty()){
-                                new AsyncTask<Void,Void,Void>(){
-                                    @Override
-                                    protected Void doInBackground(Void... voids) {
-                                        for (JsonElement json : response.body()) {
-                                            Post p = new Post();
-                                            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-                                            long millis = new Date().getTime();
-                                            String t = dateFormat.format(millis);
-                                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
-                                            p.setTime(t);
-                                            DB.postDao().createPost(p);
-                                            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                    Log.d("data_recu:", response.body().toString());
+                    if (response.body().size() != 0) {
+                        //List<Post> Alerts=DB.postDao().getAllPost();
+                        //if (Alerts.isEmpty()){
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                for (JsonElement json : response.body()) {
+                                    Post p = new Post();
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                                    long millis = new Date().getTime();
+                                    String t = dateFormat.format(millis);
+                                    p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                                    p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                                    p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                                    p.setTime(t);
+                                    DB.postDao().createPost(p);
+                                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
 
-                                            Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                                            PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                    Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                    PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-                                            Calendar cal = Calendar.getInstance();
-                                            cal.add(Calendar.SECOND, 5);
-                                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
-                                            Log.d("post_recu", "idServeur: "+json.getAsJsonObject().get("id").getAsString());
-                                        }
-                                        return null;
-                                    }
-                                }.execute();
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.add(Calendar.SECOND, 5);
+                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                    Log.d("post_recu", "idServeur: " + json.getAsJsonObject().get("id").getAsString());
+                                }
+                                return null;
+                            }
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
-
-//                            }
-//                            else{
-//                                for (Post pi : Alerts) {
-//                                    Log.d("post" + pi.getId(), "idServeur: " + pi.getIdServeur());
-//                                    if (!pi.getIdServeur().equals(json.getAsJsonObject().get("id").getAsString())) {
-//                                        new AsyncTask<Void,Void,Void>(){
-//                                            @Override
-//                                            protected Void doInBackground(Void... voids) {
-//                                                DB.postDao().createPost(p);
-//                                                return null;
-//                                            }
-//                                        }.execute();
-//                                    }
-//                                    //Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
-//                                }
-//                            }
-
-//                            if (!DB.postDao().getAllPost().contains(p)) {
-//                                DB.postDao().createPost(p);
-//                            }
-
-
-
-//                            insertPost(p);
-//                            List<Post> Alerts=DB.postDao().getAllPost();
-//                            Log.d("Alert_list",Alerts.toString());
-//                            Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
-////                        List<Post> getAlert=Alerts.getValue();
-//                            if (Alerts.size()==0){
-//                                new AsyncTask<Void,Void,Void>(){
-//                                    @Override
-//                                    protected Void doInBackground(Void... voids) {
-//                                        DB.postDao().createPost(p);
-//                                        return null;
-//                                    }
-//                                }.execute();
-//                            }else {
-//                                for (Post pi:Alerts) {
-//                                    Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
-//                                }
-//
-//                                for (Post pi:Alerts) {
-//                                    if (!pi.getIdServeur().equals(p.getIdServeur())) {
-//                                        new AsyncTask<Void, Void, Void>() {
-//                                            @Override
-//                                            protected Void doInBackground(Void... voids) {
-//                                                DB.postDao().createPost(p);
-//                                                return null;
-//                                            }
-//                                        }.execute();
-//                                    }
-//                                }
-//                            }
-
-
-                        //insertPost(p);
                     }
                 } else {
                     Log.e("Error:", response.errorBody().string());
