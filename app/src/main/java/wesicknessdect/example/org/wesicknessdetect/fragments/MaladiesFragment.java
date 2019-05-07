@@ -55,7 +55,7 @@ public class MaladiesFragment extends Fragment {
 //                        0.5f);
                 recyclerView.setHasFixedSize(true);
                 recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-                recyclerView.setAdapter(new DiseaseAdapter(mContext,diseases));
+                recyclerView.setAdapter(new DiseaseAdapter(getActivity(),diseases));
                 recyclerView.setLayoutAnimation(controller);
                 recyclerView.scheduleLayoutAnimation();
                 //recyclerView.addItemDecoration(decoration);

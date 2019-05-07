@@ -52,7 +52,7 @@ public class OfflineService extends Service {
     public void onCreate() {
         super.onCreate();
         DB = AppDatabase.getInstance(this);
-        Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
         mTimer.schedule(new TimerTaskOffline(), 0, 60000);
         intent = new Intent(str_receiver);

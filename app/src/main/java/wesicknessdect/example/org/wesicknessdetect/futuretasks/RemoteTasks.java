@@ -776,6 +776,7 @@ public class RemoteTasks {
                     @Override
                     protected Void doInBackground(Void... voids) {
                         for (Disease d : diseases) {
+                            d.setLink(Constants.base_url+d.getLink());
                             DB.diseaseDao().createDisease(d);
                             for (Integer i : d.getSymptoms()) {
                                 DiseaseSymptom ds = new DiseaseSymptom();

@@ -78,7 +78,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             .asBitmap()
                             .load(bm)
                             .apply(new RequestOptions().centerCrop())
-                            .apply(new RequestOptions().error(R.drawable.close_box))
+                            .apply(new RequestOptions().error(R.drawable.information))
                             .apply(new RequestOptions().placeholder(R.drawable.restart))
                             .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                             .into(holder.image);

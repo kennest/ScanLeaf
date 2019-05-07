@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -33,11 +34,11 @@ import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 
 public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHolder> {
 
-    Context context;
+    Activity context;
     List<Disease> diseases;
     private int mExpandedPosition;
 
-    public DiseaseAdapter(Context context, List<Disease> diseases) {
+    public DiseaseAdapter(Activity context, List<Disease> diseases) {
         this.context = context;
         this.diseases = diseases;
     }

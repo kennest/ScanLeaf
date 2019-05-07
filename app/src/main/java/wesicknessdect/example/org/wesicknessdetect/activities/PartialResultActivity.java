@@ -115,7 +115,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         String location = FastSave.getInstance().getString("location", "0.0:0.0");
         String[] locpart = location.split(":");
 
-        diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[1] + " " + locpart[0] + ")");
+        diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[0] + " " + locpart[1] + ")");
 
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
