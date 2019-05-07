@@ -1,0 +1,103 @@
+package wesicknessdect.example.org.wesicknessdetect;
+
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.os.SystemClock;
+import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import wesicknessdect.example.org.wesicknessdetect.activities.NotificationActivity;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
+
+import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
+import static wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity.DB;
+
+public class AlarmReceiver extends BroadcastReceiver{
+    private static final String CHANNEL_ID = "com.singhajit.notificationDemo.channelId";
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Intent notificationIntent = new Intent(context, NotificationActivity.class);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(NotificationActivity.class);
+        stackBuilder.addNextIntent(notificationIntent);
+
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        Notification.Builder builderGroup = new Notification.Builder(context)
+//                .setContentTitle("WeScanLeaf Notification")
+//                .setContentTitle("WeScanLeaf Détection")
+//                .setContentText("Certaines maladies ont été détectées...")
+//                .setGroupSummary(true)
+//                .setGroup("disease")
+//                .setContentIntent(pendingIntent);
+
+        Notification.Builder builder = new Notification.Builder(context)
+                                        .setGroup("disease");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId(CHANNEL_ID);
+        }
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "NotificationDemo",
+                    IMPORTANCE_DEFAULT
+            );
+            notificationManager.createNotificationChannel(channel);
+        }
+
+
+        long[] vibrate = { 0, 100, 200, 300 };
+
+        List<Post> posts=DB.postDao().getAllPost();
+        int nb=posts.size();
+        if (nb>=1){
+        for (Post post:posts){
+
+            Notification notification = builder.setContentTitle("WeScanLeaf Notification")
+                    .setContentText(post.getDiseaseName()+" détecté à "+post.getDistance()+" km de vous ...")
+                    .setTicker("Alerte, nouvelle maladie!")
+                    .setSmallIcon(R.drawable.ic_launcher)
+                    .setGroup("disease")
+                    .setOnlyAlertOnce(true)
+                    .setColor(context.getResources().getColor(R.color.colorPrimaryPix))
+                    .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_launcher))
+                    .setContentIntent(pendingIntent).build();
+            SystemClock.sleep(800);
+            notification.vibrate = vibrate;
+            notificationManager.notify((int) post.getId(), notification);
+        }}
+        Notification summaryNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .setBigContentTitle(nb+" maladies détections")
+                        .setSummaryText("Détection de maladie"))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setGroup("disease")
+                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
+                .setGroupSummary(true)
+                .build();
+
+        SystemClock.sleep(2000);
+        notificationManager.notify(50, summaryNotification);
+        }
+
+    }
+

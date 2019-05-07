@@ -6,11 +6,15 @@ import butterknife.OnClick;
 import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
+import wesicknessdect.example.org.wesicknessdetect.activities.QuizActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity;
 import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;

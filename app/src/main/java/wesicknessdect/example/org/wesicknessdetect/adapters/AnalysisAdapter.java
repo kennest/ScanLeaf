@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +23,8 @@ import com.glide.slider.library.SliderTypes.TextSliderView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -40,6 +44,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
     Activity context;
     List<DiagnosticPictures> diagnosticPictures;
+    RelativeLayout container;
 
     public AnalysisAdapter(Activity context, List<DiagnosticPictures> diagnosticPictures) {
         this.context = context;
@@ -61,6 +66,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         Log.e("XXXX 0 " + position, diagnosticPictures.get(position).pictures.size() + "");
                 if(diagnosticPictures.get(position).pictures.size()>0){
+
                     holder.counter.setText(Integer.toString(diagnosticPictures.get(position).pictures.size()));
                     for (Picture s : diagnosticPictures.get(position).pictures) {
                         Log.e("XXXX N " + position, s.getImage());
@@ -79,10 +85,20 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
+                Date   now = new Date();
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                String result = formatter.format(now);
+                holder.now.setText(result);
                 holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
                 holder.analyseTime.setText("1 min Ago");
                 //holder.slideview.addOnPageChangeListener(this);
+
+        holder.image.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_transition_animation));
+        holder.container.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_scale_animation));
+
+
+
     }
 
     @Override
@@ -95,8 +111,14 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         @BindView(R.id.image)
         CircularImageView image;
 
+        @BindView(R.id.now)
+        TextView now;
+
         @BindView(R.id.user_name)
         TextView userName;
+
+        @BindView(R.id.container)
+        RelativeLayout container;
 
         @BindView(R.id.analyse_time)
         TextView analyseTime;
@@ -106,6 +128,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
         public StatusHolder(View itemView) {
             super(itemView);
+
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

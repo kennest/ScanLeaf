@@ -1,13 +1,18 @@
 package wesicknessdect.example.org.wesicknessdetect.futuretasks;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.Error;
@@ -25,8 +30,10 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.AccessController;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +49,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
+import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
@@ -829,7 +838,7 @@ public class RemoteTasks {
             }
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
             //return new ArrayList<>();
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -877,7 +886,7 @@ public class RemoteTasks {
             }
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
             //return new ArrayList<>();
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -938,7 +947,7 @@ public class RemoteTasks {
             return model;
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
@@ -1002,7 +1011,7 @@ public class RemoteTasks {
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
         }
 
     }
@@ -1013,19 +1022,8 @@ public class RemoteTasks {
 
     }
     private void insertPost(Post popo){
-        List<Post> Alerts=DB.postDao().getAllPost();
-        Log.d("Alert_list",Alerts.toString());
-        Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
-//                        List<Post> getAlert=Alerts.getValue();
-//        if (Alerts.size()==0){
-            new AsyncTask<Void,Void,Void>(){
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    DB.postDao().createPost(popo);
-                    return null;
-                }
-            }.execute();
-        }
+
+    }
 //        else {
 //            for (Post po: Alerts){
 //                if (popo.getIdServeur().equals(po.getIdServeur())){
@@ -1061,20 +1059,91 @@ public class RemoteTasks {
 
                 if (response.isSuccessful()) {
                     Log.d("data_recu:",response.body().toString());
-                    Post p=new Post();
                     if (response.body().size()!=0) {
                         for (JsonElement json : response.body()) {
-                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                            Post p=new Post();
                             SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
                             long millis = new Date().getTime();
                             String t = dateFormat.format(millis);
+                            p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                            p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                            p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                             p.setTime(t);
-                            //insertPost(p);
+                            //List<Post> Alerts=DB.postDao().getAllPost();
+                            //if (Alerts.isEmpty()){
+                                new AsyncTask<Void,Void,Void>(){
+                                    @Override
+                                    protected Void doInBackground(Void... voids) {
+                                        DB.postDao().createPost(p);
+                                        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+                                        Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                        PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                        Calendar cal = Calendar.getInstance();
+                                        cal.add(Calendar.SECOND, 5);
+                                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                        return null;
+                                    }
+                                }.execute();
+
+
+//                            }
+//                            else{
+//                                for (Post pi : Alerts) {
+//                                    Log.d("post" + pi.getId(), "idServeur: " + pi.getIdServeur());
+//                                    if (!pi.getIdServeur().equals(json.getAsJsonObject().get("id").getAsString())) {
+//                                        new AsyncTask<Void,Void,Void>(){
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//                                                DB.postDao().createPost(p);
+//                                                return null;
+//                                            }
+//                                        }.execute();
+//                                    }
+//                                    //Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
+//                                }
+//                            }
+
+//                            if (!DB.postDao().getAllPost().contains(p)) {
+//                                DB.postDao().createPost(p);
+//                            }
+                            Log.d("post_recu", "idServeur: "+json.getAsJsonObject().get("id").getAsString());
+
+
+//                            insertPost(p);
+//                            List<Post> Alerts=DB.postDao().getAllPost();
+//                            Log.d("Alert_list",Alerts.toString());
+//                            Log.d("Alert_list_taille", String.valueOf(Alerts.size()));
+////                        List<Post> getAlert=Alerts.getValue();
+//                            if (Alerts.size()==0){
+//                                new AsyncTask<Void,Void,Void>(){
+//                                    @Override
+//                                    protected Void doInBackground(Void... voids) {
+//                                        DB.postDao().createPost(p);
+//                                        return null;
+//                                    }
+//                                }.execute();
+//                            }else {
+//                                for (Post pi:Alerts) {
+//                                    Log.d("post"+pi.getId(),"idServeur: "+pi.getIdServeur());
+//                                }
+//
+//                                for (Post pi:Alerts) {
+//                                    if (!pi.getIdServeur().equals(p.getIdServeur())) {
+//                                        new AsyncTask<Void, Void, Void>() {
+//                                            @Override
+//                                            protected Void doInBackground(Void... voids) {
+//                                                DB.postDao().createPost(p);
+//                                                return null;
+//                                            }
+//                                        }.execute();
+//                                    }
+//                                }
+//                            }
 
                         }
-                        insertPost(p);
+                        //insertPost(p);
                     }
                 } else {
                     Log.e("Error:", response.errorBody().string());

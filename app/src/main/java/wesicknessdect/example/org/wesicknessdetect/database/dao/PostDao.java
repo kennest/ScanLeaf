@@ -21,7 +21,7 @@ public interface PostDao {
     @Query("SELECT * FROM Post")
     List<Post> getAllPost();
 
-    @Query("SELECT id,MAX(idServeur)FROM Post")
+    @Query("SELECT * FROM Post ORDER BY id DESC LIMIT 1")
     Post getLastPost();
 
     @Query("UPDATE Post SET diseaseName = :maladie, distance = :distance WHERE idServeur =:idServeur")
