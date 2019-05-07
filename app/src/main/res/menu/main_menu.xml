@@ -14,11 +14,11 @@
         android:icon="@drawable/ic_face_black_24dp"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/menu_communaute"
-        android:title="Communauté"
-        android:icon="@drawable/ic_group_black_24dp"
-        app:showAsAction="always" />
+    <!--<item-->
+        <!--android:id="@+id/menu_communaute"-->
+        <!--android:title="Communauté"-->
+        <!--android:icon="@drawable/ic_group_black_24dp"-->
+        <!--app:showAsAction="always" />-->
 
     <item
         android:id="@+id/menu_settings"

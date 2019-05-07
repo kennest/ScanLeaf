@@ -79,7 +79,7 @@ public class ProcessActivity extends BaseActivity {
     TabLayout tabLayout;
     Toolbar toolbar;
     AppBarLayout appBarLayout;
-    FloatingActionButton actionButton;
+//    FloatingActionButton actionButton;
     Activity myActivity = this;
     List<Symptom> symptoms = new ArrayList<>();
     List<SymptomRect> symptomsRects = new ArrayList<>();
@@ -143,15 +143,15 @@ public class ProcessActivity extends BaseActivity {
         viewPager = findViewById(R.id.mainViewPager);
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
-        actionButton = findViewById(R.id.fab);
-        actionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                viewPager.setCurrentItem(0, true);
-            }
-
-
-        });
+//        actionButton = findViewById(R.id.fab);
+//        actionButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                viewPager.setCurrentItem(0, true);
+//            }
+//
+//
+//        });
 
         mainAdapter = new MainAdapter(getSupportFragmentManager());
 
@@ -179,7 +179,7 @@ public class ProcessActivity extends BaseActivity {
 //                    actionButton.setVisibility(View.GONE);
                 } else if (flag) {
                     translateDown();
-                    actionButton.setVisibility(View.VISIBLE);
+                    //actionButton.setVisibility(View.VISIBLE);
                 }
 
 //                if (position == 1) {
@@ -272,10 +272,10 @@ public class ProcessActivity extends BaseActivity {
                 startActivity(mP);
                 break;
 
-            case R.id.menu_communaute:
-                Intent mC = new Intent(this, CommunityActivity.class);
-                startActivity(mC);
-                break;
+//            case R.id.menu_communaute:
+//                Intent mC = new Intent(this, CommunityActivity.class);
+//                startActivity(mC);
+//                break;
 
             case R.id.menu_settings:
                 Intent settings = new Intent(this, SettingsActivity.class);
