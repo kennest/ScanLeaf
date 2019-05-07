@@ -135,7 +135,6 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                 Canvas canvas = new Canvas(bitmap_cropped);
 
                                 //recognitions = recognitions.subList(0, 4);
-
                                 for (Classifier.Recognition r : recognitionEntry.getValue().subList(0, 3)) {
                                     symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
 

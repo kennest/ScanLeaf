@@ -119,6 +119,6 @@ public class SettingsActivity extends BaseActivity {
                         }
                 }
             }
-        }.execute();
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }

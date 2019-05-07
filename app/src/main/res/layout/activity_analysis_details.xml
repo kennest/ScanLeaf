@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <androidx.appcompat.widget.Toolbar
-        android:background="@color/colorPrimary"
-        app:titleTextColor="@color/white"
-        android:id="@+id/toolbar"
+    <LinearLayout
+        android:orientation="vertical"
+        android:weightSum="5"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_weight="1"
+            android:background="@color/colorPrimary"
+            app:titleTextColor="@color/white"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
 
-    </androidx.appcompat.widget.Toolbar>
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </androidx.viewpager.widget.ViewPager>
+        </androidx.appcompat.widget.Toolbar>
+        <androidx.viewpager.widget.ViewPager
+            android:layout_weight="3"
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="500dp">
+        </androidx.viewpager.widget.ViewPager>
+        <WebView
+            android:layout_weight="1"
+            android:id="@+id/webview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            tools:ignore="WebViewLayout">
 
-</LinearLayout>
+        </WebView>
+    </LinearLayout>
+</ScrollView>

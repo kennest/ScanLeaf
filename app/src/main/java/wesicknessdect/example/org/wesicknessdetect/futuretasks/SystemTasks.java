@@ -22,6 +22,11 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.material.snackbar.Snackbar;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -44,6 +49,7 @@ import androidx.fragment.app.FragmentActivity;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import rx.functions.Action1;
+import wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
@@ -162,19 +168,33 @@ public class SystemTasks {
     }
 
     public void ensureLocationSettings() {
-        LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
-                .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
-                .build();
-        RxLocationSettings.with((FragmentActivity) mContext).ensure(locationSettingsRequest).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean enabled) {
-                // Toast.makeText(BootActivity.this, enabled ? "Enabled" : "Failed",
-                // Toast.LENGTH_LONG).show();
-                if (enabled) {
-                    getLocation();
-                }
+        Dexter.withActivity(mContext)
+                .withPermissions(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_NETWORK_STATE
+                ).withListener(new MultiplePermissionsListener() {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+                Log.e("PERMISSIONS","ALL CHECKED");
+                LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
+                        .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
+                        .build();
+                RxLocationSettings.with((FragmentActivity) mContext).ensure(locationSettingsRequest).subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean enabled) {
+                        // Toast.makeText(BootActivity.this, enabled ? "Enabled" : "Failed",
+                        // Toast.LENGTH_LONG).show();
+                        if (enabled) {
+                            getLocation();
+                        }
+                    }
+                });
             }
-        });
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+        }).check();
     }
 
 
