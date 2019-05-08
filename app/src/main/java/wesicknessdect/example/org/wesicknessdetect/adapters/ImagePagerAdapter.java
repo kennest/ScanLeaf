@@ -2,18 +2,25 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsSpinner;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.allyants.chipview.ChipView;
+import com.allyants.chipview.SimpleChipAdapter;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -33,6 +40,7 @@ public class ImagePagerAdapter extends PagerAdapter {
     Activity mContext;
     LayoutInflater mLayoutInflater;
     List<Map<String, Bitmap>> linkedPartImage;
+
 
     public ImagePagerAdapter(Activity context, List<Map<String, Bitmap>> linkedPartImage) {
         mContext = context;
@@ -67,7 +75,10 @@ public class ImagePagerAdapter extends PagerAdapter {
             public void run() {
                 String[] str2;
                 String[] str;
+                ArrayList tags = new ArrayList();
+
                 if (linkedPartImage.size() > 0) {
+                    com.google.android.material.chip.ChipGroup chipGroup = new com.google.android.material.chip.ChipGroup(mContext);
                     for (Map.Entry<String, Bitmap> n : linkedPartImage.get(position).entrySet()) {
                         //Log.e("Adapter Part img:", position + "//" + n.getKey());
                         str=n.getKey().split("::");
@@ -85,15 +96,28 @@ public class ImagePagerAdapter extends PagerAdapter {
                         for(String s:symptAttrs){
                             str2=s.split(":");
                             //Log.e("Splitted N:  ",str2[1]);
-                            TextView txt = new TextView(mContext);
-                            txt.setPadding(5, 5, 5, 0);
-                            txt.setText(String.format("%s", str2[0]));
-                            txt.setTextColor(Integer.parseInt(str2[1]));
-                            txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
-                            txt.setTextSize(15);
-                            symptoms_txt.addView(txt);
+//                            TextView txt = new TextView(mContext);
+//                            txt.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.radius));
+//                            txt.setBackgroundTintList(ColorStateList.valueOf(255-Integer.parseInt(str2[1])));
+//                            txt.setPadding(5, 5, 5, 0);
+//
+//                            txt.setText(String.format("%s", str2[0]));
+//                            txt.setTextColor(Integer.parseInt(str2[1]));
+//                            txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
+//                            txt.setTextSize(15);
+
+                            com.google.android.material.chip.Chip cv=new com.google.android.material.chip.Chip(mContext);
+                            cv.setText(String.format("%s", str2[0]));
+                            cv.setTextColor(Color.WHITE);
+                            cv.setChipIcon(mContext.getDrawable(R.drawable.barley_off));
+//                            Log.e("color",str2[1].substring(1));
+                            cv.setChipBackgroundColor(ColorStateList.valueOf(Integer.parseInt(str2[1])));
+                            chipGroup.addView(cv);
                         }
+                        symptoms_txt.removeAllViews();
+                        symptoms_txt.addView(chipGroup);
                     }
+//
                 }
             }
         });

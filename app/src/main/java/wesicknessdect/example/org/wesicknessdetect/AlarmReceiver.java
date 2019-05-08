@@ -68,8 +68,17 @@ public class AlarmReceiver extends BroadcastReceiver{
         if (nb>=1){
         for (Post post:posts){
 
+            String distance=post.getDistance();
+            Character z='0';
+            if (distance.charAt(0)==z)
+            {
+                distance=post.getDiseaseName()+" détectée près";
+            }else {
+                distance=post.getDiseaseName()+" détectée à "+post.getDistance()+" km";
+            }
+            String d=distance+" de vous";
             Notification notification = builder.setContentTitle("WeScanLeaf Notification")
-                    .setContentText(post.getDiseaseName()+" détecté à "+post.getDistance()+" km de vous ...")
+                    .setContentText(d)
                     .setTicker("Alerte, nouvelle maladie!")
                     .setSmallIcon(R.drawable.ic_launcher)
                     .setGroup("disease")
@@ -81,10 +90,18 @@ public class AlarmReceiver extends BroadcastReceiver{
             notification.vibrate = vibrate;
             notificationManager.notify((int) post.getId(), notification);
         }}
+        String y="";
+        if (nb==0){
+            y="Aucune maladie n'a été détectée dans les environs...";
+        }else if (nb==1){
+            y=nb+" maladie a été détectée dans les environs...";
+        }else if (nb==2){
+            y=nb+" maladies ont été détectées dans les environs...";
+        }
         Notification summaryNotification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setStyle(new NotificationCompat.InboxStyle()
-                        .setBigContentTitle(nb+" maladies détections")
+                        .setBigContentTitle(y)
                         .setSummaryText("Détection de maladie"))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setGroup("disease")

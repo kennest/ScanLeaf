@@ -10,13 +10,15 @@
         android:weightSum="5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <androidx.appcompat.widget.Toolbar
-            android:layout_weight="1"
-            android:background="@color/colorPrimary"
-            app:titleTextColor="@color/white"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:background="@color/colorPrimaryDark"
+            app:titleTextColor="@color/white">
 
         </androidx.appcompat.widget.Toolbar>
         <androidx.viewpager.widget.ViewPager
@@ -25,12 +27,19 @@
             android:layout_width="match_parent"
             android:layout_height="500dp">
         </androidx.viewpager.widget.ViewPager>
+
         <Button
             android:id="@+id/btnStruggle"
-            android:background="@color/colorPrimary"
-            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Methode de Lutte"/>
+            android:background="@drawable/radius_right"
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="10dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginHorizontal="15dp"
+            android:gravity="center"
+            android:text="Methode de Lutte"
+            android:textAlignment="center"
+            android:textColor="@color/white" />
     </LinearLayout>
 </ScrollView>

@@ -1,71 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_marginTop="8dp">
 
-    <LinearLayout
+
+    <RelativeLayout
+        android:paddingBottom="16dp"
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:orientation="horizontal">
+        android:layout_marginStart="24dp"
+        android:layout_marginLeft="24dp"
+        android:background="@drawable/card_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:id="@+id/user_image"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:src="@drawable/vieuxkouakou" />
+        <TextView
 
-        <RelativeLayout
+            android:id="@+id/my_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="20dp"
+            android:text="Simple Title Text "
+            android:textColor="@color/title_text_color"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/my_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="top"
-                android:text="Vieux Kouakou"
-                android:textColor="@android:color/black"
-                android:textSize="18sp"
-                android:fontFamily="sans-serif"
-                android:textStyle="bold" />
+        <TextView
+            android:id="@+id/latest_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/my_status"
+            android:layout_alignStart="@+id/my_status"
+            android:layout_alignLeft="@id/my_status"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:lineSpacingExtra="8dp"
+            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+            android:textColor="@color/content_text_color" />
 
-            <RelativeLayout
-                android:layout_below="@id/my_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/latest_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="TextView"
+            android:textColor="@color/content_text_color"
 
-                <TextView
-                    android:layout_marginStart="4dp"
-                    android:id="@+id/latest_message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Hello Android!"
-                    android:textColor="#555555"
-                    android:textSize="14sp"
-                    android:textStyle="normal" />
+            />
+    </RelativeLayout>
 
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/latest_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end|center"
-                android:text="Yesterday"
-                android:textColor="@color/colorPrimary"
-                android:textSize="12sp" />
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/user_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/container"
+        app:layout_constraintStart_toStartOf="@+id/container"
+        app:layout_constraintTop_toTopOf="@+id/container"
+        app:srcCompat="@mipmap/ic_launcher" />
 
 
-        </RelativeLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
