@@ -84,7 +84,15 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
 //            long di= Long.parseLong(post.getDistance());
 //            int dis;
 //            dis= (int) (di/1000);
-            String d="Détecté à "+post.getDistance()+" km de vous";
+            String distance=post.getDistance();
+            Character z='0';
+            if (distance.charAt(0)==z)
+            {
+                distance="Détecté près";
+            }else {
+                distance="Détecté à "+post.getDistance()+" km";
+            }
+            String d=distance+" de vous";
             latestMessage.setText(d);
         }
 

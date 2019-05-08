@@ -48,6 +48,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 public class AnalysisDetailsActivity extends BaseActivity {
     int diagnostic_id;
     ImagePagerAdapter imagePagerAdapter;
+
     List<Map<String, Bitmap>> linkedPartImage = new ArrayList<>();
     List<Symptom> symptoms = new ArrayList<>();
     List<SymptomRect> symptomRects = new ArrayList<>();
@@ -152,6 +153,8 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                                         }
                                                     }
                                                 }
+
+//                                                culturePart.getNom();
                                                 symtString = gson.toJson(symptAttrs);
                                                 map.put(culturePart.getImage() + "::" + symtString, bitmap_cropped);
                                                 linkedPartImage.add(map);
