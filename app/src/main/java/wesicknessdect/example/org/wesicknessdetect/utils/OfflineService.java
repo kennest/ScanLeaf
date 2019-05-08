@@ -112,7 +112,7 @@ public class OfflineService extends Service {
 
             //recuperation du dernier id du serveur
             //code de ça ▲
-            AsyncTask.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                 @Override
                 public void run() {
                     diagnostics = DB.diagnosticDao().getAllSync();

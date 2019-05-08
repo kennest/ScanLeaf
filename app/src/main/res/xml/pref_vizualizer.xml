@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="show_base"
+        android:summaryOff="Bass will not be shown currently."
+        android:summaryOn="Bass will be shown currently."
+        android:title="Show Bass"
+        />
+
+    <SwitchPreferenceCompat
+        app:key="synchronisation"
+        app:title="Activer synchronisation automatique"/>
+
+    <EditTextPreference
+        android:key="number"
+        android:inputType="number"
+        android:title="Nombre d'elements par synchronisation" />
+
+
+</PreferenceScreen>

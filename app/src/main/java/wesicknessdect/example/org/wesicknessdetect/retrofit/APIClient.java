@@ -18,7 +18,7 @@ public class APIClient {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         int cacheSize = 40 * 1024 * 1024; // 40 MiB
-        File cacheDirectory=new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/scanleaf_okhttp_cache/");
+        File cacheDirectory=new File(Environment.getDownloadCacheDirectory().getAbsolutePath()+"/scanleaf_okhttp_cache/");
         Cache cache = new Cache(cacheDirectory, cacheSize);
 
         OkHttpClient client = new OkHttpClient.Builder()

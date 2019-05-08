@@ -1,8 +1,10 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import androidx.room.Room;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
@@ -27,6 +29,11 @@ import com.appizona.yehiahd.fastsave.FastSave;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.hotmail.or_dvir.easysettings.pojos.BasicSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
+import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -37,18 +44,19 @@ import com.squareup.moshi.Moshi;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class SplashActivity extends BaseActivity {
-    private static int SPLASH_TIME_OUT=8000;
+    private static int SPLASH_TIME_OUT = 8000;
     TextView tv;
     WebView pulse;
-    Animation appear,dubas,fromLeft,fromRight, out;
+    Animation appear, dubas, fromLeft, fromRight, out;
     private static AppDatabase appDatabase;
     private static final String DATABASE_NAME = "wesickness.db";
-    String token="";
-    boolean isAuthenticated=false;
+    String token = "";
+    boolean isAuthenticated = false;
 
     @BindView(R.id.welcome_txt)
     TextView welcome;
@@ -60,6 +68,19 @@ public class SplashActivity extends BaseActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
+        //Init Settings
+        ArrayList<SettingsObject> mySettingsList = EasySettings.createSettingsArray(
+                new SeekBarSettingsObject.Builder("number", "Definissez le Nombre",10,10,50)
+                        .setSummary("Nombre de donnees par synchronisation")
+                        .build(),
+                new CheckBoxSettingsObject.Builder("synchronisation", "Synchronisation des donnees", false)
+                        .setSummary("Activez la synchronisation auto des donnees")
+                        .build());
+
+        Paper.book().write("SETTINGS", mySettingsList);
+
+        EasySettings.initializeSettings(this, mySettingsList);
+
         Dexter.withActivity(this)
                 .withPermissions(
                         Manifest.permission.CAMERA,
@@ -69,11 +90,14 @@ public class SplashActivity extends BaseActivity {
                         Manifest.permission.READ_EXTERNAL_STORAGE,
                         Manifest.permission.ACCESS_NETWORK_STATE
                 ).withListener(new MultiplePermissionsListener() {
-            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
-               Log.e("PERMISSIONS","ALL CHECKED");
+            @Override
+            public void onPermissionsChecked(MultiplePermissionsReport report) {
+                Log.e("PERMISSIONS", "ALL CHECKED");
                 SystemTasks.getInstance(SplashActivity.this).ensureLocationSettings();
             }
-            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+
+            @Override
+            public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).check();
         //*****************CHECK IF USER IS AUTHENTICATED****************/
         new Thread(new Runnable() {
@@ -86,14 +110,14 @@ public class SplashActivity extends BaseActivity {
                 List<User> users = appDatabase.userDao().getAll();
                 Moshi moshi = new Moshi.Builder().build();
                 JsonAdapter<User> jsonAdapter = moshi.adapter(User.class);
-                for(User u :users){
+                for (User u : users) {
                     String json = jsonAdapter.toJson(u);
-                    Log.e("JSON USER: ",json);
-                    Log.e("user: "+users.indexOf(u), u.getNom()+"/"+u.getPrenom()+"/"+u.getEmail());
-                    if(u.getToken()!=null){
-                        isAuthenticated=true;
-                        token=u.getToken();
-                        welcome.setText("Welcome, "+u.getUsername());
+                    Log.e("JSON USER: ", json);
+                    Log.e("user: " + users.indexOf(u), u.getNom() + "/" + u.getPrenom() + "/" + u.getEmail());
+                    if (u.getToken() != null) {
+                        isAuthenticated = true;
+                        token = u.getToken();
+                        welcome.setText("Welcome, " + u.getUsername());
                     }
                 }
                 try {
@@ -109,10 +133,10 @@ public class SplashActivity extends BaseActivity {
 //        pulse.loadUrl("file:///android_asset/boonnnn.gif");
 //        pulse.getSettings().setLoadWithOverviewMode(true);
 //        pulse.getSettings().setUseWideViewPort(true);
-        out=AnimationUtils.loadAnimation(this, R.anim.splashtransitionout);
+        out = AnimationUtils.loadAnimation(this, R.anim.splashtransitionout);
         fromLeft = AnimationUtils.loadAnimation(this, R.anim.lefttoright);
-        fromRight =AnimationUtils.loadAnimation(this, R.anim.rightoleft);
-        dubas =AnimationUtils.loadAnimation(this, R.anim.splashtransition);
+        fromRight = AnimationUtils.loadAnimation(this, R.anim.rightoleft);
+        dubas = AnimationUtils.loadAnimation(this, R.anim.splashtransition);
         appear = AnimationUtils.loadAnimation(this, R.anim.splashtransition);
         appear.setStartOffset(2800);
         fromLeft.setStartOffset(2300);
@@ -121,13 +145,13 @@ public class SplashActivity extends BaseActivity {
         dubas.setStartOffset(1500);
         ImageView left = findViewById(R.id.left);
         ImageView iv3 = findViewById(R.id.plantation);
-        ImageView right= findViewById(R.id.right);
+        ImageView right = findViewById(R.id.right);
         //pulse.animate().alpha(0.0f).setDuration(1500).setStartDelay(3000);
         left.startAnimation(fromLeft);
         right.startAnimation(fromRight);
         iv3.startAnimation(dubas);
 
-        if(isAuthenticated) {
+        if (isAuthenticated) {
             welcome.setVisibility(View.VISIBLE);
             try {
                 Thread.sleep(200);
@@ -141,12 +165,12 @@ public class SplashActivity extends BaseActivity {
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(!isAuthenticated) {
+                if (!isAuthenticated) {
                     //EventBus.getDefault().post(new ShowPartScreenEvent("from splash screen"));
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
-                   finish();
-                }else{
+                    finish();
+                } else {
 //                    EventBus.getDefault().post(new UserAuthenticatedEvent(token));
                     Intent intent = new Intent(getApplicationContext(), QuizActivity.class);
                     startActivity(intent);
@@ -156,9 +180,8 @@ public class SplashActivity extends BaseActivity {
         }, SPLASH_TIME_OUT);
 
 
-
-        }
-
-
     }
+
+
+}
 
