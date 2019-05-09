@@ -152,28 +152,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                 }
                             }
                         });
-
-                        //culturePart.getNom();
-
-
-//                        DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
-//                            @Override
-//                            public void onChanged(List<SymptomRect> symptomRects) {
-//                                Log.e("Analysis Rects -> ", symptomRects.size() + "");
-//
-//                            }
-//                        });
-
-//                        DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
-//                            @SuppressLint("StaticFieldLeak")
-//                            @Override
-//                            public void onChanged(CulturePart culturePart) {
-////                                                Log.e("Part Image DB:", culturePart.getImage() + " FOUND");
-//
-//
-//                                imagePagerAdapter.notifyDataSetChanged();
-//                            }
-//                        });
                     }
                 }
 
@@ -181,15 +159,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 viewPager.setAdapter(imagePagerAdapter);
             }
         }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-
-//                DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
-//                    @SuppressLint("StaticFieldLeak")
-//                    @Override
-//                    public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-//
-//                    }
-//                });
-
 
     }
 
