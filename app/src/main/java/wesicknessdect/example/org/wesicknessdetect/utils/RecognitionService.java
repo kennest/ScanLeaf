@@ -3,29 +3,16 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.util.Log;
-
-import com.downloader.Error;
-import com.downloader.OnCancelListener;
-import com.downloader.OnDownloadListener;
-import com.downloader.OnPauseListener;
-import com.downloader.OnProgressListener;
-import com.downloader.OnStartOrResumeListener;
-import com.downloader.PRDownloader;
-import com.downloader.Progress;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,9 +20,6 @@ import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classif
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
 
 public class RecognitionService extends IntentService {
     private static final String BITMAP = "bitmap";

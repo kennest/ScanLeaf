@@ -1,7 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.fragments;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import java.util.List;
 
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;

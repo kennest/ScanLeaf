@@ -1,26 +1,20 @@
-package wesicknessdect.example.org.wesicknessdetect.futuretasks;
+package wesicknessdect.example.org.wesicknessdetect.tasks;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 
 import com.appizona.yehiahd.fastsave.FastSave;
-import com.github.florent37.rxgps.RxGps;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.material.snackbar.Snackbar;
 import com.jetradarmobile.rxlocationsettings.RxLocationSettings;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -43,20 +37,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import rx.functions.Action1;
-import wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
-
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 
 
 public class SystemTasks {

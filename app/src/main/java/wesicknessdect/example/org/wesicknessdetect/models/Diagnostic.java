@@ -15,10 +15,10 @@ import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = User.class, parentColumns = "id", childColumns = "user_id",onUpdate = CASCADE,onDelete = CASCADE
+                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE, onDelete = CASCADE
         ),
-},indices = {@Index({"user_id","uuid"})})
-public class Diagnostic  {
+}, indices = {@Index(value = {"uuid","remote_id"})})
+public class Diagnostic {
     //@SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)
     private int x;
@@ -34,14 +34,14 @@ public class Diagnostic  {
     private String disease;
     private boolean finish;
     private int sended;
-    private float probability=95f;
+    private float probability = 95f;
     @SerializedName(value = "user")
     private long user_id;
     @SerializedName(value = "culture")
     private long culture_id;
     @SerializedName(value = "country")
     private long country_id;
-    private int is_share=0;
+    private int is_share = 0;
 
     @Ignore
     private Map<Integer, String> images_by_parts;

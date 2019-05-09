@@ -32,7 +32,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
-        <activity android:name=".activities.NotificationActivity"></activity>
+        <receiver
+            android:name=".utils.BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.PACKAGE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".activities.NotificationActivity">
+
+        </activity>
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.DiseaseActivity" />
         <activity android:name=".activities.ProfileActivity" />
@@ -86,6 +99,7 @@
 
 
         <receiver android:name=".AlarmReceiver" />
+        <receiver android:name=".utils.SyncReceiver" />
     </application>
 
 </manifest>

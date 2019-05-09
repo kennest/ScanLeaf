@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 
@@ -16,17 +15,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.lifecycle.Observer;
 
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+import wesicknessdect.example.org.wesicknessdetect.tasks.timers.OfflineTimerTask;
 
 public class OfflineService extends Service {
     private Timer mTimer = null;
@@ -54,7 +51,7 @@ public class OfflineService extends Service {
         DB = AppDatabase.getInstance(this);
         //Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
-        mTimer.schedule(new TimerTaskOffline(), 0, 60000);
+        mTimer.schedule(new OfflineTimerTask(this), 0, 60000);
         intent = new Intent(str_receiver);
     }
 
@@ -64,105 +61,6 @@ public class OfflineService extends Service {
         return START_STICKY;
     }
 
-
-    @SuppressLint("StaticFieldLeak")
-    private void SendDataOffline() throws IOException {
-        if (diagnostics != null) {
-            for (Diagnostic d : diagnostics) {
-                Log.e("Diag::Size", diagnostics.size() + "");
-                if (d.getSended() == 0) {
-                    RemoteTasks.getInstance(getApplicationContext()).SendOfflineDiagnostic(d, false);
-                }
-            }
-        }
-
-        if (pictures != null) {
-            for (Picture p : pictures) {
-                if (p.getSended() == 0) {
-                    RemoteTasks.getInstance(getApplicationContext()).SendDiagnosticPicture(p, false);
-                }
-            }
-        }
-
-        if (symptomRects != null) {
-            for (SymptomRect s : symptomRects) {
-                Log.e("Diag::Size", symptomRects.size() + "");
-                if (s.getSended() == 0) {
-                    RemoteTasks.getInstance(getApplicationContext()).sendSymptomRect(s, false);
-                }
-            }
-        }
-    }
-
-    private class TimerTaskOffline extends TimerTask {
-        @SuppressLint("StaticFieldLeak")
-        @Override
-        public void run() {
-
-            String location = FastSave.getInstance().getString("location", "0.0:0.0");
-            String[] split = location.split(":");
-
-            Double lat = Double.valueOf(split[0]);
-            Double longi = Double.valueOf(split[1]);
-
-            Log.e("mes_coordonnées", "Lat: " + lat + ", Longi: " + longi);
-            Location l = new Location();
-            l.setLat(lat.toString());
-            l.setLongi(longi.toString());
-
-            //recuperation du dernier id du serveur
-            //code de ça ▲
-            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                @Override
-                public void run() {
-                    diagnostics = DB.diagnosticDao().getAllSync();
-                    pictures = DB.pictureDao().getAllSync();
-                    symptomRects = DB.symptomRectDao().getAllSync();
-                    Log.e("Pre Task", "Started");
-                    String idServeur = "" + 0;
-                    posti = DB.postDao().getAllPost();
-                    Log.e("tous_posts", posti.toString());
-                    if (posti.size() == 0) {
-                        idServeur = "" + 0;
-                        l.setIdServeur(idServeur);
-                        Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
-                        RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
-                    } else {
-                        Post p = posti.get(posti.size() - 1);
-                        Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
-                        idServeur = p.getIdServeur();
-                        l.setIdServeur(idServeur);
-                        Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
-                        RemoteTasks.getInstance(getApplicationContext()).sendLocation(l);
-                    }
-
-                    try {
-                        SendDataOffline();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e("Pre Task", "Finished");
-                }
-            });
-
-//            new AsyncTask<Void, Void, Void>() {
-//                @Override
-//                protected Void doInBackground(Void... voids) {
-//
-//
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Void aVoid) {
-//                    super.onPostExecute(aVoid);
-//
-//                }
-//            }.execute();
-
-        }
-
-    }
 }
 
 

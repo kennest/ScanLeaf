@@ -8,14 +8,12 @@ import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,11 +23,6 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.appizona.yehiahd.fastsave.FastSave;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.hotmail.or_dvir.easysettings.pojos.BasicSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
@@ -41,8 +34,6 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,9 +61,10 @@ public class SplashActivity extends BaseActivity {
 
         //Init Settings
         ArrayList<SettingsObject> mySettingsList = EasySettings.createSettingsArray(
-                new SeekBarSettingsObject.Builder("number", "Definissez le Nombre",10,10,50)
-                        .setSummary("Nombre de donnees par synchronisation")
+                new SeekBarSettingsObject.Builder("number_x", "Definissez le Nombre d'elements a synchroniser",10,10,50)
+                        .setUseValueAsSummary()
                         .build(),
+                //new EditTextSettingsObject.Builder("number","Definissez le Nombre","0","Sauvegarder").build(),
                 new CheckBoxSettingsObject.Builder("synchronisation", "Synchronisation des donnees", false)
                         .setSummary("Activez la synchronisation auto des donnees")
                         .build());

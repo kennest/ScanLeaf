@@ -1,9 +1,8 @@
-package wesicknessdect.example.org.wesicknessdetect.futuretasks;
+package wesicknessdect.example.org.wesicknessdetect.tasks;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,8 +10,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.Error;
@@ -30,27 +27,23 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.AccessController;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
-import io.paperdb.Paper;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
@@ -306,7 +299,7 @@ public class RemoteTasks {
                                     }
                                     return null;
                                 }
-                            }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                         }
                     }
 

@@ -21,10 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -40,7 +38,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.DeletePartPictureEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 

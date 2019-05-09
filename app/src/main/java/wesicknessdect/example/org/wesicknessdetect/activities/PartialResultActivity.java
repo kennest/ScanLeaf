@@ -1,7 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.yuyakaido.android.cardstackview.CardStackView;
 import com.yuyakaido.android.cardstackview.Direction;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
@@ -40,17 +38,13 @@ import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.adapters.PartialResultImageAdapter;
-import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.SystemTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
-import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
-import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 
 public class PartialResultActivity extends BaseActivity implements CardStackListener {

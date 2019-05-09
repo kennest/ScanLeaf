@@ -2,10 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Environment;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.PRDownloader;
@@ -21,9 +18,7 @@ import java.util.Map;
 import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.models.Culture;
-import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 

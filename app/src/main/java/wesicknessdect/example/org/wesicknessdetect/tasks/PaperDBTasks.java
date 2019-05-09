@@ -1,14 +1,11 @@
-package wesicknessdect.example.org.wesicknessdetect.futuretasks;
+package wesicknessdect.example.org.wesicknessdetect.tasks;
 
 import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import androidx.room.Transaction;
-
 import io.paperdb.Paper;
-import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;

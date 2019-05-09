@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(indices = @Index("uuid"))
+@Entity(indices = {@Index(value = {"uuid","remote_id"})})
 public class SymptomRect extends RectF {
 
     @SerializedName(value = "id_mobile")

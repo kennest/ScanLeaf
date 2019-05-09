@@ -3,21 +3,14 @@ package wesicknessdect.example.org.wesicknessdetect.activities.login;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
-import wesicknessdect.example.org.wesicknessdetect.activities.QuizActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
-import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,8 +18,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends BaseActivity {

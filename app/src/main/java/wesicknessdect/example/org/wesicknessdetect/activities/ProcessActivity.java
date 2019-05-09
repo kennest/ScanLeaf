@@ -3,13 +3,9 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,15 +17,12 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
-import com.appizona.yehiahd.fastsave.FastSave;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.gson.JsonObject;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -38,8 +31,6 @@ import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
@@ -48,8 +39,6 @@ import androidx.viewpager.widget.ViewPager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
@@ -58,15 +47,8 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
-import wesicknessdect.example.org.wesicknessdetect.futuretasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
-import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
-import wesicknessdect.example.org.wesicknessdetect.models.Picture;
-import wesicknessdect.example.org.wesicknessdetect.models.Post;
-import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
-import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
 /**
