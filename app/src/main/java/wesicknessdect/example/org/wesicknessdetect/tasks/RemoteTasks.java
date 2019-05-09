@@ -450,12 +450,12 @@ public class RemoteTasks {
             @Override
             protected Void doInBackground(Void... voids) {
                 d.setSended(0);
-                for (Picture p : d.getPictures()) {
-                    for (SymptomRect sr : p.getSymptomRects()) {
-                        Symptom s = DB.symptomDao().getByNameSync(sr.label);
-                        sr.setSymptom_id(s.getId());
-                    }
-                }
+//                for (Picture p : d.getPictures()) {
+//                    for (SymptomRect sr : p.getSymptomRects()) {
+//                        Symptom s = DB.symptomDao().getByNameSync(sr.label);
+//                        sr.setSymptom_id(s.getId());
+//                    }
+//                }
                 DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
                 return null;
             }
