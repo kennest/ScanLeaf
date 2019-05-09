@@ -17,7 +17,7 @@ import static androidx.room.ForeignKey.CASCADE;
         @ForeignKey(
                 entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE, onDelete = CASCADE
         ),
-}, indices = {@Index(value = {"uuid","remote_id"})})
+}, indices = {@Index(value = {"remote_id"}), @Index(value = "uuid", unique = true)})
 public class Diagnostic {
     //@SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)

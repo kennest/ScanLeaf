@@ -55,6 +55,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
     DiagnosticPictures diagnosticPictures = new DiagnosticPictures();
     Struggle struggle = new Struggle();
     Disease disease = new Disease();
+    CulturePart cp=new CulturePart();
 
     @BindView(R.id.pager)
     public ViewPager viewPager;
@@ -71,6 +72,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
     public void onStart() {
         super.onStart();
     }
+
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -93,85 +95,102 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 symptomRects = DB.symptomRectDao().getAllSync();
                 return null;
             }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
-        runOnUiThread(new Runnable() {
             @Override
-            public void run() {
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                toolbar.setTitle(diagnosticPictures.diagnostic.getDisease());
 
-                DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
-                    @SuppressLint("StaticFieldLeak")
-                    @Override
-                    public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-                        for (DiagnosticPictures dp : diagnosticPictures) {
-                            if (dp.diagnostic.getX() == diagnostic_id) {
-                                toolbar.setTitle(dp.diagnostic.getDisease());
+                for (Picture p : diagnosticPictures.pictures) {
+                    //Log.e("Pic exist:", p.getImage());
+                    if (new File(p.getImage()).exists()) {
+                        Set<String> symptAttrs = new HashSet<>();
+                        Map<String, Bitmap> map = new HashMap<>();
+                        @SuppressLint("UseSparseArrays")
+                        Map<Integer, SymptomRect> rects = new HashMap<>();
+                        Bitmap bm = BitmapFactory.decodeFile(p.getImage());
+                        Gson gson = new Gson();
+                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
+                        Canvas canvas = new Canvas(bitmap_cropped);
 
-                                for (Picture p : dp.pictures) {
-                                    //Log.e("Pic exist:", p.getImage());
-                                    if (new File(p.getImage()).exists()) {
-                                        Set<String> symptAttrs = new HashSet<>();
-                                        Map<String, Bitmap> map = new HashMap<>();
-                                        @SuppressLint("UseSparseArrays")
-                                        Map<Integer, SymptomRect> rects = new HashMap<>();
-                                        Bitmap bm = BitmapFactory.decodeFile(p.getImage());
-                                        Gson gson = new Gson();
-                                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
-                                        Canvas canvas = new Canvas(bitmap_cropped);
+                        for (SymptomRect rect : symptomRects) {
+                            if(rect.picture_id==p.getX()) {
+                                Random rnd = new Random();
+                                Paint paint = new Paint();
+                                Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
+                                paint.setStyle(Paint.Style.STROKE);
+                                paint.setStrokeWidth(4f);
+                                int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+                                paint.setColor(color);
+                                paint.setAntiAlias(true);
+                                canvas.drawRect(rect, paint);
+                                rects.put(color, rect);
+                            }
+                        }
 
-                                        DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
-                                            @Override
-                                            public void onChanged(List<SymptomRect> symptomRects) {
-                                                Log.e("Analysis Rects -> ", symptomRects.size() + "");
-                                                for (SymptomRect rect : symptomRects) {
-                                                    Random rnd = new Random();
-                                                    Paint paint = new Paint();
-                                                    Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
-                                                    paint.setStyle(Paint.Style.STROKE);
-                                                    paint.setStrokeWidth(4f);
-                                                    int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
-                                                    paint.setColor(color);
-                                                    paint.setAntiAlias(true);
-                                                    canvas.drawRect(rect, paint);
-                                                    rects.put(color, rect);
-                                                }
-                                            }
-                                        });
 
-                                        DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
-                                            @SuppressLint("StaticFieldLeak")
-                                            @Override
-                                            public void onChanged(CulturePart culturePart) {
-//                                                Log.e("Part Image DB:", culturePart.getImage() + " FOUND");
 
-                                                for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
-                                                    for (Symptom s : symptoms) {
-                                                        if (s.getId() == n.getValue().getSymptom_id()) {
-                                                            String tmp = s.getName() + ":" + n.getKey();
-                                                            Log.e("Symptom details", tmp);
-                                                            symptAttrs.add(tmp);
-                                                        }
-                                                    }
-                                                }
-
-//                                                culturePart.getNom();
-                                                symtString = gson.toJson(symptAttrs);
-                                                map.put(culturePart.getImage() + "::" + symtString, bitmap_cropped);
-                                                linkedPartImage.add(map);
-                                                imagePagerAdapter.notifyDataSetChanged();
-                                            }
-                                        });
-                                    }
+                        for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
+                            for (Symptom s : symptoms) {
+                                if (s.getId() == n.getValue().getSymptom_id()) {
+                                    String tmp = s.getName() + ":" + n.getKey();
+                                    Log.e("Symptom details", tmp);
+                                    symptAttrs.add(tmp);
                                 }
                             }
                         }
+
+                        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                cp=DB.culturePartsDao().getByIdSync(p.getCulture_part_id());
+                                symtString = gson.toJson(symptAttrs);
+                                map.put(cp.getImage() + "::" + symtString+"::"+cp.getNom(), bitmap_cropped);
+                                linkedPartImage.add(map);
+                                if(imagePagerAdapter!=null) {
+                                    imagePagerAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        });
+
+                        //culturePart.getNom();
+
+
+//                        DB.symptomRectDao().getByPictureId(p.getX()).observe(AnalysisDetailsActivity.this, new Observer<List<SymptomRect>>() {
+//                            @Override
+//                            public void onChanged(List<SymptomRect> symptomRects) {
+//                                Log.e("Analysis Rects -> ", symptomRects.size() + "");
+//
+//                            }
+//                        });
+
+//                        DB.culturePartsDao().getById(p.getCulture_part_id()).observe(AnalysisDetailsActivity.this, new Observer<CulturePart>() {
+//                            @SuppressLint("StaticFieldLeak")
+//                            @Override
+//                            public void onChanged(CulturePart culturePart) {
+////                                                Log.e("Part Image DB:", culturePart.getImage() + " FOUND");
+//
+//
+//                                imagePagerAdapter.notifyDataSetChanged();
+//                            }
+//                        });
                     }
-                });
+                }
+
                 imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
                 viewPager.setAdapter(imagePagerAdapter);
-
             }
-        });
+        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+
+//                DB.diagnosticDao().getDiagnosticWithPictures().observe(AnalysisDetailsActivity.this, new Observer<List<DiagnosticPictures>>() {
+//                    @SuppressLint("StaticFieldLeak")
+//                    @Override
+//                    public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
+//
+//                    }
+//                });
+
+
     }
 
     @OnClick(R.id.btnStruggle)

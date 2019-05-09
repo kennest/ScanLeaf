@@ -65,14 +65,12 @@ public class ImagePagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.analysis_detail_image, container, false);
         ImageView image = itemView.findViewById(R.id.image);
+        TextView partname=itemView.findViewById(R.id.partname);
         CircularImageView part_image = itemView.findViewById(R.id.part_image);
         LinearLayout symptoms_txt = itemView.findViewById(R.id.symptoms_txt);
         symptoms_txt.setOrientation(LinearLayout.VERTICAL);
         Gson gson = new Gson();
 
-        mContext.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
                 String[] str2;
                 String[] str;
                 ArrayList tags = new ArrayList();
@@ -87,7 +85,7 @@ public class ImagePagerAdapter extends PagerAdapter {
                         part_image.setImageBitmap(bm);
                         //image.setImageBitmap(BitmapFactory.decodeFile(n.getKey()));
                         image.setImageBitmap(n.getValue());
-
+                        partname.setText(str[2]);
                         //Split to get symptoms infos
                         Type typeOfHashMap = new TypeToken<List<String>>() {}.getType();
                         symptoms_txt.removeAllViews();
@@ -95,17 +93,6 @@ public class ImagePagerAdapter extends PagerAdapter {
                         Log.e("Attrs Size -> "+position+" -> ",symptAttrs.size()+"");
                         for(String s:symptAttrs){
                             str2=s.split(":");
-                            //Log.e("Splitted N:  ",str2[1]);
-//                            TextView txt = new TextView(mContext);
-//                            txt.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.radius));
-//                            txt.setBackgroundTintList(ColorStateList.valueOf(255-Integer.parseInt(str2[1])));
-//                            txt.setPadding(5, 5, 5, 0);
-//
-//                            txt.setText(String.format("%s", str2[0]));
-//                            txt.setTextColor(Integer.parseInt(str2[1]));
-//                            txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
-//                            txt.setTextSize(15);
-
                             com.google.android.material.chip.Chip cv=new com.google.android.material.chip.Chip(mContext);
                             cv.setText(String.format("%s", str2[0]));
                             cv.setTextColor(Color.WHITE);
@@ -119,8 +106,6 @@ public class ImagePagerAdapter extends PagerAdapter {
                     }
 //
                 }
-            }
-        });
 
         container.addView(itemView);
         //image.setImageBitmap(bitmaps.get(position));
