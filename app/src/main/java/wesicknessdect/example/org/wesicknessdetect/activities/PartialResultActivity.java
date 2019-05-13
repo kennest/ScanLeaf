@@ -32,6 +32,7 @@ import java.util.UUID;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -76,7 +77,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     Diagnostic diagnostic = new Diagnostic();
     int index = 0;
     Map.Entry<Long, Integer> maxEntry = null;
-
+    String symptoms_ids = "";
 
 
     @SuppressLint("StaticFieldLeak")
@@ -147,8 +148,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         //Add distinct label in a list
         for (Classifier.Recognition r : recognitions) {
-
-            symptoms_set.add(r.getTitle().toUpperCase(Locale.ENGLISH));
+            symptoms_set.add(r.getTitle().toUpperCase());
         }
 
         //Log.e("All Recognitions label", symptoms_set.size() + "");
@@ -163,13 +163,19 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                     item = item.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
                     for (String n : symptoms_set) {
-                        //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
+                        Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
                         if (item.toUpperCase().equals(n)) {
                             img_symptoms_id.add(s.getId());
+                            if (symptoms_ids == "") {
+                                symptoms_ids = +s.getId() + "";
+                            } else {
+                                symptoms_ids = symptoms_ids + ":" + s.getId();
+                            }
                         }
                     }
+                    diagnostic.setSymptoms(symptoms_ids);
                 }
-               // Log.e("All img symptom id", img_symptoms_id.size() + "");
+                // Log.e("All img symptom id", img_symptoms_id.size() + "");
             }
         });
 
@@ -225,21 +231,21 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @OnClick(R.id.btn_save_diagnostic)
     public void SendDiagnostic() {
-            try {
-                diagnostic.setPictures(AppController.getInstance().getPictures());
-                String uuid=UUID.randomUUID().toString();
-                diagnostic.setUuid(uuid);
-                RemoteTasks.getInstance(this).sendDiagnostic(diagnostic,false);
-                finish();
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            diagnostic.setPictures(AppController.getInstance().getPictures());
+            String uuid = UUID.randomUUID().toString();
+            diagnostic.setUuid(uuid);
+            RemoteTasks.getInstance(this).sendDiagnostic(diagnostic, false);
+            finish();
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 //            for(Map.Entry<Integer,List<Classifier.Recognition>> entry:recognitions_by_part.entrySet()){
 //                entry.setValue(entry.getValue().subList(0,4));
 //            }
-            AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+        AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
     }
 
     private void InitCardSwipe() {
@@ -344,7 +350,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void onCardDisappeared(View view, int position) {
         //Log.e("Card Disappeared ", position + "//" + partialResultImageAdapter.getItemCount());
         if (position == (partialResultImageAdapter.getItemCount() - 1)) {
-           // Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
+            // Log.e("Card Disappeared ", position + "//" + (partialResultImageAdapter.getItemCount() - 1));
             progressBar.setVisibility(View.VISIBLE);
         }
     }

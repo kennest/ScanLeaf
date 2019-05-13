@@ -43,6 +43,9 @@ public class Diagnostic {
     private long country_id;
     private int is_share = 0;
 
+    @SerializedName(value = "symptoms")
+    private String symptoms;
+
     @Ignore
     private Map<Integer, String> images_by_parts;
 
@@ -168,5 +171,13 @@ public class Diagnostic {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
     }
 }
