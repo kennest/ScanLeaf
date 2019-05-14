@@ -9,21 +9,17 @@ import androidx.room.PrimaryKey;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = Diagnostic.class,
-                parentColumns = "x",
-                childColumns = "diagnostic_id"),
-        @ForeignKey(
                 entity = Symptom.class,
                 parentColumns = "id",
                 childColumns = "symptom_id")
-},indices = {@Index("diagnostic_id"),@Index("symptom_id")})
+},indices = {@Index("symptom_id")})
 public class UserChoice {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @SerializedName(value = "id")
-    private long res_id;
-    private String value;
-    private long diagnostic_id;
+    private long remote_id;
+
+    private String diagnostic_uuid;
     private long symptom_id;
 
     public int getId() {
@@ -34,20 +30,12 @@ public class UserChoice {
         this.id = id;
     }
 
-    public String getValue() {
-        return value;
+    public String getDiagnostic_uuid() {
+        return diagnostic_uuid;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public long getDiagnostic_id() {
-        return diagnostic_id;
-    }
-
-    public void setDiagnostic_id(long diagnostic_id) {
-        this.diagnostic_id = diagnostic_id;
+    public void setDiagnostic_uuid(String diagnostic_uuid) {
+        this.diagnostic_uuid = diagnostic_uuid;
     }
 
     public long getSymptom_id() {
@@ -58,11 +46,11 @@ public class UserChoice {
         this.symptom_id = symptom_id;
     }
 
-    public long getRes_id() {
-        return res_id;
+    public long getRemote_id() {
+        return remote_id;
     }
 
-    public void setRes_id(long res_id) {
-        this.res_id = res_id;
+    public void setRemote_id(long remote_id) {
+        this.remote_id = remote_id;
     }
 }

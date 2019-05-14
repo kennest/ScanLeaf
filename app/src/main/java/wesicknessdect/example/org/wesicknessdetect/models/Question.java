@@ -4,8 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+
+import java.util.List;
 
 @Entity(foreignKeys = {@ForeignKey(entity = CulturePart.class,parentColumns = "id",childColumns = "part_culture_id")},
         indices = {@Index("part_culture_id")})
@@ -19,6 +22,9 @@ public class Question  {
 
     @SerializedName(value = "partCulture")
     private long part_culture_id;
+
+    @Ignore
+    private List<Symptom> symptomList;
 
     public int getId() {
         return id;
@@ -44,4 +50,11 @@ public class Question  {
         this.part_culture_id = part_culture_id;
     }
 
+    public List<Symptom> getSymptomList() {
+        return symptomList;
+    }
+
+    public void setSymptomList(List<Symptom> symptomList) {
+        this.symptomList = symptomList;
+    }
 }

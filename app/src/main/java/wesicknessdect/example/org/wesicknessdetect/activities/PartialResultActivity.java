@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -58,6 +59,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @BindView(R.id.btn_save_diagnostic)
     FloatingActionButton save_diagnostic;
+
+    @BindView(R.id.btn_next_diagnostic)
     FloatingActionButton go_to_quiz_diagnostic;
 
 
@@ -101,6 +104,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
         });
 
+
     }
 
     private void InitDiagnosticData() {
@@ -124,7 +128,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         diagnostic.setCulture_id(1);
         diagnostic.setAdvancedAnalysis("2019-03-08T16:00:59Z");
         diagnostic.setFinish(true);
-
+        String uuid = UUID.randomUUID().toString();
+        diagnostic.setUuid(uuid);
         diagnostic.setImages_by_parts(images_by_parts);
 
         DB.profileDao().getAll().observe(this, new Observer<List<Profile>>() {
@@ -233,8 +238,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void SendDiagnostic() {
         try {
             diagnostic.setPictures(AppController.getInstance().getPictures());
-            String uuid = UUID.randomUUID().toString();
-            diagnostic.setUuid(uuid);
+
             RemoteTasks.getInstance(this).sendDiagnostic(diagnostic, false);
             finish();
             Thread.sleep(1000);
@@ -246,6 +250,19 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 //                entry.setValue(entry.getValue().subList(0,4));
 //            }
         AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+    }
+
+    @OnClick(R.id.btn_next_diagnostic)
+    public void goToQuiz(){
+        Intent quiz=new Intent(this,QuizActivity.class);
+
+        Gson gson_score=new Gson();
+        String disease_score_gson=gson_score.toJson(disease_score);
+        String diagnostic_gson=gson_score.toJson(diagnostic);
+
+        quiz.putExtra("disease_score_gson",disease_score_gson);
+        quiz.putExtra("diagnostic_gson",diagnostic_gson);
+        startActivity(quiz);
     }
 
     private void InitCardSwipe() {
