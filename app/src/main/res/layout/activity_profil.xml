@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="match_parent" android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,7 +11,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="210dp"
-        android:background="@drawable/cacao" />
+        android:background="@drawable/background_gradient" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +27,8 @@
             android:text="Mon Profil"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:id="@+id/monProfil"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -36,8 +39,9 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_centerHorizontal="true"
-                android:elevation="1dp"
-                android:src="@drawable/profile" />
+                android:elevation="0.5dp"
+                android:id="@+id/userImage"
+                android:src="@drawable/vieuxkouakou" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -67,6 +71,7 @@
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="60dp"
                             android:text="Adopo Jordan"
+                            android:id="@+id/userNom"
                             android:textColor="@color/black"
                             android:textSize="25sp"
                             android:textStyle="bold" />
@@ -75,17 +80,30 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="20dp"
+                            android:layout_marginTop="10dp"
+                            android:text="alias"
+                            android:textColor="#d5d5d5"
+                            android:textSize="14sp"
+                            android:textStyle="italic" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="10dp"
+                            android:id="@+id/userFonction"
                             android:text="Agriculteur de cacao"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="17sp" />
+
+
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="30dp"
-                            android:text="Ma particularité c'est de planter les racines et surveiller l'évolution des plantes jusqu'à la fructification"
+                            android:text="jordan.adopo@gmail.com"
+                            android:id="@+id/userEmail"
                             android:textAlignment="center"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="18sp"
@@ -96,6 +114,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="40dp"
+                            android:id="@+id/userPays"
                             android:text="Meagui, Côte d'Ivoire"
                             android:textColor="@color/colorPrimary"
                             android:textSize="18sp"
@@ -123,6 +142,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
+                            android:id="@+id/nbAnalyses"
                             android:text="25"
                             android:textColor="@color/black"
                             android:textSize="20sp"
@@ -133,6 +153,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="analyses efectuées"
+
                             android:textColor="@color/black"
                             android:textSize="18sp" />
                     </LinearLayout>
@@ -149,6 +170,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:text="16"
+                            android:id="@+id/nbDetect"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -175,10 +197,11 @@
                     <Button
                         android:layout_width="125dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="70dp"
-                        android:layout_weight="2"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_weight="1"
+                        android:id="@+id/voirAnalyses"
                         android:backgroundTint="@color/colorPrimary"
-                        android:drawableLeft="@drawable/ic_visibility_black_24dp"
+                        android:drawableEnd="@drawable/ic_visibility_black_24dp"
                         android:drawableTint="@color/white"
                         android:text="Mes analyses"
                         android:textColor="@color/white"
@@ -189,13 +212,15 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="10dp"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/colorPrimary"
-                        android:drawableRight="@drawable/ic_group_black_24dp"
+                        android:id="@+id/modifyProfil"
+                        android:backgroundTint="@color/colorAccent"
+                        android:drawableEnd="@drawable/ic_edit_black_24dp"
                         android:drawableTint="@color/white"
-                        android:text="Communauté"
-                        android:textColor="@color/white"
-                        android:visibility="gone"
+                        android:text="Modifier le profil"
+                        android:textColor="@color/colorPrimaryDark"
                         tools:ignore="ButtonStyle" />
+
+
 
                 </LinearLayout>
 
@@ -204,3 +229,4 @@
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
+</ScrollView>

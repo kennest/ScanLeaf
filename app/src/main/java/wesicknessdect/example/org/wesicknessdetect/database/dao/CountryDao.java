@@ -22,4 +22,7 @@ public interface CountryDao {
 
     @Query("SELECT * FROM Country WHERE name=:name")
     LiveData<Country> getByName(String name);
+
+    @Query("SELECT * FROM Country WHERE id=:id")
+    Country getById(int id);
 }

@@ -18,4 +18,7 @@ public interface ProfileDao {
     @Query("SELECT * FROM Profile")
     LiveData<List<Profile>> getAll();
 
+    @Query("SELECT * FROM Profile")
+    List<Profile> getProfil();
+
 }
