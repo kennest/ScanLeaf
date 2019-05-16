@@ -45,9 +45,7 @@ public class OfflineTimerTask extends TimerTask {
 
         //recuperation du dernier id du serveur
         //code de ça ▲
-        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
+
                 diagnostics = AppDatabase.getInstance(ctx).diagnosticDao().getAllSync();
                 pictures = AppDatabase.getInstance(ctx).pictureDao().getAllSync();
                 symptomRects = AppDatabase.getInstance(ctx).symptomRectDao().getAllSync();
@@ -75,8 +73,6 @@ public class OfflineTimerTask extends TimerTask {
                     e.printStackTrace();
                 }
                 Log.e("Pre Task", "Finished");
-            }
-        });
     }
 
     @SuppressLint("StaticFieldLeak")

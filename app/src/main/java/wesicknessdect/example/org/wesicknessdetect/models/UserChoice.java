@@ -19,7 +19,9 @@ public class UserChoice {
     @SerializedName(value = "id")
     private long remote_id;
 
+    @SerializedName(value = "diagnostic_uuid")
     private String diagnostic_uuid;
+
     private long symptom_id;
 
     public int getId() {

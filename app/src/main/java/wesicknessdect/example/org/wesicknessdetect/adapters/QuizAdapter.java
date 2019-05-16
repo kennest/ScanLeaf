@@ -13,7 +13,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,21 +57,25 @@ public class QuizAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         convertView = activity.getLayoutInflater().inflate(R.layout.quiz_item, null, false);
         CircularImageView part_icon = convertView.findViewById(R.id.partIcon);
         TextView part_culture = convertView.findViewById(R.id.partCulture);
         TextView question = convertView.findViewById(R.id.question);
         LinearLayout symptom_layout = convertView.findViewById(R.id.sympt);
         symptom_layout.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-       HashMap<Question, Set<Integer>> choices=new HashMap<>();
-        Set<Integer> symptoms_sets=new HashSet<>();
+
+        HashMap<Question, Set<Integer>> choices = new HashMap<>();
+        Set<Integer> symptoms_sets = new HashSet<>();
+
         for (Map.Entry<CulturePart, Question> entry : list.entrySet()) {
-            Log.e("Quiz Adpater Symptom ->", entry.getValue().getSymptomList().size()+"");
+
+            Log.e("Quiz Adpater Symptom ->", entry.getValue().getSymptomList().size() + "");
             part_icon.setImageBitmap(BitmapFactory.decodeFile(entry.getKey().getImage()));
             part_culture.setText(entry.getKey().getNom());
             question.setText(entry.getValue().getQuestion());
-            for(Symptom s:entry.getValue().getSymptomList()){
 
+            for (Symptom s : entry.getValue().getSymptomList()) {
                 CheckBox ch = new CheckBox(activity);
                 ch.setText(s.getName());
                 ch.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimaryLightPix));
@@ -94,30 +100,30 @@ public class QuizAdapter extends BaseAdapter {
                     }
                 });
 
+                //Listen on checkbox change to set symptoms IDs
                 ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        symptoms_sets.add((Integer) ch.getTag()) ;
+                        symptoms_sets.add((Integer) ch.getTag());
                         if (isChecked) {
                             ch.setBackgroundColor(activity.getResources().getColor(R.color.white));
                             ch.setTextColor(activity.getResources().getColor(R.color.colorPrimaryLightPix));
-                         Log.e("CheckBox Tag ->",buttonView.getTag()+"");
+                            Log.e("CheckBox Tag ->", buttonView.getTag() + "");
                         } else {
                             symptoms_sets.remove(ch.getTag());
                             ch.setTextColor(activity.getResources().getColor(R.color.white));
                             ch.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimaryLightPix));
                         }
-                        Log.e("Choices size ->",symptoms_sets.size()+"");
+                        Log.e("Choices size ->", symptoms_sets.size() + "");
                     }
                 });
                 ch.setId(s.getId());
-
                 symptom_layout.addView(ch);
             }
-            choices.put(entry.getValue(),symptoms_sets);
+            //Store Question with its symptoms IDs
+            choices.put(entry.getValue(), symptoms_sets);
         }
         return convertView;
     }
-
 
 }
