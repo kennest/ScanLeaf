@@ -102,20 +102,6 @@ public class ProcessActivity extends BaseActivity {
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
 
 
-
-
-
-
-
-        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
-            @Override
-            public void onChanged(List<SymptomRect> symptomRects) {
-                    Log.e("RectF lenght->", symptomRects.size()+"");
-            }
-        });
-
-
-
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(getResources().getString(R.string.app_name));

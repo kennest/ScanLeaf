@@ -1,150 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".activities.QuizActivity"
-    android:background="@color/colorPrimaryDark">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_quiz"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
+    android:weightSum="3"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".activities.QuizActivity">
 
 
->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:background="@drawable/carrele"
-        android:layout_marginBottom="40dp"
-        >
+        <!--<LinearLayout-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="40dp"-->
+            <!--android:background="@drawable/carrele"-->
+            <!--android:padding="8dp">-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Swollen shoot: "
-            android:textStyle="bold"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_alignParentLeft="true"
-            android:id="@+id/score_text"
-            />
+            <!--<LinearLayout-->
+                <!--android:id="@+id/score"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:orientation="horizontal">-->
 
+            <!--</LinearLayout>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/score"
-            android:layout_below="@+id/score_text"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:text="0"
-            android:textSize="20sp"/>
+        <!--</LinearLayout>-->
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pourriture brune:"
-            android:textStyle="bold"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/score1_text"
-            />
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/score1"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/white"
-            android:textStyle="bold"
-            android:text="0"
-            android:layout_below="@+id/score1_text"
-            android:textSize="20sp"/>
-
-    </RelativeLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:gravity="center"
-        android:paddingHorizontal="15dp"
-        android:id="@+id/partie"
-        android:layout_marginBottom="10dp">
-        <com.mikhaellopez.circularimageview.CircularImageView
+        <ListView
+            android:layout_weight="2"
+            android:id="@+id/quiz_lv"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1.7"
-            android:id="@+id/partIcon"
-            android:src="@drawable/cacao_cult"/>
-        <TextView
-            android:layout_weight="0.3"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="Tige et Tronc"
-            android:gravity="center"
+            android:layout_height="wrap_content">
 
-            android:textSize="20sp"
+        </ListView>
+
+        <Button
+            android:id="@+id/quit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:background="@color/colorPrimary"
             android:padding="8dp"
+            android:layout_weight="1"
+            android:text="Suivant"
             android:textColor="@color/white"
-            android:textStyle="bold"
-            android:id="@+id/partCulture"/>
-    </LinearLayout>
-
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/vieuxkouakou"
-        android:layout_gravity="center_horizontal"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Which thing is alive?"
-        android:gravity="center_horizontal|center_vertical"
-        android:textSize="20sp"
-        android:padding="8dp"
-        android:layout_marginBottom="40dp"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:id="@+id/question"/>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/sympt"
-        android:layout_marginBottom="20dp"
-        android:layout_marginHorizontal="10dp">
-
-    </LinearLayout>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Suivant"
-        android:textStyle="bold"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/white"
-        android:padding="8dp"
-        android:layout_marginBottom="24dp"
-        android:id="@+id/quit"/>
-
-
+            android:textStyle="bold" />
 
 </LinearLayout>
-    </ScrollView>

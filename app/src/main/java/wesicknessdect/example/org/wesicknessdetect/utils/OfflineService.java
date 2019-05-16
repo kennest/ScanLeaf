@@ -27,13 +27,8 @@ import wesicknessdect.example.org.wesicknessdetect.tasks.timers.OfflineTimerTask
 
 public class OfflineService extends Service {
     private Timer mTimer = null;
-    public AppDatabase DB;
     public static String str_receiver = "scanleaf.offline.service";
     Intent intent;
-    List<SymptomRect> symptomRects;
-    List<Diagnostic> diagnostics;
-    List<Picture> pictures;
-    List<Post> posti;
 
     public OfflineService() {
     }
@@ -48,7 +43,6 @@ public class OfflineService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        DB = AppDatabase.getInstance(this);
         //Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
         mTimer.schedule(new OfflineTimerTask(this), 0, 60000);
