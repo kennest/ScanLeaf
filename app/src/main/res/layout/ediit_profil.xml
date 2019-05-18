@@ -42,7 +42,7 @@
                     android:layout_centerHorizontal="true"
                     android:elevation="0.5dp"
                     android:id="@+id/userNewImage"
-                    android:src="@drawable/vieuxkouakou"
+                    android:src="@drawable/ic_add_a_photo_black_24dp"
                     />
 
                 <LinearLayout

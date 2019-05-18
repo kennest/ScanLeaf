@@ -62,6 +62,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
+import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
@@ -242,6 +243,22 @@ public class RemoteTasks {
                                     return null;
                                 }
                             }.execute();
+
+                            new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... voids) {
+                                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+
+                                    Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                    PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.add(Calendar.SECOND, 1);
+                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                    return null;
+                                }
+                            }.execute();
+
 
                         } else {
                             Log.e("Error:", response.errorBody().string());
@@ -553,6 +570,65 @@ public class RemoteTasks {
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
         return true;
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public void SendUpdatedUser(String path,User u, Profile p) throws IOException {
+        if (Constants.isOnline(mContext)) {
+            String base_64="";
+            JsonObject json = new JsonObject();
+            JsonObject profile = new JsonObject();
+            APIService service = APIClient.getClient().create(APIService.class);
+            if (path.equals("")){
+                base_64="rien";
+            }else {
+                base_64 = new EncodeBase64().encode(path);
+            }
+            //Log.e("Picture ID:", p.getX() + "");
+
+            json.addProperty("password", u.getPassword());
+            json.addProperty("first_name", u.getNom());
+            json.addProperty("last_name", u.getPrenom());
+            profile.addProperty("avatar", base_64);
+            profile.addProperty("country", p.getCountry_id());
+            json.addProperty("email", u.getEmail());
+            json.addProperty("profil", String.valueOf(profile));
+            json.addProperty("username", u.getUsername());
+            //json.addProperty("id_mobile", p.getX());
+
+            String token = FastSave.getInstance().getString("token", null);
+            Call<JsonElement> call = service.updateProfile("Token " + token, json);
+            Response<JsonElement> response = call.execute();
+            if (response.isSuccessful()) {
+                Log.d("updated_user_response:", response.body().toString());
+                if (response.body().getAsJsonObject().has("statut")) {
+                    if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                    DB.userDao().update(u);
+                                    DB.profileDao().update(p);
+                                return null;
+                            }
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                    }
+                }
+            } else {
+                Log.e("Error:", response.errorBody().string());
+            }
+
+        } else {
+
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    DB.profileDao().createProfile(p);
+                    DB.userDao().createUser(u);
+                    return null;
+                }
+            }.execute();
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+        }
     }
 
     //Get Cultures from Server

@@ -86,7 +86,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                     .setColor(context.getResources().getColor(R.color.colorPrimaryPix))
                     .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_launcher))
                     .setContentIntent(pendingIntent).build();
-            SystemClock.sleep(800);
+            SystemClock.sleep(100);
             notification.vibrate = vibrate;
             notificationManager.notify((int) post.getId(), notification);
         }}
@@ -109,7 +109,7 @@ public class AlarmReceiver extends BroadcastReceiver{
                 .setGroupSummary(true)
                 .build();
 
-        SystemClock.sleep(2000);
+        SystemClock.sleep(0);
         notificationManager.notify(50, summaryNotification);
         }
 
