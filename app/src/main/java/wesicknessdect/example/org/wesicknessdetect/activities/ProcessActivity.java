@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -80,7 +81,7 @@ public class ProcessActivity extends BaseActivity {
     @BindView(R.id.toggleView)
     FloatingActionButton toggleView;
 
-    boolean flag = false;
+    boolean flag,sync = false;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -94,7 +95,10 @@ public class ProcessActivity extends BaseActivity {
         stopService(offline);
         startService(offline);
 
-
+        sync= EasySettings.retrieveSettingsSharedPrefs(getApplicationContext()).getBoolean("sync_after",false);
+        if(sync){
+            StartSyncingData(getApplication(),0);
+        }
 
 
         toolbar = findViewById(R.id.toolbar);

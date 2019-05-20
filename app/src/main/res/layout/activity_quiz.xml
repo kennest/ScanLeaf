@@ -39,7 +39,7 @@
         <Button
             android:id="@+id/quit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="80dp"
             android:layout_marginBottom="24dp"
             android:background="@color/colorPrimary"
             android:padding="8dp"

@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import androidx.core.app.NavUtils;
 
+import com.hotmail.or_dvir.easysettings.events.BasicSettingsClickEvent;
 import com.hotmail.or_dvir.easysettings.events.CheckBoxSettingsClickEvent;
 import com.hotmail.or_dvir.easysettings.events.SeekBarSettingsValueChangedEvent;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
@@ -60,21 +61,23 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onSeekBarSettingsValueChanged(SeekBarSettingsValueChangedEvent event)
-    {
-        Log.e("Seekbar Prefs ->",event.getSeekBarObj().getValue()+"");
-    }
-
-    @Subscribe
     public void onCheckBoxSettingsClicked(CheckBoxSettingsClickEvent event)
     {
         boolean prefValue = EasySettings.retrieveSettingsSharedPrefs(this)
                 .getBoolean(event.getClickedSettingsObj().getKey(),
                         event.getClickedSettingsObj().getDefaultValue());
         if(prefValue){
-            StartSyncingData(getApplicationContext());
+            StartSyncingData(getApplicationContext(),1000);
         }
         Log.e("CheckBox Prefs ->",event.getClickedSettingsObj().getValue()+"");
+    }
+
+    @Subscribe
+    public void onBasicSettingClicked(BasicSettingsClickEvent event){
+        if(event.getClickedSettingsObj().getKey().equals("sync_now")){
+            Log.e("Basic Prefs ->",event.getClickedSettingsObj().getValue()+"");
+            StartSyncingData(getApplicationContext(),0);
+        }
     }
 
     @Override
@@ -85,10 +88,6 @@ public class SettingsActivity extends BaseActivity {
         return true;
     }
 
-    public void StartSyncingData(Context ctx) {
-        Timer timer=new Timer();
-        timer.schedule(new SyncTimerTask(ctx),60000);
-        // Init Necessary Data
-    }
+
 
 }

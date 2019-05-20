@@ -9,34 +9,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.mikhaellopez.circularimageview.CircularImageView;
-
 import org.greenrobot.eventbus.EventBus;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
-import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 
 public class QuizAdapter extends BaseAdapter {
     HashMap<CulturePart, Question> list = new HashMap<>();
@@ -69,8 +59,6 @@ public class QuizAdapter extends BaseAdapter {
     @SuppressLint("ViewHolder")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        Gson gson = new Gson();
         convertView = activity.getLayoutInflater().inflate(R.layout.quiz_item, null, false);
         CircularImageView part_icon = convertView.findViewById(R.id.partIcon);
         TextView part_culture = convertView.findViewById(R.id.partCulture);
@@ -134,14 +122,6 @@ public class QuizAdapter extends BaseAdapter {
                         //Store Question with its symptoms IDs
                         choices.put(entry.getValue().getId(), symptoms_sets);
                         EventBus.getDefault().post(new QuizCheckedEvent(choices, (int) entry.getKey().getId()));
-                        //gson_list.add(choices);
-//                        Set< HashMap<Integer, Set<Integer>>> tmp = new HashSet<>();
-//                        tmp=AppController.getInstance().getUser_choices();
-//                        tmp.add(choices);
-//
-//
-//                        Log.e("Choices tmp size ->", tmp.size() + "");
-//                        Log.e("Choices tmp Json ->", tmp.toString());
                     }
                 });
                 ch.setId(s.getId());

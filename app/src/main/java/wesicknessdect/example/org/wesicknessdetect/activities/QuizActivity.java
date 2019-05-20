@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,8 @@ import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
+import wesicknessdect.example.org.wesicknessdetect.models.DiseaseSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
@@ -62,6 +65,8 @@ public class QuizActivity extends BaseActivity {
     ListView quiz_lv;
     HashMap<Integer, Set<Integer>> choices = new HashMap<>();
     Set<HashMap<Integer, Set<Integer>>> choices_set = new HashSet<>();
+    List<DiseaseSymptom> diseases = new ArrayList<>();
+    Map.Entry<Long, Integer> maxEntry = null;
 
     HashMap<Long, Integer> disease_score = new HashMap<>();
     List<CulturePart> cultureParts = new ArrayList<>();
@@ -69,7 +74,7 @@ public class QuizActivity extends BaseActivity {
     List<Integer> culture_part_id = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
     int index = 0;
-
+    int score = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +97,7 @@ public class QuizActivity extends BaseActivity {
             @Override
             public void run() {
                 cultureParts = DB.culturePartsDao().getAllSync();
+                diseases = DB.diseaseSymptomsDao().getAllSync();
                 for (CulturePart c : cultureParts) {
                     culture_part_id.add((int) c.getId());
                 }
@@ -105,6 +111,7 @@ public class QuizActivity extends BaseActivity {
             public void onClick(View v) {
                 Log.e("Index ->", index + "");
                 try {
+                    //Si on est au dernier element du tableau des ID des symptomes
                     if (index == (culture_part_id.size())) {
                         nexquit.setText("Envoyer");
                         nexquit.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +119,42 @@ public class QuizActivity extends BaseActivity {
                             public void onClick(View v) {
                                 SaveChoiceByPart(choices);
                                 Log.e("Index listener 2->", index + "");
+
+                                for(HashMap<Integer, Set<Integer>> hm:choices_set){
+                                    for (Map.Entry<Integer, Set<Integer>> entry : hm.entrySet()) {
+                                        Log.e("Choices Size ->",entry.getValue().size()+"");
+                                        for (DiseaseSymptom d : diseases) {
+                                            for (Integer n : entry.getValue()) {
+                                                //Log.e("Match disease 0->", d.getDisease_id() + "->"+n);
+                                                if (d.getSymptom_id() == n) {
+                                                    Log.e("Match disease->", d.getDisease_id() + "->"+n);
+                                                    score = score + 1;
+                                                }
+                                            }
+                                            disease_score.put((long) d.getDisease_id(), score);
+                                            Log.e("Score ->",d.getDisease_id()+"->"+score);
+                                        }
+                                    }
+                                }
+
+                                for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
+                                    //Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
+                                    if (maxEntry == null || score_entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                                        maxEntry = score_entry;
+                                        DB.diseaseDao().getAll().observe(QuizActivity.this, new Observer<List<Disease>>() {
+                                            @Override
+                                            public void onChanged(List<Disease> diseases) {
+                                                for (Disease d : diseases) {
+                                                    if (d.getId() == maxEntry.getKey()) {
+                                                        //disease.setText(d.getName().toUpperCase());
+                                                        diagnostic.setAdvancedAnalysis(d.getName());
+                                                        Log.e("Advanced Analysis->",d.getName());
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
                             }
                         });
                     }
@@ -119,13 +162,11 @@ public class QuizActivity extends BaseActivity {
                     SaveChoiceByPart(choices);
                     if (index <= culture_part_id.size()) {
                         InitQuiz(culture_part_id.get(index));
-                        index = index + 1;
                     }
+                    index = index + 1;
                 } catch (IndexOutOfBoundsException e) {
                     Log.e("Exception ->", e.getMessage());
                 }
-
-
             }
         });
     }

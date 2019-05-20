@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+
+import java.util.Timer;
+
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
@@ -27,6 +31,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.ShowQuizPageEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
+import wesicknessdect.example.org.wesicknessdetect.tasks.timers.SyncTimerTask;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -169,5 +174,11 @@ public class BaseActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(0, 0);
         }
+    }
+
+    public void StartSyncingData(Context ctx, int delay) {
+        Timer timer=new Timer();
+        timer.schedule(new SyncTimerTask(ctx),delay);
+        // Init Necessary Data
     }
 }
