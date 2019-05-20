@@ -589,10 +589,12 @@ public class RemoteTasks {
             JsonObject profile = new JsonObject();
 
             APIService service = APIClient.getClient().create(APIService.class);
-            if (path.equals("")){
-                base_64="rien";
-            }else {
-                base_64 = new EncodeBase64().encode(path);
+            if(path!=null){
+                if (path.equals("")){
+                    base_64="rien";
+                }else {
+                    base_64 = new EncodeBase64().encode(path);
+                }
             }
 
             json.addProperty("password", u.getPassword());
