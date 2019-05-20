@@ -198,6 +198,7 @@
                         android:layout_width="125dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="20dp"
+                        android:layout_gravity="center"
                         android:layout_weight="1"
                         android:id="@+id/voirAnalyses"
                         android:backgroundTint="@color/colorPrimary"
@@ -216,13 +217,28 @@
                         android:backgroundTint="@color/colorAccent"
                         android:drawableEnd="@drawable/ic_edit_black_24dp"
                         android:drawableTint="@color/white"
-                        android:text="Modifier le profil"
+                        android:text="Modifier"
                         android:textColor="@color/colorPrimaryDark"
                         tools:ignore="ButtonStyle" />
 
 
 
                 </LinearLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/logout"
+                    android:backgroundTint="#666666"
+                    android:drawableEnd="@drawable/ic_edit_black_24dp"
+                    android:drawableTint="@color/white"
+                    android:text="Déconnecter"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    tools:ignore="ButtonStyle" />
 
             </LinearLayout>
 
