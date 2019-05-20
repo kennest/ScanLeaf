@@ -20,6 +20,7 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -224,6 +225,14 @@ public class RemoteTasks {
                         EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
                         if (response.body() != null) {
                             user = response.body();
+                            Profile p=user.getProfile();
+                            Uri uri = Uri.parse(p.getAvatar());
+                            String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                            File f = new File(destination + uri.getLastPathSegment());
+                            if (!f.exists()) {
+                                DownloadFile(Constants.base_url+p.getAvatar());
+                            }
+                            p.setAvatar(destination + uri.getLastPathSegment());
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
@@ -578,23 +587,26 @@ public class RemoteTasks {
             String base_64="";
             JsonObject json = new JsonObject();
             JsonObject profile = new JsonObject();
+
             APIService service = APIClient.getClient().create(APIService.class);
             if (path.equals("")){
                 base_64="rien";
             }else {
                 base_64 = new EncodeBase64().encode(path);
             }
-            //Log.e("Picture ID:", p.getX() + "");
 
             json.addProperty("password", u.getPassword());
             json.addProperty("first_name", u.getNom());
             json.addProperty("last_name", u.getPrenom());
-            profile.addProperty("avatar", base_64);
             profile.addProperty("country", p.getCountry_id());
+            profile.addProperty("avatar", base_64);
             json.addProperty("email", u.getEmail());
-            json.addProperty("profil", String.valueOf(profile));
+            json.add("profil", profile);
             json.addProperty("username", u.getUsername());
+
             //json.addProperty("id_mobile", p.getX());
+
+            Log.e("Update User Json ->",json.toString());
 
             String token = FastSave.getInstance().getString("token", null);
             Call<JsonElement> call = service.updateProfile("Token " + token, json);
@@ -606,6 +618,7 @@ public class RemoteTasks {
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
+                                p.setAvatar(path);
                                     DB.userDao().update(u);
                                     DB.profileDao().update(p);
                                 return null;

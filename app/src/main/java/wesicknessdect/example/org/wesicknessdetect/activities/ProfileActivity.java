@@ -30,6 +30,7 @@ import androidx.lifecycle.Observer;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.fxn.utility.ImageQuality;
+import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,6 +60,7 @@ public class ProfileActivity extends BaseActivity {
      String password;
      int id;
      String chemin;
+    Country c=new Country();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +87,9 @@ public class ProfileActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+
         nbDete=DB.postDao().getAllPost().size()+"";
+
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
@@ -96,6 +100,7 @@ public class ProfileActivity extends BaseActivity {
                 username=user.get(0).getPrenom()+" "+user.get(0).getNom();
                 pseudo=user.get(0).getUsername();
                 userEmail=user.get(0).getEmail();
+
                 if (profil.get(0).getAvatar()==null){
                     chemin="rien";
                 }
@@ -123,6 +128,7 @@ public class ProfileActivity extends BaseActivity {
 
             }
         });
+
         modifyProf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,28 +162,36 @@ public class ProfileActivity extends BaseActivity {
                 //Building dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
                 builder.setView(layout);
+
                 builder.setPositiveButton("Confirmer", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
+                        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                             c= DB.countryDao().getByNameSync(countri.getSelectedItem().toString());
+                                user.get(0).setNom(nameBox.getText().toString());
+                                user.get(0).setPrenom(surnameBox.getText().toString());
+                                user.get(0).setEmail(email.getText().toString());
+                                user.get(0).setPassword(password);
+                                user.get(0).setUsername(pseudoBox.getText().toString());
+                                if (path.equals("")) {
+                                    path = "rien";
+                                }
+                                profil.get(0).setAvatar(path);
+                                profil.get(0).setCountry_id(c.getId());
+                                user.get(0).setProfile(profil.get(0));
 
-                        user.get(0).setNom(nameBox.getText().toString());
-                        user.get(0).setPrenom(surnameBox.getText().toString());
-                        user.get(0).setEmail(email.getText().toString());
-                        user.get(0).setPassword(password);
-                        user.get(0).setUsername(pseudoBox.getText().toString());
-                        if (path.equals("")) {
-                            path = "rien";
-                        }
-                        profil.get(0).setAvatar(path);
-                        profil.get(0).setCountry_id(countri.getId());
-                        user.get(0).setProfile(profil.get(0));
+                                try {
+                                    RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(path, user.get(0),profil.get(0));
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
 
-                        try {
-                            RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(path, user.get(0),profil.get(0));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
                     }
                 });
                 builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
@@ -201,6 +215,7 @@ public class ProfileActivity extends BaseActivity {
             ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
             path=returnValue.get(0);
             imageBox.setImageBitmap(BitmapFactory.decodeFile(path));
+            pI.setImageBitmap(BitmapFactory.decodeFile(path));
         }
     }
 
