@@ -995,6 +995,9 @@ public class RemoteTasks {
                     if (response.body().size() != 0) {
                         //List<Post> Alerts=DB.postDao().getAllPost();
                         //if (Alerts.isEmpty()){
+                        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                        Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                        PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
@@ -1008,11 +1011,6 @@ public class RemoteTasks {
                                     p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                                     p.setTime(t);
                                     DB.postDao().createPost(p);
-                                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-
-                                    Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                                    PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
                                     Calendar cal = Calendar.getInstance();
                                     cal.add(Calendar.SECOND, 5);
                                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);

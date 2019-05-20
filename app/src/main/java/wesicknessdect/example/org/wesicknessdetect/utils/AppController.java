@@ -12,8 +12,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
@@ -30,6 +32,7 @@ public class AppController extends Application {
     public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     public List<SymptomRect> symptomsRects = new ArrayList<>();
     public List<Picture> pictures = new ArrayList<>();
+    Set< HashMap<Integer, Set<Integer>>> user_choices=new HashSet<>();
 
     public static synchronized AppController getInstance() {
         if (mInstance == null) { //if there is no instance available... create new one
@@ -90,6 +93,14 @@ public class AppController extends Application {
 
     public void setPictures(List<Picture> pictures) {
         this.pictures = pictures;
+    }
+
+    public Set<HashMap<Integer, Set<Integer>>> getUser_choices() {
+        return user_choices;
+    }
+
+    public void setUser_choices(Set<HashMap<Integer, Set<Integer>>> user_choices) {
+        this.user_choices = user_choices;
     }
 
     @SuppressLint("StaticFieldLeak")

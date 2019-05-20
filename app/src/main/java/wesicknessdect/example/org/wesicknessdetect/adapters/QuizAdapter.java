@@ -14,8 +14,13 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,19 +28,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import io.paperdb.Paper;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 
 public class QuizAdapter extends BaseAdapter {
     HashMap<CulturePart, Question> list = new HashMap<>();
     Activity activity;
+    String diagnostic_uuid;
 
-    public QuizAdapter(HashMap<CulturePart, Question> list, Activity activity) {
+
+    public QuizAdapter(HashMap<CulturePart, Question> list, Activity activity,String diagnostic_uuid) {
         this.list = list;
         this.activity = activity;
+        this.diagnostic_uuid = diagnostic_uuid;
     }
 
     @Override
@@ -58,6 +70,7 @@ public class QuizAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        Gson gson = new Gson();
         convertView = activity.getLayoutInflater().inflate(R.layout.quiz_item, null, false);
         CircularImageView part_icon = convertView.findViewById(R.id.partIcon);
         TextView part_culture = convertView.findViewById(R.id.partCulture);
@@ -65,7 +78,7 @@ public class QuizAdapter extends BaseAdapter {
         LinearLayout symptom_layout = convertView.findViewById(R.id.sympt);
         symptom_layout.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
 
-        HashMap<Question, Set<Integer>> choices = new HashMap<>();
+
         Set<Integer> symptoms_sets = new HashSet<>();
 
         for (Map.Entry<CulturePart, Question> entry : list.entrySet()) {
@@ -104,8 +117,11 @@ public class QuizAdapter extends BaseAdapter {
                 ch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        symptoms_sets.add((Integer) ch.getTag());
+                        Set< HashMap<Integer, Set<Integer>>> gson_list=new HashSet<>();
+                        HashMap<Integer, Set<Integer>> choices = new HashMap<>();
+
                         if (isChecked) {
+                            symptoms_sets.add((Integer) ch.getTag());
                             ch.setBackgroundColor(activity.getResources().getColor(R.color.white));
                             ch.setTextColor(activity.getResources().getColor(R.color.colorPrimaryLightPix));
                             Log.e("CheckBox Tag ->", buttonView.getTag() + "");
@@ -114,14 +130,23 @@ public class QuizAdapter extends BaseAdapter {
                             ch.setTextColor(activity.getResources().getColor(R.color.white));
                             ch.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimaryLightPix));
                         }
-                        Log.e("Choices size ->", symptoms_sets.size() + "");
+
+                        //Store Question with its symptoms IDs
+                        choices.put(entry.getValue().getId(), symptoms_sets);
+                        EventBus.getDefault().post(new QuizCheckedEvent(choices, (int) entry.getKey().getId()));
+                        //gson_list.add(choices);
+//                        Set< HashMap<Integer, Set<Integer>>> tmp = new HashSet<>();
+//                        tmp=AppController.getInstance().getUser_choices();
+//                        tmp.add(choices);
+//
+//
+//                        Log.e("Choices tmp size ->", tmp.size() + "");
+//                        Log.e("Choices tmp Json ->", tmp.toString());
                     }
                 });
                 ch.setId(s.getId());
                 symptom_layout.addView(ch);
             }
-            //Store Question with its symptoms IDs
-            choices.put(entry.getValue(), symptoms_sets);
         }
         return convertView;
     }

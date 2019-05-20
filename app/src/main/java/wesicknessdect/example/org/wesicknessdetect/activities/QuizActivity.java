@@ -21,6 +21,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +31,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -39,11 +43,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.QuizAdapter;
+import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
 public class QuizActivity extends BaseActivity {
     @BindView(R.id.quit)
@@ -54,15 +60,14 @@ public class QuizActivity extends BaseActivity {
 
     @BindView(R.id.quiz_lv)
     ListView quiz_lv;
-    private int mScorepb = 0;
-    private int mScoress = 0;
+    HashMap<Integer, Set<Integer>> choices = new HashMap<>();
+    Set<HashMap<Integer, Set<Integer>>> choices_set = new HashSet<>();
 
-    List<HashMap<CulturePart, Question>> list = new ArrayList<>();
     HashMap<Long, Integer> disease_score = new HashMap<>();
     List<CulturePart> cultureParts = new ArrayList<>();
 
     List<Integer> culture_part_id = new ArrayList<>();
-    Diagnostic diagnostic=new Diagnostic();
+    Diagnostic diagnostic = new Diagnostic();
     int index = 0;
 
     @Override
@@ -81,7 +86,7 @@ public class QuizActivity extends BaseActivity {
         String diagnostic_gson = getIntent().getStringExtra("diagnostic_gson");
         disease_score = gson.fromJson(data, type);
         diagnostic = gson.fromJson(diagnostic_gson, diagnostictype);
-        Log.e("Quiz ->", disease_score.size() + "->"+diagnostic.getUuid());
+        Log.e("Quiz ->", disease_score.size() + "->" + diagnostic.getUuid());
 
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
@@ -91,7 +96,7 @@ public class QuizActivity extends BaseActivity {
                     culture_part_id.add((int) c.getId());
                 }
                 InitQuiz(culture_part_id.get(index));
-                index = index+1;
+                index = index + 1;
             }
         });
 
@@ -99,10 +104,28 @@ public class QuizActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Log.e("Index ->", index + "");
-                if (index <= (culture_part_id.size()-1)) {
-                    InitQuiz(culture_part_id.get(index));
-                    index = index+1;
+                try {
+                    if (index == (culture_part_id.size())) {
+                        nexquit.setText("Envoyer");
+                        nexquit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SaveChoiceByPart(choices);
+                                Log.e("Index listener 2->", index + "");
+                            }
+                        });
+                    }
+
+                    SaveChoiceByPart(choices);
+                    if (index <= culture_part_id.size()) {
+                        InitQuiz(culture_part_id.get(index));
+                        index = index + 1;
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    Log.e("Exception ->", e.getMessage());
                 }
+
+
             }
         });
     }
@@ -136,15 +159,26 @@ public class QuizActivity extends BaseActivity {
                 map.put(cp, question);
 
                 //list.add(map);
-                if (adapter != null && quiz_lv!=null) {
+                if (adapter != null && quiz_lv != null) {
                     adapter.notifyDataSetInvalidated();
                     quiz_lv.invalidate();
                 }
-                adapter = new QuizAdapter(map, QuizActivity.this);
+                adapter = new QuizAdapter(map, QuizActivity.this, diagnostic.getUuid());
                 quiz_lv.setAdapter(adapter);
             }
 
         });
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void GetQuizCheckedEvent(QuizCheckedEvent event) {
+        Log.e("Event ->", event.choices.size() + "//" + event.part_id);
+        choices = event.choices;
+    }
+
+    private void SaveChoiceByPart(HashMap<Integer, Set<Integer>> choices) {
+        choices_set.add(choices);
+        Log.e("Save Choices ->", choices_set.size() + "");
     }
 
 }

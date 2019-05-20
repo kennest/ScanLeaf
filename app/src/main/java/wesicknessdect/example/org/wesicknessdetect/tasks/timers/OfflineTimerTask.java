@@ -25,9 +25,11 @@ public class OfflineTimerTask extends TimerTask {
     List<Picture> pictures;
     List<Post> posti;
     Context ctx;
+    AppDatabase DB;
 
     public OfflineTimerTask(Context ctx) {
         this.ctx = ctx;
+        DB = AppDatabase.getInstance(this.ctx);
     }
 
     @Override
@@ -46,33 +48,33 @@ public class OfflineTimerTask extends TimerTask {
         //recuperation du dernier id du serveur
         //code de ça ▲
 
-                diagnostics = AppDatabase.getInstance(ctx).diagnosticDao().getAllSync();
-                pictures = AppDatabase.getInstance(ctx).pictureDao().getAllSync();
-                symptomRects = AppDatabase.getInstance(ctx).symptomRectDao().getAllSync();
-                Log.e("Pre Task", "Started");
-                String idServeur = "" + 0;
-                posti = AppDatabase.getInstance(ctx).postDao().getAllPost();
-                Log.e("tous_posts", posti.toString());
-                if (posti.size() == 0) {
-                    idServeur = "" + 0;
-                    l.setIdServeur(idServeur);
-                    Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
-                    RemoteTasks.getInstance(ctx).sendLocation(l);
-                } else {
-                    Post p = posti.get(posti.size() - 1);
-                    Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
-                    idServeur = p.getIdServeur();
-                    l.setIdServeur(idServeur);
-                    Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
-                    RemoteTasks.getInstance(ctx).sendLocation(l);
-                }
+        diagnostics = DB.diagnosticDao().getAllSync();
+        pictures = DB.pictureDao().getAllSync();
+        symptomRects = DB.symptomRectDao().getAllSync();
+        Log.e("Pre Task", "Started");
+        String idServeur = "" + 0;
+        posti = DB.postDao().getAllPost();
+        Log.e("tous_posts", posti.toString());
+        if (posti.size() == 0) {
+            idServeur = "" + 0;
+            l.setIdServeur(idServeur);
+            Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
+            RemoteTasks.getInstance(ctx).sendLocation(l);
+        } else {
+            Post p = posti.get(posti.size() - 1);
+            Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
+            idServeur = p.getIdServeur();
+            l.setIdServeur(idServeur);
+            Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
+            RemoteTasks.getInstance(ctx).sendLocation(l);
+        }
 
-                try {
-                    SendDataOffline();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Log.e("Pre Task", "Finished");
+        try {
+            SendDataOffline();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e("Pre Task", "Finished");
     }
 
     @SuppressLint("StaticFieldLeak")
