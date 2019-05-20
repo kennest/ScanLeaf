@@ -108,7 +108,7 @@ public interface APIService {
     @GET("api/pictures/")
     Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic,@Header("Authorization") String token);
 
-    @PUT("api/users/")
+    @PUT("api/user/")
     Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
 }
