@@ -112,7 +112,7 @@ public class QuizActivity extends BaseActivity {
                 Log.e("Index ->", index + "");
                 try {
                     //Si on est au dernier element du tableau des ID des symptomes
-                    if (index == (culture_part_id.size())) {
+                    if (index == (culture_part_id.size()-1)) {
                         nexquit.setText("Envoyer");
                         nexquit.setOnClickListener(new View.OnClickListener() {
                             @Override

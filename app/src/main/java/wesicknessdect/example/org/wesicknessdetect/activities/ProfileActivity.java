@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -59,7 +60,7 @@ public class ProfileActivity extends BaseActivity {
     EditText emailBox;
     String password;
     int id;
-    String chemin;
+    File avatar_file=null;
     Country c = new Country();
     View layout;
     AlertDialog dialog = null;
@@ -90,7 +91,6 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
-
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
@@ -99,16 +99,12 @@ public class ProfileActivity extends BaseActivity {
                 profil = DB.profileDao().getProfil();
                 user = DB.userDao().getAll();
                 country = DB.countryDao().getById(profil.get(0).getCountry_id());
-                Log.d("userDAO", user.toString());
+
+
                 username = user.get(0).getPrenom() + " " + user.get(0).getNom();
                 pseudo = user.get(0).getUsername();
                 userEmail = user.get(0).getEmail();
 
-                if (profil.get(0).getAvatar() == null) {
-                    chemin = "rien";
-                } else {
-                    chemin = profil.get(0).getAvatar();
-                }
 
 
                 runOnUiThread(new Runnable() {
@@ -118,11 +114,19 @@ public class ProfileActivity extends BaseActivity {
                         pseudon.setText(pseudo);
                         email.setText(userEmail);
                         pays.setText(country.getName());
-                        if (chemin.equals("rien") || chemin.equals("")) {
-                            pI.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add));
-                        } else {
-                            pI.setImageBitmap(BitmapFactory.decodeFile(chemin));
+                        if(profil.get(0).getAvatar()!=null) {
+                            avatar_file = new File(profil.get(0).getAvatar());
+                            if(avatar_file!=null) {
+                                if (!avatar_file.exists()) {
+                                    Log.e("Avatar Path ->", profil.get(0).getAvatar());
+                                    pI.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add));
+                                } else {
+                                    Log.e("Avatar Path ->", profil.get(0).getAvatar());
+                                    pI.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
+                                }
+                            }
                         }
+
                         nbAnalyses.setText(nbAna);
                         nbDetect.setText(nbDete);
                         modifyProf.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +170,6 @@ public class ProfileActivity extends BaseActivity {
                                         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                                             @Override
                                             public void run() {
-                                                c = DB.countryDao().getByNameSync(countri.getSelectedItem().toString());
                                                 user.get(0).setNom(nameBox.getText().toString());
                                                 user.get(0).setPrenom(surnameBox.getText().toString());
                                                 user.get(0).setEmail(email.getText().toString());
@@ -195,6 +198,10 @@ public class ProfileActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface d, int which) {
                                         d.dismiss();
+                                        Intent current=getIntent();
+                                        finish();
+                                        current.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(current);
                                     }
                                 });
                                 dialog = builder.create();
@@ -236,6 +243,7 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
+
     }
 
     @Override
@@ -250,7 +258,7 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void getCountryFromDBandFillSpinner() {
-        AppDatabase.getInstance(getApplicationContext()).countryDao().getAll().observe(this, new Observer<List<Country>>() {
+        DB.countryDao().getAll().observe(this, new Observer<List<Country>>() {
             @Override
             public void onChanged(List<Country> countries) {
                 for (Country c : countries) {
@@ -261,13 +269,21 @@ public class ProfileActivity extends BaseActivity {
                 // Drop down layout style - list view with radio button
                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 countri.setAdapter(dataAdapter);
+                countri.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        c = DB.countryDao().getByNameSync(countri.getItemAtPosition(position).toString());
+                        profil.get(0).setCountry_id(c.getId());
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
         });
     }
 
-    private void InitDialogView() {
-
-
-    }
 
 }
