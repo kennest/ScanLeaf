@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent" android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activities.ProfileActivity">
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <View
         android:layout_width="match_parent"
@@ -17,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <TextView
@@ -62,47 +63,45 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:orientation="vertical">
+                        android:layout_marginTop="25dp"
+                        android:orientation="vertical"
+                        android:layout_marginHorizontal="40dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/nom"
+                                android:layout_marginTop="55dp"
+                                android:id="@+id/userNom"
+                                android:layout_gravity="center_horizontal"
+                                android:textColor="@color/black"
+                                android:textSize="25sp"
+                                android:textStyle="bold" />
+
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="60dp"
-                            android:text="Adopo Jordan"
-                            android:id="@+id/userNom"
-                            android:textColor="@color/black"
-                            android:textSize="25sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
-                            android:text="alias"
-                            android:textColor="#d5d5d5"
-                            android:textSize="14sp"
-                            android:textStyle="italic" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="10dp"
+                            android:layout_marginTop="15dp"
                             android:id="@+id/userFonction"
-                            android:text="Agriculteur de cacao"
+                            android:drawableLeft="@drawable/ic_person"
+                            android:drawableTint="@color/colorPrimaryDark"
+                            android:text="@string/pseudo"
+                            android:textAlignment="center"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="17sp" />
 
 
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="30dp"
-                            android:text="jordan.adopo@gmail.com"
+                            android:layout_marginTop="15dp"
+                            android:text="@string/email"
+                            android:drawableLeft="@drawable/ic_mail"
+                            android:drawableTint="@color/colorPrimaryDark"
                             android:id="@+id/userEmail"
                             android:textAlignment="center"
                             android:textColor="@color/colorPrimaryDark"
@@ -110,12 +109,16 @@
                             android:textStyle="italic" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="40dp"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="20dp"
+                            android:textAlignment="center"
                             android:id="@+id/userPays"
-                            android:text="Meagui, Côte d'Ivoire"
+                            android:drawableLeft="@drawable/ic_maps"
+                            android:drawableTint="@color/colorPrimaryDark"
+                            android:text="@string/pays"
                             android:textColor="@color/colorPrimary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
