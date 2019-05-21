@@ -94,6 +94,7 @@ public class RemoteTasks {
     List<Country> countries = new ArrayList<>();
     List<Diagnostic> diagnostics = new ArrayList<>();
     List<Picture> pictures = new ArrayList<>();
+    List<Profile> profiles = new ArrayList<>();
 
     List<Model> models = new ArrayList<>();
     Diagnostic diagnostic = new Diagnostic();
@@ -236,37 +237,29 @@ public class RemoteTasks {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
-                                    profile_id = (int) DB.profileDao().createProfile(user.getProfile());
+                                    profiles=DB.profileDao().getAllSync();
+                                    if(profiles.size()>0){
+                                        profile_id=profiles.get(0).getId();
+                                    }else{
+                                        profile_id = (int) DB.profileDao().createProfile(p);
+                                    }
+
                                     FastSave.getInstance().saveString("token", response.body().getToken());
                                     FastSave.getInstance().saveString("user_id", String.valueOf(response.body().getId()));
                                     EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
-                                    return null;
-                                }
-                            }.execute();
 
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
                                     user.setProfile_id(profile_id);
                                     DB.userDao().createUser(user);
-                                    return null;
-                                }
-                            }.execute();
 
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
                                     AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-
                                     Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
                                     PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
                                     Calendar cal = Calendar.getInstance();
                                     cal.add(Calendar.SECOND, 1);
                                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
                                     return null;
                                 }
-                            }.execute();
+                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
 
                         } else {
@@ -589,17 +582,20 @@ public class RemoteTasks {
             JsonObject profile = new JsonObject();
 
             APIService service = APIClient.getClient().create(APIService.class);
-            if (path.equals("")){
-                base_64="rien";
-            }else {
-                base_64 = new EncodeBase64().encode(path);
+            if(path!=null){
+                if (path.equals("")){
+                    base_64="rien";
+                }else {
+                    base_64 = new EncodeBase64().encode(path);
+                    profile.addProperty("avatar", base_64);
+                }
             }
 
             json.addProperty("password", u.getPassword());
             json.addProperty("first_name", u.getNom());
             json.addProperty("last_name", u.getPrenom());
             profile.addProperty("country", p.getCountry_id());
-            profile.addProperty("avatar", base_64);
+
             json.addProperty("email", u.getEmail());
             json.add("profil", profile);
             json.addProperty("username", u.getUsername());
@@ -631,15 +627,14 @@ public class RemoteTasks {
             }
 
         } else {
-
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    DB.profileDao().createProfile(p);
-                    DB.userDao().createUser(u);
+                    DB.profileDao().update(p);
+                    DB.userDao().update(u);
                     return null;
                 }
-            }.execute();
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
     }

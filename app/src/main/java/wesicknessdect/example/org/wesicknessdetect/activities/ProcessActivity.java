@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -64,11 +65,6 @@ public class ProcessActivity extends BaseActivity {
     Toolbar toolbar;
     AppBarLayout appBarLayout;
 //    FloatingActionButton actionButton;
-    Activity myActivity = this;
-    List<Symptom> symptoms = new ArrayList<>();
-    List<SymptomRect> symptomsRects = new ArrayList<>();
-    Map<Integer, List<Classifier.Recognition>> recognitions_map = new HashMap<>();
-
 
     //Fragment Objects
     CameraFragment cameraFragment;
@@ -80,7 +76,7 @@ public class ProcessActivity extends BaseActivity {
     @BindView(R.id.toggleView)
     FloatingActionButton toggleView;
 
-    boolean flag = false;
+    boolean flag,sync = false;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -94,7 +90,11 @@ public class ProcessActivity extends BaseActivity {
         stopService(offline);
         startService(offline);
 
-
+        //Try to sync the data
+        sync= EasySettings.retrieveSettingsSharedPrefs(getApplicationContext()).getBoolean("sync_after",false);
+        if(sync){
+            StartSyncingData(getApplication(),0);
+        }
 
 
         toolbar = findViewById(R.id.toolbar);
@@ -108,15 +108,6 @@ public class ProcessActivity extends BaseActivity {
         viewPager = findViewById(R.id.mainViewPager);
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
-//        actionButton = findViewById(R.id.fab);
-//        actionButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                viewPager.setCurrentItem(0, true);
-//            }
-//
-//
-//        });
 
         mainAdapter = new MainAdapter(getSupportFragmentManager());
 

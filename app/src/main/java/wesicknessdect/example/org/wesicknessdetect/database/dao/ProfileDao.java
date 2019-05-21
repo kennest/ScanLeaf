@@ -23,6 +23,9 @@ public interface ProfileDao {
     LiveData<List<Profile>> getAll();
 
     @Query("SELECT * FROM Profile")
+    List<Profile> getAllSync();
+
+    @Query("SELECT * FROM Profile")
     List<Profile> getProfil();
 
     @Update

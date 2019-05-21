@@ -23,6 +23,7 @@ import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hotmail.or_dvir.easysettings.pojos.BasicSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
@@ -57,15 +58,16 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
         ButterKnife.bind(this);
 
         //Init Settings
         ArrayList<SettingsObject> mySettingsList = EasySettings.createSettingsArray(
-                new SeekBarSettingsObject.Builder("number_x", "Definissez le Nombre d'elements a synchroniser",10,10,50)
-                        .setUseValueAsSummary()
+                new BasicSettingsObject.Builder("sync_now", "Synchroniser maintenant")
+                        .setSummary("Recupere vos donnees maintenant")
                         .build(),
                 //new EditTextSettingsObject.Builder("number","Definissez le Nombre","0","Sauvegarder").build(),
-                new CheckBoxSettingsObject.Builder("synchronisation", "Synchronisation des donnees", false)
+                new CheckBoxSettingsObject.Builder("sync_after", "Synchronisation des donnees", false)
                         .setSummary("Activez la synchronisation auto des donnees")
                         .build());
 

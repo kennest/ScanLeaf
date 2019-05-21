@@ -32,7 +32,6 @@ public class AppController extends Application {
     public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     public List<SymptomRect> symptomsRects = new ArrayList<>();
     public List<Picture> pictures = new ArrayList<>();
-    Set< HashMap<Integer, Set<Integer>>> user_choices=new HashSet<>();
 
     public static synchronized AppController getInstance() {
         if (mInstance == null) { //if there is no instance available... create new one
@@ -62,7 +61,7 @@ public class AppController extends Application {
         //RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
 
         //Delete the Database
-        getApplicationContext().deleteDatabase(getApplicationContext().getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME);
+        //getApplicationContext().deleteDatabase(getApplicationContext().getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME);
 
         //Create the database
         //appDatabase = AppDatabase.getInstance(getApplicationContext());
@@ -93,14 +92,6 @@ public class AppController extends Application {
 
     public void setPictures(List<Picture> pictures) {
         this.pictures = pictures;
-    }
-
-    public Set<HashMap<Integer, Set<Integer>>> getUser_choices() {
-        return user_choices;
-    }
-
-    public void setUser_choices(Set<HashMap<Integer, Set<Integer>>> user_choices) {
-        this.user_choices = user_choices;
     }
 
     @SuppressLint("StaticFieldLeak")

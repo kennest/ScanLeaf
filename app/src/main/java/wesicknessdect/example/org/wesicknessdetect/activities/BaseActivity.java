@@ -1,5 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +18,10 @@ import org.greenrobot.eventbus.ThreadMode;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+
+import java.io.File;
+import java.util.Timer;
+
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
@@ -27,6 +34,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.ShowQuizPageEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
+import wesicknessdect.example.org.wesicknessdetect.tasks.timers.SyncTimerTask;
 
 
 public class BaseActivity extends AppCompatActivity {
@@ -34,6 +42,7 @@ public class BaseActivity extends AppCompatActivity {
     boolean dialogIsCancelable;
     public static AppDatabase DB;
     public  static APIService service;
+    private static final String DATABASE_NAME = "scanleaf.db";
 
 
 
@@ -169,5 +178,46 @@ public class BaseActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(0, 0);
         }
+    }
+
+    public void StartSyncingData(Context ctx, int delay) {
+        Timer timer=new Timer();
+        timer.schedule(new SyncTimerTask(ctx),delay);
+        // Init Necessary Data
+    }
+
+
+    public void deleteCache(Context context) {
+        try {
+            File dir = context.getCacheDir();
+            deleteDir(dir);
+            getApplicationContext().deleteDatabase(getApplicationContext().getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME);
+        } catch (Exception e) { e.printStackTrace();}
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+            return dir.delete();
+        } else if(dir!= null && dir.isFile()) {
+            return dir.delete();
+        } else {
+            return false;
+        }
+    }
+
+    public void restartApp() {
+        Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+        int mPendingIntentId = 4850;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
     }
 }
