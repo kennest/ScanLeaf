@@ -43,7 +43,7 @@ public class ProfileActivity extends BaseActivity {
     public List<Profile> profil = null;
     String username, pseudo, userEmail, Pays;
     TextView nom, pseudon, email, pays, nbAnalyses, nbDetect;
-    Button analyseView, modifyProf;
+    Button analyseView, modifyProf, logout;
     ImageView pI;
     Country country;
     String nbAna, nbDete;
@@ -62,8 +62,8 @@ public class ProfileActivity extends BaseActivity {
     String chemin;
     Country c = new Country();
     View layout;
-    AlertDialog dialog=null;
-    AlertDialog.Builder builder=null;
+    AlertDialog dialog = null;
+    AlertDialog.Builder builder = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +79,8 @@ public class ProfileActivity extends BaseActivity {
         nbDetect = (TextView) findViewById(R.id.nbDetect);
         analyseView = (Button) findViewById(R.id.voirAnalyses);
         modifyProf = (Button) findViewById(R.id.modifyProfil);
+        logout = findViewById(R.id.logout);
 
-        nbAna = DB.diagnosticDao().getAllSync().size() + "";
 
         analyseView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,11 +90,12 @@ public class ProfileActivity extends BaseActivity {
             }
         });
 
-        nbDete = DB.postDao().getAllPost().size() + "";
 
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
+                nbAna = DB.diagnosticDao().getAllSync().size() + "";
+                nbDete = DB.postDao().getAllPost().size() + "";
                 profil = DB.profileDao().getProfil();
                 user = DB.userDao().getAll();
                 country = DB.countryDao().getById(profil.get(0).getCountry_id());
@@ -131,7 +132,7 @@ public class ProfileActivity extends BaseActivity {
                                 //Building dialog
                                 builder = new AlertDialog.Builder(ProfileActivity.this);
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                                View layout = inflater.inflate(R.layout.ediit_profil, null,true);
+                                View layout = inflater.inflate(R.layout.ediit_profil, null, true);
                                 //layout_root should be the name of the "top-level" layout node in the dialog_layout.xml file.
                                 nameBox = layout.findViewById(R.id.userNewNom);
                                 countri = layout.findViewById(R.id.userNewPays);
@@ -207,7 +208,33 @@ public class ProfileActivity extends BaseActivity {
         });
 
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileActivity.this);
+                builder.setTitle("Attention");
+                builder.setMessage("Voulez-vous deconnecter le compte courant et supprimer les données?");
+                // Add the buttons
+                builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                        deleteCache(getApplicationContext());
+                        restartApp();
+                    }
+                });
+                builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        dialog.dismiss();
+                    }
+                });
 
+                // Create the AlertDialog
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+            }
+        });
 
     }
 

@@ -633,15 +633,14 @@ public class RemoteTasks {
             }
 
         } else {
-
             new AsyncTask<Void, Void, Void>() {
                 @Override
                 protected Void doInBackground(Void... voids) {
-                    DB.profileDao().createProfile(p);
-                    DB.userDao().createUser(u);
+                    DB.profileDao().update(p);
+                    DB.userDao().update(u);
                     return null;
                 }
-            }.execute();
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
     }
