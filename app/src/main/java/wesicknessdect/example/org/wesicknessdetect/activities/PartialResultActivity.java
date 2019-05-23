@@ -126,7 +126,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         diagnostic.setUser_id(user_id);
         diagnostic.setIs_share(0);
         diagnostic.setCulture_id(1);
-        diagnostic.setAdvancedAnalysis("2019-03-08T16:00:59Z");
         diagnostic.setFinish(true);
         String uuid = UUID.randomUUID().toString();
         diagnostic.setUuid(uuid);
@@ -259,9 +258,11 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         Gson gson_score=new Gson();
         String disease_score_gson=gson_score.toJson(disease_score);
         String diagnostic_gson=gson_score.toJson(diagnostic);
+        String recognition_by_part_gson=gson_score.toJson(recognitions_by_part);
 
         quiz.putExtra("disease_score_gson",disease_score_gson);
         quiz.putExtra("diagnostic_gson",diagnostic_gson);
+        quiz.putExtra("recognition_by_part_gson",recognition_by_part_gson);
         startActivity(quiz);
     }
 
@@ -313,31 +314,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void onCardSwiped(Direction direction) {
         Log.e("Card Swiped", manager.getTopPosition() + "/****/" + partialResultImageAdapter.getItemCount());
         if (manager.getTopPosition() == partialResultImageAdapter.getItemCount()) {
-//            manager = new CardStackLayoutManager(this, this);
-//            manager.setDirections(Direction.HORIZONTAL);
-//            manager.setCanScrollHorizontal(true);
-//            manager.setCanScrollVertical(false);
-//            manager.setSwipeThreshold(0.3f);
-//            manager.setStackFrom(StackFrom.Top);
-//            manager.setTranslationInterval(8f);
-//
-//            partialResultImageAdapter = new PartialResultImageAdapter(this, recognitions_by_part, images_by_part_adapter);
-//            manager.setVisibleCount(partialResultImageAdapter.getItemCount());
-//            images_analysed_lv.setLayoutManager(manager);
-//            images_analysed_lv.setAdapter(partialResultImageAdapter);
-//            partialResultImageAdapter.notifyDataSetChanged();
-//
-////            RewindAnimationSetting setting = new RewindAnimationSetting.Builder()
-////                    .setDirection(Direction.Bottom)
-////                    .setDuration(200)
-////                    .setInterpolator(new DecelerateInterpolator())
-////                    .build();
-////
-////            manager.setRewindAnimationSetting(setting);
-//
-//            //images_analysed_lv.rewind();
-//            manager.smoothScrollToPosition(images_analysed_lv,null,0);
-            //progressBar.setVisibility(View.VISIBLE);
             this.Reload();
         }
     }

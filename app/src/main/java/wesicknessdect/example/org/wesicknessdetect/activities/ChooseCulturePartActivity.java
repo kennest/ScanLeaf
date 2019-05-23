@@ -3,8 +3,10 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,10 @@ import com.google.gson.Gson;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -178,6 +184,30 @@ public class ChooseCulturePartActivity extends BaseActivity {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
+                    AssetManager am = getAssets();
+                    InputStream modelStream = null;
+                    InputStream labelStream = null;
+//                    try {
+//                        modelStream = am.open("check.pb");
+//                        File check_model = createFileFromInputStream(modelStream,"check.pb");
+//                        labelStream = am.open("check.txt");
+//                        File check_label = createFileFromInputStream(labelStream,"check.txt");
+//
+//                        Log.e("Check Model Path->",check_model.getPath()+"//"+check_label.getPath());
+//
+//                        new AsyncTask<Void, Void, Void>() {
+//                            @Override
+//                            protected Void doInBackground(Void... voids) {
+//                                Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+//                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+//                                List<Classifier.Recognition> checks= SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, check_model.getPath(),check_label.getPath(), model.getPart_id(),true);
+//                                Log.e("Check Model->",checks.get(0).getTitle());
+//                                return null;
+//                            }
+//                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 
                     // modele = model;
                     //Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
@@ -189,12 +219,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
                         new AsyncTask<Void, Void, Void>() {
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                List<Classifier.Recognition> recognitions = new ArrayList<>();
-                                recognitions = SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id());
-                                //Log.d(entry.getKey() + ":Recognitions -> ", recognitions.toString());
+                                SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id(),false);
                                 return null;
                             }
-                        }.execute();
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                     }else{
                         Log.e("Recognizing Error","Cannot find models and labels");
                     }
@@ -288,6 +316,29 @@ public class ChooseCulturePartActivity extends BaseActivity {
         partial.putExtra("images_by_part", images);
 
         startActivity(partial);
+    }
+
+    private File createFileFromInputStream(InputStream inputStream,String my_file_name) {
+
+        try{
+            File f = new File(my_file_name);
+            OutputStream outputStream = new FileOutputStream(f);
+            byte buffer[] = new byte[1024];
+            int length = 0;
+
+            while((length=inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer,0,length);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return f;
+        }catch (IOException e) {
+            //Logging exception
+        }
+
+        return null;
     }
 
     @Override

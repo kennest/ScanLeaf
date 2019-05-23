@@ -17,6 +17,8 @@ public class Question  {
     @PrimaryKey
     private int id;
 
+    private int sended=0;
+
     @SerializedName(value = "question")
     private String question;
 
@@ -56,5 +58,13 @@ public class Question  {
 
     public void setSymptomList(List<Symptom> symptomList) {
         this.symptomList = symptomList;
+    }
+
+    public int getSended() {
+        return sended;
+    }
+
+    public void setSended(int sended) {
+        this.sended = sended;
     }
 }

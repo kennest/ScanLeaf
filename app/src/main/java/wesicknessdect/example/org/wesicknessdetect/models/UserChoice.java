@@ -7,22 +7,24 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {
-        @ForeignKey(
-                entity = Symptom.class,
-                parentColumns = "id",
-                childColumns = "symptom_id")
-},indices = {@Index("symptom_id")})
+@Entity
 public class UserChoice {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    @SerializedName(value = "id")
-    private long remote_id;
+
+    @SerializedName(value = "question")
+    private long question;
 
     @SerializedName(value = "diagnostic_uuid")
     private String diagnostic_uuid;
 
-    private long symptom_id;
+    @SerializedName(value = "symptoms")
+    private String symptoms;
+
+    @SerializedName("uuid")
+    private String uuid;
+
+    private int sended=0;
 
     public int getId() {
         return id;
@@ -40,19 +42,36 @@ public class UserChoice {
         this.diagnostic_uuid = diagnostic_uuid;
     }
 
-    public long getSymptom_id() {
-        return symptom_id;
+
+    public long getQuestion() {
+        return question;
     }
 
-    public void setSymptom_id(long symptom_id) {
-        this.symptom_id = symptom_id;
+    public void setQuestion(long question) {
+        this.question = question;
     }
 
-    public long getRemote_id() {
-        return remote_id;
+    public String getSymptoms() {
+        return symptoms;
     }
 
-    public void setRemote_id(long remote_id) {
-        this.remote_id = remote_id;
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public int getSended() {
+        return sended;
+    }
+
+    public void setSended(int sended) {
+        this.sended = sended;
     }
 }

@@ -19,4 +19,7 @@ public interface ModelDao {
 
     @Query("SELECT * FROM Model WHERE part_id=:id")
     LiveData<Model> getByPart(long id);
+
+    @Query("SELECT * FROM Model WHERE part_id=:id")
+    Model getByPartSync(long id);
 }

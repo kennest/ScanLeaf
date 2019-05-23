@@ -39,6 +39,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.StruggleResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
+import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 
 public interface APIService {
     @GET
@@ -74,8 +75,9 @@ public interface APIService {
     @GET("api/models/")
     Call<List<Model>> getModel(@Query("part") int part_id);
 
-    @GET("api/models")
-    Call<Model> getModels(@Header("Authorization") String token);
+    @Headers({"Content-Type:application/json","Accept:application/json"})
+    @POST("api/userchoices")
+    Call<JsonElement> sendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
 
     @POST("api/diagnostic/")
     Call<JsonElement> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);

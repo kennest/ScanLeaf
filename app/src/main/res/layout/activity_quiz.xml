@@ -1,51 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="3"
     android:background="@color/colorPrimaryDark"
+    android:orientation="vertical"
+    android:weightSum="4"
     tools:context=".activities.QuizActivity">
 
+    <ListView
+        android:id="@+id/quiz_lv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="3">
 
+    </ListView>
 
-        <!--<LinearLayout-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginBottom="40dp"-->
-            <!--android:background="@drawable/carrele"-->
-            <!--android:padding="8dp">-->
+    <LinearLayout
+        android:id="@+id/global_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="3"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-            <!--<LinearLayout-->
-                <!--android:id="@+id/score"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:orientation="horizontal">-->
+    </LinearLayout>
 
-            <!--</LinearLayout>-->
-
-        <!--</LinearLayout>-->
-
-        <ListView
-            android:layout_weight="2"
-            android:id="@+id/quiz_lv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </ListView>
-
-        <Button
-            android:id="@+id/quit"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginBottom="24dp"
-            android:background="@color/colorPrimary"
-            android:padding="8dp"
-            android:layout_weight="1"
-            android:text="Suivant"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
+    <Button
+        android:id="@+id/quit"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="5dp"
+        android:background="@color/colorPrimary"
+        android:padding="8dp"
+        android:text="Suivant"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
 </LinearLayout>

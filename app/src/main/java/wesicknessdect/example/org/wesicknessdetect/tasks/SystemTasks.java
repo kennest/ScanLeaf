@@ -77,39 +77,6 @@ public class SystemTasks {
     private static final Logger LOGGER = new Logger();
 
 
-    //Converti le fichier en base64
-    public String imageToB64(String filepath) throws InterruptedException, ExecutionException {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        FutureTask<String> future =
-                new FutureTask<String>(new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        InputStream inputStream = null;
-                        String fileB64 = "";
-                        File f = new File(filepath);
-                        try {
-                            inputStream = new FileInputStream(f.getAbsolutePath());
-
-                            byte[] buffer = new byte[8192];
-                            int bytesRead;
-                            ByteArrayOutputStream output = new ByteArrayOutputStream();
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                output.write(buffer, 0, bytesRead);
-                            }
-                            byte file[] = output.toByteArray();
-
-                            fileB64 = Base64.encodeToString(file, 0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.i("fileb64", fileB64);
-                        return fileB64;
-                    }
-                });
-        executor.execute(future);
-        return future.get();
-    }
-
     @SuppressLint({"CheckResult", "MissingPermission"})
     public void getLocation() {
         // Acquire a reference to the system Location Manager
@@ -169,7 +136,7 @@ public class SystemTasks {
 
 
     //Recognized Symptoms on given bitmap
-    public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+    public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id,boolean check) {
 
         EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions = new ArrayList<>();
@@ -179,18 +146,20 @@ public class SystemTasks {
                         model,
                         label,
                         TF_OD_API_INPUT_SIZE);
-
                 cropSize = TF_OD_API_INPUT_SIZE;
 
                 LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
-
                 recognitions = detector.recognizeImage(bitmap);
                 Log.e("Recognitions", recognitions.toString());
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                if(!check) {
+                    EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                }
 
             } catch (final IOException e) {
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
-                LOGGER.e("Exception initializing classifier!", e);
+                if(!check) {
+                    EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                }
+                LOGGER.e("Exception initializing classifier!", e.getMessage());
             }
 
         }
