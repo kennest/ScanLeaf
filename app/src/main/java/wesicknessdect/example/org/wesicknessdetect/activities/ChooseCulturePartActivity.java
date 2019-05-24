@@ -287,6 +287,23 @@ public class ChooseCulturePartActivity extends BaseActivity {
                         }
                     });
 
+                }else{
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
+                                DB.modelDao().getByPart((long) entry.getKey()).observe(ChooseCulturePartActivity.this, new Observer<Model>() {
+                                    @Override
+                                    public void onChanged(Model model) {
+                                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+                                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                                        doRecognizingImage(model.getPb(), model.getLabel(), entry.getKey(), bitmap_cropped);
+                                    }
+                                });
+                            }
+                        }
+                    });
+
                 }
                 return null;
             }
