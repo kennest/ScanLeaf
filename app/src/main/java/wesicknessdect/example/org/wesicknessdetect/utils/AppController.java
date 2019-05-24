@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.appizona.yehiahd.fastsave.FastSave;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import io.paperdb.Paper;
@@ -103,6 +105,30 @@ public class AppController extends Application {
             @Override
             protected Void doInBackground(Void... voids) {
                 remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+
+                Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
+                Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
+                String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
+
+                String modelpath = destination + model_uri.getLastPathSegment();
+                String label_path = destination + label_uri.getLastPathSegment();
+
+                FastSave.getInstance().saveString("check_model",modelpath);
+                FastSave.getInstance().saveString("check_label",label_path);
+
+
+                File fmodel = new File(modelpath);
+                File flabel = new File(label_path);
+
+                if (!fmodel.exists()) {
+                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite");
+                }
+
+                if (!flabel.exists()) {
+                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt");
+                }
+
+
 
                 //Init all needed data
                 try {

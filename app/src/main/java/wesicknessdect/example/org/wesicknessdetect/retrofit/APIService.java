@@ -76,7 +76,7 @@ public interface APIService {
     Call<List<Model>> getModel(@Query("part") int part_id);
 
     @Headers({"Content-Type:application/json","Accept:application/json"})
-    @POST("api/userchoices")
+    @POST("api/userchoices/")
     Call<JsonElement> sendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
 
     @POST("api/diagnostic/")

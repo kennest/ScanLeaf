@@ -26,6 +26,23 @@
         android:orientation="vertical"
         android:visibility="gone">
 
+        <TextView
+            android:background="#01463A"
+            android:id="@+id/header"
+            android:textSize="25sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            android:text="Maladie detectée"/>
+
+        <TextView
+            android:id="@+id/result"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:textColor="#FFC107"
+            android:layout_height="wrap_content"
+            android:text="RESULT"/>
     </LinearLayout>
 
     <Button

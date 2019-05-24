@@ -41,6 +41,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import rx.functions.Action1;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.ImageClassifier;
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowImageClassifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
@@ -50,6 +52,7 @@ public class SystemTasks {
     private static SystemTasks systemTasks;
     private static Activity mContext;
     private Location loc;
+    private ImageClassifier checker;
 
     private SystemTasks(Activity context) {
         mContext = context;
@@ -135,34 +138,45 @@ public class SystemTasks {
     }
 
 
+    public String checkImage(Bitmap bitmap){
+        String checked="";
+        try {
+            checker= new ImageClassifier(mContext);
+             checked=  checker.classifyFrame(bitmap);
+            //Log.e("Checked Result->", checked);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return checked;
+    }
+
     //Recognized Symptoms on given bitmap
-    public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id,boolean check) {
+    public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
 
         EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions = new ArrayList<>();
-        if (MODE == DetectorMode.TF_OD_API) {
-            try {
-                detector = TensorFlowObjectDetectionAPIModel.create(
-                        model,
-                        label,
-                        TF_OD_API_INPUT_SIZE);
-                cropSize = TF_OD_API_INPUT_SIZE;
 
-                LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
-                recognitions = detector.recognizeImage(bitmap);
-                Log.e("Recognitions", recognitions.toString());
-                if(!check) {
-                    EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+            if (MODE == DetectorMode.TF_OD_API) {
+                try {
+                    detector = TensorFlowObjectDetectionAPIModel.create(
+                            model,
+                            label,
+                            TF_OD_API_INPUT_SIZE);
+                    cropSize = TF_OD_API_INPUT_SIZE;
+
+                    LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
+                    recognitions = detector.recognizeImage(bitmap);
+                    Log.e("Recognitions", recognitions.toString());
+
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+
+
+                } catch (final IOException e) {
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                    LOGGER.e("Exception initializing classifier!", e.getMessage());
                 }
-
-            } catch (final IOException e) {
-                if(!check) {
-                    EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
-                }
-                LOGGER.e("Exception initializing classifier!", e.getMessage());
-            }
-
         }
+
         return recognitions;
     }
 }

@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -14,26 +15,37 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.Toolbar;
+
+import com.appizona.yehiahd.fastsave.FastSave;
 import com.fxn.pix.Pix;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -51,10 +63,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.Model;
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> culturePartList = new ArrayList<>();
     Map<Integer, String> images_by_part = new HashMap<>();
-    Map<Integer, List<Classifier.Recognition>> recognitions_by_part =new HashMap<>();
+    Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     private static AppDatabase DB;
-
-    private static final ExecutorService executor=Executors.newSingleThreadExecutor();
+    List<Classifier.Recognition> check_recognitions = new ArrayList<>();
 
     @BindView(R.id.culture_parts_lv)
     RecyclerView parts_lv;
@@ -74,15 +85,15 @@ public class ChooseCulturePartActivity extends BaseActivity {
         setContentView(R.layout.activity_add_picture);
         ButterKnife.bind(this);
         DB = AppDatabase.getInstance(this);
-        controller=AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down);
+        controller = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down);
 
         toolbar.setTitle("Choose Culture Part");
 
 
         //Diable AnalysisBtn if no image selected
-        if(images_by_part.size()==0) {
+        if (images_by_part.size() == 0) {
             disableAnalysisBtn();
-        }else{
+        } else {
             enableAnalysisBtn();
         }
 
@@ -131,14 +142,14 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
     }
 
-    private void disableAnalysisBtn(){
+    private void disableAnalysisBtn() {
         analysisBtn.setActivated(false);
         analysisBtn.setClickable(false);
         analysisBtn.setEnabled(false);
         analysisBtn.setBackgroundColor(getResources().getColor(R.color.gray));
     }
 
-    private void enableAnalysisBtn(){
+    private void enableAnalysisBtn() {
         analysisBtn.setActivated(true);
         analysisBtn.setClickable(true);
         analysisBtn.setEnabled(true);
@@ -163,9 +174,9 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 parts_lv.scheduleLayoutAnimation();
             }
         }
-        if(images_by_part.size()==0) {
+        if (images_by_part.size() == 0) {
             disableAnalysisBtn();
-        }else{
+        } else {
             enableAnalysisBtn();
         }
     }
@@ -184,9 +195,67 @@ public class ChooseCulturePartActivity extends BaseActivity {
             DB.modelDao().getByPart((long) entry.getKey()).observe(this, new Observer<Model>() {
                 @Override
                 public void onChanged(Model model) {
-                    AssetManager am = getAssets();
-                    InputStream modelStream = null;
-                    InputStream labelStream = null;
+                    String check_label = FastSave.getInstance().getString("check_label", "");
+                    String check_model = FastSave.getInstance().getString("check_model", "");
+
+                    //Log.e("Checks filepath ->",check_label+"->"+check_model);
+                    File fcheckmodel = new File(check_model);
+                    File fchecklabel = new File(check_label);
+
+                    if (fchecklabel.exists() && fcheckmodel.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 224, 224, false);
+                        new AsyncTask<Void, Void, Void>() {
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                String result = SystemTasks.getInstance(ChooseCulturePartActivity.this).checkImage(bitmap_cropped);
+                                Log.e("Checks Result 0->", result);
+                                Gson gson=new Gson();
+                                Map<String,Float> result_map=new HashMap<>();
+                                Type typeOfHashMap = new TypeToken<Map<String, Float>>() {
+                                }.getType();
+
+                                String checked="";
+                                result_map=gson.fromJson(result,typeOfHashMap);
+                                Float max= Collections.max(result_map.values());
+                                for(Map.Entry<String,Float> n:result_map.entrySet()){
+                                    if(n.getValue()==max){
+                                        checked=n.getKey();
+                                    }
+                                }
+                                if(checked.equals("good")){
+                                   doRecognizingImage(model.getPb(),model.getLabel(),entry.getKey(),bitmap_cropped);
+                                }else{
+                                    Log.e("Checkd Error ->","BAD IMAGE ");
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            AlertDialog.Builder builder=new AlertDialog.Builder(ChooseCulturePartActivity.this);
+                                            builder.setTitle("Attention!!!");
+                                            builder.setMessage("Ceci n'est pas une image de partie de cacao,voulez vous quand meme l'analyser?");
+                                            builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    doRecognizingImage(model.getPb(),model.getLabel(),entry.getKey(),bitmap_cropped);
+                                                }
+                                            });
+
+                                            builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                    EventBus.getDefault().post(new DeletePartPictureEvent(entry.getKey()));
+                                                }
+                                            });
+                                            AlertDialog dialog=builder.create();
+                                            dialog.show();
+                                        }
+                                    });
+                                }
+                                return null;
+                            }
+                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                    }
 //                    try {
 //                        modelStream = am.open("check.pb");
 //                        File check_model = createFileFromInputStream(modelStream,"check.pb");
@@ -211,23 +280,26 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
                     // modele = model;
                     //Log.i("model in DB::", model.getLabel() + "//" + model.getPb() + "//" + entry.getKey());
-                    File modelfile=new File(model.getPb());
-                    File labelpath=new File(model.getLabel());
-                    if(modelfile.exists() && labelpath.exists()){
-                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
-                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap_cropped, model.getPb(), model.getLabel(), model.getPart_id(),false);
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                    }else{
-                        Log.e("Recognizing Error","Cannot find models and labels");
-                    }
+
                 }
             });
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void doRecognizingImage(String modelpath, String labelpath, int part_id, Bitmap bitmap){
+        File modelfilepath = new File(modelpath);
+        File labelfilepath = new File(labelpath);
+        if (modelfilepath.exists() && labelfilepath.exists()) {
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap,modelpath, labelpath, part_id);
+                    return null;
+                }
+            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        } else {
+            Log.e("Recognizing Error", "Cannot find models and labels");
         }
     }
 
@@ -263,10 +335,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
             if ((c.getId() == event.part_id)) {
                 if (!event.finished) {
                     c.setRecognizing(true);
-                }else{
+                } else {
                     c.setRecognizing(false);
                     c.setChecked(true);
-                    recognitions_by_part.put((int) event.part_id,event.recognitions);
+                    recognitions_by_part.put((int) event.part_id, event.recognitions);
                 }
             }
             culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
@@ -274,7 +346,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
             parts_lv.setAdapter(culturePartAdapter);
             culturePartAdapter.notifyDataSetChanged();
         }
-        if(recognitions_by_part.size()==images_by_part.size()){
+        if (recognitions_by_part.size() == images_by_part.size()) {
             //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
             goToPartialResult();
             analysisBtn.setEnabled(true);
@@ -286,10 +358,10 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
     //Listen for deletion on picture part
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onDeletePartPicture(DeletePartPictureEvent event){
+    public void onDeletePartPicture(DeletePartPictureEvent event) {
         for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
             //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
-            if (entry.getKey()==Integer.valueOf((Integer) event.part_id)) {
+            if (entry.getKey() == Integer.valueOf((Integer) event.part_id)) {
                 //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
                 images_by_part.remove(entry.getKey());
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, culturePartList, images_by_part);
@@ -298,43 +370,43 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 culturePartAdapter.notifyDataSetChanged();
             }
         }
-        if(images_by_part.size()==0) {
+        if (images_by_part.size() == 0) {
             disableAnalysisBtn();
-        }else{
+        } else {
             enableAnalysisBtn();
         }
     }
 
-    private void goToPartialResult(){
-        Intent partial=new Intent(ChooseCulturePartActivity.this,PartialResultActivity.class);
-        Gson gson=new Gson();
-        String recognitions=gson.toJson(recognitions_by_part);
-        String images=gson.toJson(images_by_part);
+    private void goToPartialResult() {
+        Intent partial = new Intent(ChooseCulturePartActivity.this, PartialResultActivity.class);
+        Gson gson = new Gson();
+        String recognitions = gson.toJson(recognitions_by_part);
+        String images = gson.toJson(images_by_part);
 
         //Log.e(getLocalClassName()+" GoToresult:",images);
-        partial.putExtra("recognitions_by_part",recognitions);
+        partial.putExtra("recognitions_by_part", recognitions);
         partial.putExtra("images_by_part", images);
 
         startActivity(partial);
     }
 
-    private File createFileFromInputStream(InputStream inputStream,String my_file_name) {
+    private File createFileFromInputStream(InputStream inputStream, String my_file_name) {
 
-        try{
+        try {
             File f = new File(my_file_name);
             OutputStream outputStream = new FileOutputStream(f);
             byte buffer[] = new byte[1024];
             int length = 0;
 
-            while((length=inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer,0,length);
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
             }
 
             outputStream.close();
             inputStream.close();
 
             return f;
-        }catch (IOException e) {
+        } catch (IOException e) {
             //Logging exception
         }
 

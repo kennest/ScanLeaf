@@ -74,6 +74,7 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation("com.squareup.moshi:moshi:1.8.0")
     implementation 'org.tensorflow:tensorflow-android:1.13.1'
+    implementation 'org.tensorflow:tensorflow-lite:1.13.1'
     implementation 'com.gmail.samehadar:iosdialog:1.0'
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'

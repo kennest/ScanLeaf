@@ -54,6 +54,7 @@ public class QuizActivity extends BaseActivity {
 
     @BindView(R.id.quiz_lv)
     ListView quiz_lv;
+
     HashMap<Integer, Set<Integer>> choices = new HashMap<>();
     Set<HashMap<Integer, Set<Integer>>> choices_set = new HashSet<>();
     List<DiseaseSymptom> diseaseSymptoms = new ArrayList<>();
@@ -161,16 +162,8 @@ public class QuizActivity extends BaseActivity {
                                     }
                                 }
                                 diagnostic.setAdvancedAnalysis(final_detected);
-                                TextView result = new TextView(QuizActivity.this);
-                                TextView header = new TextView(QuizActivity.this);
-                                result.setTextColor(getResources().getColor(R.color.white));
-                                header.setTextColor(getResources().getColor(R.color.white));
-                                result.setTextSize(25f);
-
+                                TextView result = global_result.findViewById(R.id.result);
                                 result.setText(final_detected);
-                                header.setText("Maladie detectee:");
-                                global_result.addView(header);
-                                global_result.addView(result);
                                 global_result.setPadding(100, 450, 100, 20);
                                 global_result.setVisibility(View.VISIBLE);
                                 quiz_lv.setVisibility(View.GONE);
