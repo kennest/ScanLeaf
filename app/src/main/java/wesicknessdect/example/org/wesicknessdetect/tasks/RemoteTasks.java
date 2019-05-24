@@ -290,7 +290,7 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call<JsonElement> call=service.sendUserChoices(token,choice);
+            Call<JsonElement> call=service.sendUserChoices("Token "+token,choice);
             try {
                 Response<JsonElement> response = call.execute();
                 if (response.isSuccessful()) {
