@@ -3,6 +3,8 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +31,7 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
+import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
@@ -52,6 +55,7 @@ public class ProcessActivity extends BaseActivity {
     static MainAdapter mainAdapter;
 
     boolean flag,sync = false;
+    private Menu menu;
 
 
     @SuppressLint("StaticFieldLeak")
@@ -177,8 +181,11 @@ public class ProcessActivity extends BaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        List<Profile> profiles=DB.profileDao().getAllSync();
+        menu.getItem(1).setIcon(BitmapDrawable.createFromPath(profiles.get(0).getAvatar()));
         return true;
     }
 
