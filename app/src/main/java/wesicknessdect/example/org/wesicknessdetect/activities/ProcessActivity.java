@@ -1,56 +1,34 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
-
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
 import wesicknessdect.example.org.wesicknessdetect.R;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
-import wesicknessdect.example.org.wesicknessdetect.events.ToggleViewEvent;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
-import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
@@ -73,9 +51,6 @@ public class ProcessActivity extends BaseActivity {
     MaladiesFragment maladiesFragment;
     static MainAdapter mainAdapter;
 
-    @BindView(R.id.toggleView)
-    FloatingActionButton toggleView;
-
     boolean flag,sync = false;
 
 
@@ -95,7 +70,6 @@ public class ProcessActivity extends BaseActivity {
         if(sync){
             StartSyncingData(getApplication(),0);
         }
-
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -152,13 +126,6 @@ public class ProcessActivity extends BaseActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
-
-        toggleView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EventBus.getDefault().post(new ToggleViewEvent(true));
-            }
-        });
 
         DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
             @Override
@@ -238,6 +205,25 @@ public class ProcessActivity extends BaseActivity {
                 startActivity(settings);
                 break;
 
+            case R.id.menu_quit:
+                AlertDialog.Builder builder=new AlertDialog.Builder(this);
+                builder.setTitle("Attention!!");
+                builder.setMessage("Voulez-vous quitter l'application?");
+                builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(1);
+                    }
+                });
+                builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog d=builder.create();
+                d.show();
+                break;
         }
 
         return super.onOptionsItemSelected(item);

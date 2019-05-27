@@ -17,10 +17,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
 public class OfflineTimerTask extends TimerTask {
     List<SymptomRect> symptomRects;
+    List<UserChoice> userChoices;
     List<Diagnostic> diagnostics;
     List<Picture> pictures;
     List<Post> posti;
@@ -51,6 +53,8 @@ public class OfflineTimerTask extends TimerTask {
         diagnostics = DB.diagnosticDao().getAllSync();
         pictures = DB.pictureDao().getAllSync();
         symptomRects = DB.symptomRectDao().getAllSync();
+        userChoices=DB.userChoiceDao().getNotSended(0);
+
         Log.e("Pre Task", "Started");
         String idServeur = "" + 0;
         posti = DB.postDao().getAllPost();
@@ -98,10 +102,17 @@ public class OfflineTimerTask extends TimerTask {
 
         if (symptomRects != null) {
             for (SymptomRect s : symptomRects) {
-                Log.e("Diag::Size", symptomRects.size() + "");
+                Log.e("Rect::Size", symptomRects.size() + "");
                 if (s.getSended() == 0) {
                     RemoteTasks.getInstance(ctx).sendSymptomRect(s, false);
                 }
+            }
+        }
+
+        if (userChoices != null) {
+            for (UserChoice s : userChoices) {
+                Log.e("Choices::Size", userChoices.size() + "");
+                    RemoteTasks.getInstance(ctx).sendUserChoices(s);
             }
         }
     }

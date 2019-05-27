@@ -41,6 +41,8 @@ import androidx.fragment.app.FragmentActivity;
 
 import rx.functions.Action1;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.ImageClassifier;
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowImageClassifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
@@ -50,6 +52,7 @@ public class SystemTasks {
     private static SystemTasks systemTasks;
     private static Activity mContext;
     private Location loc;
+    private ImageClassifier checker;
 
     private SystemTasks(Activity context) {
         mContext = context;
@@ -76,39 +79,6 @@ public class SystemTasks {
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final Logger LOGGER = new Logger();
 
-
-    //Converti le fichier en base64
-    public String imageToB64(String filepath) throws InterruptedException, ExecutionException {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        FutureTask<String> future =
-                new FutureTask<String>(new Callable<String>() {
-                    @Override
-                    public String call() throws Exception {
-                        InputStream inputStream = null;
-                        String fileB64 = "";
-                        File f = new File(filepath);
-                        try {
-                            inputStream = new FileInputStream(f.getAbsolutePath());
-
-                            byte[] buffer = new byte[8192];
-                            int bytesRead;
-                            ByteArrayOutputStream output = new ByteArrayOutputStream();
-                            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                                output.write(buffer, 0, bytesRead);
-                            }
-                            byte file[] = output.toByteArray();
-
-                            fileB64 = Base64.encodeToString(file, 0);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Log.i("fileb64", fileB64);
-                        return fileB64;
-                    }
-                });
-        executor.execute(future);
-        return future.get();
-    }
 
     @SuppressLint({"CheckResult", "MissingPermission"})
     public void getLocation() {
@@ -168,32 +138,45 @@ public class SystemTasks {
     }
 
 
+    public String checkImage(Bitmap bitmap){
+        String checked="";
+        try {
+            checker= new ImageClassifier(mContext);
+             checked=  checker.classifyFrame(bitmap);
+            //Log.e("Checked Result->", checked);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return checked;
+    }
+
     //Recognized Symptoms on given bitmap
     public List<Classifier.Recognition> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
 
         EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
         List<Classifier.Recognition> recognitions = new ArrayList<>();
-        if (MODE == DetectorMode.TF_OD_API) {
-            try {
-                detector = TensorFlowObjectDetectionAPIModel.create(
-                        model,
-                        label,
-                        TF_OD_API_INPUT_SIZE);
 
-                cropSize = TF_OD_API_INPUT_SIZE;
+            if (MODE == DetectorMode.TF_OD_API) {
+                try {
+                    detector = TensorFlowObjectDetectionAPIModel.create(
+                            model,
+                            label,
+                            TF_OD_API_INPUT_SIZE);
+                    cropSize = TF_OD_API_INPUT_SIZE;
 
-                LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
+                    LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
+                    recognitions = detector.recognizeImage(bitmap);
+                    Log.e("Recognitions", recognitions.toString());
 
-                recognitions = detector.recognizeImage(bitmap);
-                Log.e("Recognitions", recognitions.toString());
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
 
-            } catch (final IOException e) {
-                EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
-                LOGGER.e("Exception initializing classifier!", e);
-            }
 
+                } catch (final IOException e) {
+                        EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                    LOGGER.e("Exception initializing classifier!", e.getMessage());
+                }
         }
+
         return recognitions;
     }
 }

@@ -71,6 +71,10 @@ public abstract class DiagnosticDao {
     public abstract LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures();
 
     @Transaction
+    @Query("SELECT * FROM Diagnostic")
+    public abstract List<DiagnosticPictures> getDiagnosticWithPicturesSynchro();
+
+    @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
     public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }

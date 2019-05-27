@@ -24,6 +24,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.StruggleDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomRectDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.UserChoiceDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserDao;
 import wesicknessdect.example.org.wesicknessdetect.models.Attack;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
@@ -99,6 +100,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract PostDao postDao();
     public abstract StruggleDao struggleDao();
     public abstract PictureDao pictureDao();
+    public abstract UserChoiceDao userChoiceDao();
     private static AppDatabase INSTANCE;
     private static final String DATABASE_NAME = "scanleaf.db";
     private Context context;

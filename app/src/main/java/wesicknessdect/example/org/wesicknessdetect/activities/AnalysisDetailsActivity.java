@@ -7,17 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -55,7 +45,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
     DiagnosticPictures diagnosticPictures = new DiagnosticPictures();
     Struggle struggle = new Struggle();
     Disease disease = new Disease();
-    CulturePart cp=new CulturePart();
+    CulturePart cp = new CulturePart();
 
     @BindView(R.id.pager)
     public ViewPager viewPager;
@@ -83,24 +73,15 @@ public class AnalysisDetailsActivity extends BaseActivity {
 
         diagnostic_id = getIntent().getIntExtra("id", 0);
         Log.e("Details diagnostic", diagnostic_id + "");
-
-        new AsyncTask<Void, Void, Void>() {
-            @SuppressLint("WrongThread")
+        runOnUiThread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... voids) {
+            public void run() {
                 symptoms = DB.symptomDao().getAllSync();
                 diagnosticPictures = DB.diagnosticDao().getDiagnosticWithPicturesSync(diagnostic_id);
                 disease = DB.diseaseDao().getByName(diagnosticPictures.diagnostic.getDisease());
                 struggle = DB.struggleDao().getByIdSync(disease.getId());
                 symptomRects = DB.symptomRectDao().getAllSync();
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
                 toolbar.setTitle(diagnosticPictures.diagnostic.getDisease());
-
                 for (Picture p : diagnosticPictures.pictures) {
                     //Log.e("Pic exist:", p.getImage());
                     if (new File(p.getImage()).exists()) {
@@ -114,7 +95,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                         Canvas canvas = new Canvas(bitmap_cropped);
 
                         for (SymptomRect rect : symptomRects) {
-                            if(rect.picture_id==p.getX()) {
+                            if (rect.picture_id == p.getX()) {
                                 Random rnd = new Random();
                                 Paint paint = new Paint();
                                 Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
@@ -128,8 +109,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
                             }
                         }
 
-
-
                         for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
                             for (Symptom s : symptoms) {
                                 if (s.getId() == n.getValue().getSymptom_id()) {
@@ -140,31 +119,21 @@ public class AnalysisDetailsActivity extends BaseActivity {
                             }
                         }
 
-                        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                cp=DB.culturePartsDao().getByIdSync(p.getCulture_part_id());
-                                symtString = gson.toJson(symptAttrs);
-                                map.put(cp.getImage() + "::" + symtString+"::"+cp.getNom(), bitmap_cropped);
-                                linkedPartImage.add(map);
-                                if(imagePagerAdapter!=null) {
-                                    imagePagerAdapter.notifyDataSetChanged();
-                                }
-                            }
-                        });
+                        cp = DB.culturePartsDao().getByIdSync(p.getCulture_part_id());
+                        symtString = gson.toJson(symptAttrs);
+                        map.put(cp.getImage() + "::" + symtString + "::" + cp.getNom(), bitmap_cropped);
+                        linkedPartImage.add(map);
                     }
                 }
-
                 imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
                 viewPager.setAdapter(imagePagerAdapter);
             }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-
+        });
     }
 
     @OnClick(R.id.btnStruggle)
-    public void LancerWeb(){
-        if(struggle!=null){
+    public void LancerWeb() {
+        if (struggle != null) {
             String url = struggle.getLink();
             Intent i = new Intent(getApplicationContext(), DiseaseActivity.class);
             Log.e("page URL->", url);

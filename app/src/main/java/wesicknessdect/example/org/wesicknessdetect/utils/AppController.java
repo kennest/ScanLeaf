@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.appizona.yehiahd.fastsave.FastSave;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import io.paperdb.Paper;
@@ -28,6 +30,7 @@ public class AppController extends Application {
     private static final String DATABASE_NAME = "scanleaf.db";
     public static AppDatabase appDatabase;
     private static AppController mInstance;
+    private static RemoteTasks remoteTasks;
     @SuppressLint("UseSparseArrays")
     public Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     public List<SymptomRect> symptomsRects = new ArrayList<>();
@@ -57,6 +60,7 @@ public class AppController extends Application {
                 .build();
         PRDownloader.initialize(getApplicationContext(), config);
 
+        remoteTasks=RemoteTasks.getInstance(getApplicationContext());
 
         //RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
 
@@ -95,22 +99,46 @@ public class AppController extends Application {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void InitDBFromServer(){
+    public void InitDBFromServer(){
 
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+                remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+
+                Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
+                Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
+                String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
+
+                String modelpath = destination + model_uri.getLastPathSegment();
+                String label_path = destination + label_uri.getLastPathSegment();
+
+                FastSave.getInstance().saveString("check_model",modelpath);
+                FastSave.getInstance().saveString("check_label",label_path);
+
+
+                File fmodel = new File(modelpath);
+                File flabel = new File(label_path);
+
+                if (!fmodel.exists()) {
+                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite");
+                }
+
+                if (!flabel.exists()) {
+                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt");
+                }
+
+
 
                 //Init all needed data
                 try {
-                    RemoteTasks.getInstance(getApplicationContext()).getCultures();
-                    RemoteTasks.getInstance(getApplicationContext()).getCountries();
-                    RemoteTasks.getInstance(getApplicationContext()).getCulturePart(1);
-                    RemoteTasks.getInstance(getApplicationContext()).getQuestions();
-                    RemoteTasks.getInstance(getApplicationContext()).getSymptoms();
-                    RemoteTasks.getInstance(getApplicationContext()).getStruggles();
-                    RemoteTasks.getInstance(getApplicationContext()).getDiseases();
+                    remoteTasks.getCultures();
+                    remoteTasks.getCountries();
+                    remoteTasks.getCulturePart(1);
+                    remoteTasks.getQuestions();
+                    remoteTasks.getSymptoms();
+                    remoteTasks.getStruggles();
+                    remoteTasks.getDiseases();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
