@@ -7,17 +7,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.Button;
-
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,12 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -83,87 +73,62 @@ public class AnalysisDetailsActivity extends BaseActivity {
 
         diagnostic_id = getIntent().getIntExtra("id", 0);
         Log.e("Details diagnostic", diagnostic_id + "");
-
-        new AsyncTask<Void, Void, Void>() {
-            @SuppressLint("WrongThread")
+        runOnUiThread(new Runnable() {
             @Override
-            protected Void doInBackground(Void... voids) {
+            public void run() {
                 symptoms = DB.symptomDao().getAllSync();
                 diagnosticPictures = DB.diagnosticDao().getDiagnosticWithPicturesSync(diagnostic_id);
                 disease = DB.diseaseDao().getByName(diagnosticPictures.diagnostic.getDisease());
                 struggle = DB.struggleDao().getByIdSync(disease.getId());
                 symptomRects = DB.symptomRectDao().getAllSync();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        toolbar.setTitle(diagnosticPictures.diagnostic.getDisease());
-                        for (Picture p : diagnosticPictures.pictures) {
-                            //Log.e("Pic exist:", p.getImage());
-                            if (new File(p.getImage()).exists()) {
-                                Set<String> symptAttrs = new HashSet<>();
-                                Map<String, Bitmap> map = new HashMap<>();
-                                @SuppressLint("UseSparseArrays")
-                                Map<Integer, SymptomRect> rects = new HashMap<>();
-                                Bitmap bm = BitmapFactory.decodeFile(p.getImage());
-                                Gson gson = new Gson();
-                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
-                                Canvas canvas = new Canvas(bitmap_cropped);
+                toolbar.setTitle(diagnosticPictures.diagnostic.getDisease());
+                for (Picture p : diagnosticPictures.pictures) {
+                    //Log.e("Pic exist:", p.getImage());
+                    if (new File(p.getImage()).exists()) {
+                        Set<String> symptAttrs = new HashSet<>();
+                        Map<String, Bitmap> map = new HashMap<>();
+                        @SuppressLint("UseSparseArrays")
+                        Map<Integer, SymptomRect> rects = new HashMap<>();
+                        Bitmap bm = BitmapFactory.decodeFile(p.getImage());
+                        Gson gson = new Gson();
+                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bm, 500, 500, false);
+                        Canvas canvas = new Canvas(bitmap_cropped);
 
-                                for (SymptomRect rect : symptomRects) {
-                                    if (rect.picture_id == p.getX()) {
-                                        Random rnd = new Random();
-                                        Paint paint = new Paint();
-                                        Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
-                                        paint.setStyle(Paint.Style.STROKE);
-                                        paint.setStrokeWidth(4f);
-                                        int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
-                                        paint.setColor(color);
-                                        paint.setAntiAlias(true);
-                                        canvas.drawRect(rect, paint);
-                                        rects.put(color, rect);
-                                    }
-                                }
-
-
-                                for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
-                                    for (Symptom s : symptoms) {
-                                        if (s.getId() == n.getValue().getSymptom_id()) {
-                                            String tmp = s.getName() + ":" + n.getKey();
-                                            Log.e("Symptom details", tmp);
-                                            symptAttrs.add(tmp);
-                                        }
-                                    }
-                                }
-
-
-                                cp = DB.culturePartsDao().getByIdSync(p.getCulture_part_id());
-                                symtString = gson.toJson(symptAttrs);
-                                map.put(cp.getImage() + "::" + symtString + "::" + cp.getNom(), bitmap_cropped);
-                                linkedPartImage.add(map);
-//                                if(imagePagerAdapter!=null) {
-
-                                        //imagePagerAdapter.notifyDataSetChanged();
-
-
-                                //}
-
+                        for (SymptomRect rect : symptomRects) {
+                            if (rect.picture_id == p.getX()) {
+                                Random rnd = new Random();
+                                Paint paint = new Paint();
+                                Log.e("SympRect -> Picture", rect.picture_id + "//" + p.getX() + "//" + rect.toShortString());
+                                paint.setStyle(Paint.Style.STROKE);
+                                paint.setStrokeWidth(4f);
+                                int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+                                paint.setColor(color);
+                                paint.setAntiAlias(true);
+                                canvas.drawRect(rect, paint);
+                                rects.put(color, rect);
                             }
                         }
-                        imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
-                        viewPager.setAdapter(imagePagerAdapter);
+
+                        for (Map.Entry<Integer, SymptomRect> n : rects.entrySet()) {
+                            for (Symptom s : symptoms) {
+                                if (s.getId() == n.getValue().getSymptom_id()) {
+                                    String tmp = s.getName() + ":" + n.getKey();
+                                    Log.e("Symptom details", tmp);
+                                    symptAttrs.add(tmp);
+                                }
+                            }
+                        }
+
+                        cp = DB.culturePartsDao().getByIdSync(p.getCulture_part_id());
+                        symtString = gson.toJson(symptAttrs);
+                        map.put(cp.getImage() + "::" + symtString + "::" + cp.getNom(), bitmap_cropped);
+                        linkedPartImage.add(map);
                     }
-                });
-                return null;
+                }
+                imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
+                viewPager.setAdapter(imagePagerAdapter);
             }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-
-            }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-
+        });
     }
 
     @OnClick(R.id.btnStruggle)

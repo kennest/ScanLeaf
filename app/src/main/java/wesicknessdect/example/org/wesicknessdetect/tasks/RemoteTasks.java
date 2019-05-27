@@ -39,7 +39,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
-
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -1127,7 +1126,7 @@ public class RemoteTasks {
                                 }
                                 return null;
                             }
-                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     }
                 } else {

@@ -94,14 +94,10 @@ public class SplashActivity extends BaseActivity {
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).check();
         //*****************CHECK IF USER IS AUTHENTICATED****************/
-        new Thread(new Runnable() {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                appDatabase = Room.databaseBuilder(getApplicationContext(),
-                        AppDatabase.class, DATABASE_NAME)
-                        .build();
-
-                List<User> users = appDatabase.userDao().getAll();
+                List<User> users = DB.userDao().getAll();
                 Moshi moshi = new Moshi.Builder().build();
                 JsonAdapter<User> jsonAdapter = moshi.adapter(User.class);
                 for (User u : users) {
@@ -111,7 +107,7 @@ public class SplashActivity extends BaseActivity {
                     if (u.getToken() != null) {
                         isAuthenticated = true;
                         token = u.getToken();
-                        welcome.setText("Welcome, " + u.getUsername());
+                        welcome.setText("Bienvenue, " + u.getUsername());
                     }
                 }
                 try {
@@ -120,7 +116,7 @@ public class SplashActivity extends BaseActivity {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
 
         //*****************CHECK IF USER IS AUTHENTICATED****************/
 //        pulse=findViewById(R.id.pulse);
@@ -166,7 +162,7 @@ public class SplashActivity extends BaseActivity {
                     finish();
                 } else {
 //                    EventBus.getDefault().post(new UserAuthenticatedEvent(token));
-                    Intent intent = new Intent(getApplicationContext(), QuizActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), ProcessActivity.class);
                     startActivity(intent);
                     finish();
                 }

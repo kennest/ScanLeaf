@@ -67,7 +67,6 @@ public class AnalyseFragment extends Fragment {
 
     AnalysisAdapter analysisAdapter;
     //LayoutAnimationController controller;
-    List<Post> Posters=new ArrayList<>();
 
 
     @Nullable
@@ -75,13 +74,14 @@ public class AnalyseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_analysis, null, false);
         ButterKnife.bind(this, view);
-
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View view = getLayoutInflater().inflate(R.layout.fragment_analysis, null, false);
+        ButterKnife.bind(this, view);
         DB = AppDatabase.getInstance(getContext());
         calendarView=new CalendarView(getActivity());
         //controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
