@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_gravity="center"
-    android:backgroundTint="#ededed"
+    android:backgroundTint="#eee"
     android:elevation="10dp"
     android:layout_margin="15dp"
     android:padding="8dp"
@@ -16,56 +16,41 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:id="@+id/btnplus"
+        android:background="?android:attr/selectableItemBackground"
         android:layout_gravity="center_horizontal"
         >
-
-        <com.mikhaellopez.circularimageview.CircularImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:src="@drawable/plante"
-            android:background="#ededed"
-            android:id="@+id/maladie_image"
-            android:layout_marginBottom="10dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/maladie_name"
-        android:text="Swollen Shoot"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:textSize="22dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:id="@+id/descri"
+            android:orientation="horizontal"
+            android:gravity="center"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            >
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/maladie_desc"
-        android:text="Swollen Shoot"
-        android:textColor="#3d3d3d"
-        android:textStyle="bold"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="18sp"
-       />
-            <ImageButton
+            android:weightSum="6">
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:id="@+id/btnplus"
-                android:src="@drawable/web"
-                android:tint="@color/colorPrimary"
-                android:background="@drawable/radius"
-                android:backgroundTint="#ededed"
-                />
+                android:id="@+id/maladie_name"
+                android:text="Swollen Shoot"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:textSize="20dp"
+                android:fontFamily="@font/roboto_thin"
+                android:layout_weight="5"/>
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:layout_width="55dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/plante"
+                android:id="@+id/maladie_image"
+                android:layout_weight="1"/>
+
         </LinearLayout>
+
+
 
     </LinearLayout>
 </RelativeLayout>
