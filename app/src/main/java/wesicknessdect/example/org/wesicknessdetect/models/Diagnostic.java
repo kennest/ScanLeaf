@@ -15,7 +15,7 @@ import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE, onDelete = CASCADE
+                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE
         ),
 }, indices = {@Index(value = {"remote_id"}), @Index(value = "uuid", unique = true)})
 public class Diagnostic {

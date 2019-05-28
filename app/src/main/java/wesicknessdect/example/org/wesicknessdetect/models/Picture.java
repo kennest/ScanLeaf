@@ -14,7 +14,7 @@ import static androidx.room.ForeignKey.CASCADE;
 @Entity(foreignKeys = {
         @ForeignKey(entity = CulturePart.class,
         parentColumns = "id",
-        childColumns = "culture_part_id",onUpdate = CASCADE,onDelete = CASCADE)},
+        childColumns = "culture_part_id",onUpdate = CASCADE)},
         indices = {@Index({"diagnostic_id","culture_part_id"}),@Index(value = "uuid",unique = true)})
 public class Picture {
 

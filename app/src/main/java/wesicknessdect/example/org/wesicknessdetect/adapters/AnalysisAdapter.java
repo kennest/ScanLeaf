@@ -29,10 +29,12 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 
@@ -43,12 +45,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.StatusHolder> {
 
     Activity context;
-    List<DiagnosticPictures> diagnosticPictures;
+    List<Diagnostic> diagnostics;
     RelativeLayout container;
 
-    public AnalysisAdapter(Activity context, List<DiagnosticPictures> diagnosticPictures) {
+    public AnalysisAdapter(Activity context, List<Diagnostic> diagnostics) {
         this.context = context;
-        this.diagnosticPictures = diagnosticPictures;
+        this.diagnostics = diagnostics;
     }
 
     @NonNull
@@ -64,46 +66,51 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
-        Log.e("XXXX 0 " + position, diagnosticPictures.get(position).pictures.size() + "");
-                if(diagnosticPictures.get(position).pictures.size()>0){
+        Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
+        if (diagnostics.get(position).getPictures().size() > 0) {
 
-                    holder.counter.setText(Integer.toString(diagnosticPictures.get(position).pictures.size()));
-                    for (Picture s : diagnosticPictures.get(position).pictures) {
-                        Log.e("XXXX N " + position, s.getImage());
-                    }
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 8;
-                    Bitmap bm=BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage())),options);
-                    Glide.with(context)
-                            .asBitmap()
-                            .load(bm)
-                            .apply(new RequestOptions().centerCrop())
-                            .apply(new RequestOptions().error(R.drawable.information))
-                            .apply(new RequestOptions().placeholder(R.drawable.restart))
-                            .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                            .into(holder.image);
-                    //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
-                }
-                holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-                Date   now = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-                String result = formatter.format(now);
-                holder.now.setText(result);
-                holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getX());
-                //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                holder.analyseTime.setText("1 min Ago");
-                //holder.slideview.addOnPageChangeListener(this);
+            holder.counter.setText(Integer.toString(diagnostics.get(position).getPictures().size()));
+            for (Picture s : diagnostics.get(position).getPictures()) {
+                Log.e("XXXX N " + position, s.getImage());
+            }
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = 8;
+            Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
+            Glide.with(context)
+                    .asBitmap()
+                    .load(bm)
+                    .apply(new RequestOptions().centerCrop())
+                    .apply(new RequestOptions().error(R.drawable.information))
+                    .apply(new RequestOptions().placeholder(R.drawable.restart))
+                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                    .into(holder.image);
+            //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
+        }
+        holder.userName.setText(diagnostics.get(position).getDisease());
+        Date now = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String result = formatter.format(now);
+        holder.now.setText(result);
+        holder.itemView.setTag(diagnostics.get(position).getX());
+        //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
+        holder.analyseTime.setText("1 min Ago");
+        //holder.slideview.addOnPageChangeListener(this);
 
-        holder.image.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_transition_animation));
-        holder.container.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_scale_animation));
+        holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+        holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+    }
 
-
-
+    public void loadNextDataFromApi(int offset) {
+        // Send an API request to retrieve appropriate paginated data
+        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
+        //  --> Deserialize and construct new model objects from the API response
+        //  --> Append the new data objects to the existing set of items inside the array of items
+        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
     }
 
     @Override
     public int getItemCount() {
-        return diagnosticPictures.size();
+        return diagnostics.size();
     }
 
     class StatusHolder extends RecyclerView.ViewHolder {
@@ -134,7 +141,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 @Override
                 public void onClick(View v) {
                     Log.e("History item", "CLICKED");
-                    Intent i=new Intent(context, AnalysisDetailsActivity.class);
+                    Intent i = new Intent(context, AnalysisDetailsActivity.class);
                     i.putExtra("id", (Integer) v.getTag());
                     context.startActivity(i);
                 }

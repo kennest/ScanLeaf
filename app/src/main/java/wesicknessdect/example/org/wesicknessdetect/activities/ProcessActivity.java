@@ -4,16 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+import androidx.annotation.NonNull;
+import androidx.viewpager.widget.PagerAdapter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+
+import java.util.ArrayList;
 import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +26,8 @@ import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.adapters.MainAdapter;
+import wesicknessdect.example.org.wesicknessdetect.adapters.PageObject;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
@@ -50,6 +53,7 @@ public class ProcessActivity extends BaseActivity {
     AnalyseFragment analyseFragment;
     MaladiesFragment maladiesFragment;
     static MainAdapter mainAdapter;
+    List<PageObject> pageObjects=new ArrayList<>();
 
     boolean flag,sync = false;
 
@@ -83,7 +87,18 @@ public class ProcessActivity extends BaseActivity {
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
 
-        mainAdapter = new MainAdapter(getSupportFragmentManager());
+        PageObject camera=new PageObject("Camera",R.layout.activity_choix_culture);
+        PageObject alertes=new PageObject("Alertes",R.layout.fragment_chat);
+        PageObject historique=new PageObject("Historique",R.layout.fragment_analysis);
+        PageObject maladies=new PageObject("Maladies",R.layout.fragment_disease);
+
+        pageObjects.add(camera);
+        pageObjects.add(historique);
+        pageObjects.add(maladies);
+        pageObjects.add(alertes);
+
+
+        mainAdapter = new MainAdapter(this,pageObjects);
 
         viewPager.setAdapter(mainAdapter);
         viewPager.setCurrentItem(0, true);
@@ -235,61 +250,6 @@ public class ProcessActivity extends BaseActivity {
        // Log.e("Req code", requestCode + "");
     }
 
-    private class MainAdapter extends FragmentStatePagerAdapter {
 
-        public MainAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0) {
-                if (cameraFragment == null) {
-                    cameraFragment = new CameraFragment();
-                    return cameraFragment;
-                }
-                return cameraFragment;
-            } else if (position == 1) {
-
-                if (analyseFragment == null) {
-                    analyseFragment = new AnalyseFragment();
-                    return analyseFragment;
-                }
-                return analyseFragment;
-            } else if (position == 2) {
-                if (maladiesFragment == null) {
-                    maladiesFragment = new MaladiesFragment();
-                    return maladiesFragment;
-                }
-                return maladiesFragment;
-            } else if (position == 3) {
-                if (chatsFragment == null) {
-                    chatsFragment = new ChatsFragment();
-                    return chatsFragment;
-                }
-                return chatsFragment;
-            }
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (position == 0)
-                return "";
-            if (position == 1)
-                return "Historique";
-            if (position == 2)
-                return "Maladies";
-            if (position == 3)
-                return "Alertes";
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-    }
 
 }

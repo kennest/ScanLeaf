@@ -23,20 +23,19 @@ public abstract class DiagnosticDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long createDiagnostic(Diagnostic diagnostic);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertDiagnostics(Diagnostic... diagnostics);
 
     @Delete
     public abstract void delete(Diagnostic diagnostic);
 
     @Transaction
     public void insertDiagnosticWithPictureAndRect(Diagnostic d, List<Picture> pictures) {
-        Log.e("DAO pic size:",pictures.size()+"");
+        Log.e("DAO picture size:",pictures.size()+"");
         final long id = createDiagnostic(d);
         for (Picture p : pictures) {
             p.setDiagnostic_id(id);
             p.setDiagnostic_uuid(d.getUuid());
             final long pic_ic=insertPicture(p);
+            Log.e("DAO picture id ->",pic_ic+"");
             for(SymptomRect sr:p.getSymptomRects()){
                 sr.setPicture_id((int) pic_ic);
                 sr.setPicture_uuid(p.getUuid());
@@ -45,8 +44,6 @@ public abstract class DiagnosticDao {
         }
     }
 
-    @Query("SELECT * FROM Symptom WHERE name = :name")
-    public abstract Symptom getByNameSync(String name);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long createSymptomRect(SymptomRect symptomRect);
@@ -67,12 +64,8 @@ public abstract class DiagnosticDao {
     public abstract List<Diagnostic> getNotSendedSync();
 
     @Transaction
-    @Query("SELECT * FROM Diagnostic")
-    public abstract LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures();
-
-    @Transaction
-    @Query("SELECT * FROM Diagnostic")
-    public abstract List<DiagnosticPictures> getDiagnosticWithPicturesSynchro();
+    @Query("SELECT * FROM Diagnostic WHERE x=:id")
+    public abstract LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures(int id);
 
     @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
