@@ -48,38 +48,39 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
     @Override
     public ChatHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.disease_item,
-                parent,false);
+                parent, false);
         return new ChatHolder(view);
     }
 
-    public void LancerWeb(String url){
+    public void LancerWeb(String url) {
         Intent i = new Intent(context, DiseaseActivity.class);
-        Log.e("page URL->",url);
+        Log.e("page URL->", url);
         i.putExtra("page", url);
         context.startActivity(i);
     }
+
     @SuppressLint("NewApi")
     @Override
     public void onBindViewHolder(@NonNull ChatHolder c, int position) {
         //Log.v("DiseaseAdapter ", "onBindViewHolder position "+position);
-        final boolean isExpanded = position==mExpandedPosition;
+        final boolean isExpanded = position == mExpandedPosition;
 
-                c.maladieImage.setImageResource(R.drawable.swollen);
-                c.maladieName.setText(diseases.get(position).getName());
+        c.maladieImage.setImageResource(R.drawable.swollen);
+        c.maladieName.setText(diseases.get(position).getName());
 //                if(diseases.get(position).getDescription().length()>55) {
 //                    c.maladie_desc.setText(String.format("%s...", diseases.get(position).getDescription().substring(0, 35)));
 //                }else{
 //                    c.maladie_desc.setText(diseases.get(position).getDescription());
 //                }
-                c.itemView.setTag(diseases.get(position).getLink());
-        Log.d("WebView Url",diseases.get(position).getLink() );
-                c.imbt.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+        c.itemView.setTag(diseases.get(position).getLink());
+        Log.d("WebView Url", diseases.get(position).getLink());
+        c.imbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                        LancerWeb(diseases.get(position).getLink());
-                    }
-                });
+                LancerWeb(diseases.get(position).getLink());
+            }
+        });
     }
 
     @Override
@@ -87,7 +88,7 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
         return diseases.size();
     }
 
-    public class ChatHolder extends RecyclerView.ViewHolder{
+    public class ChatHolder extends RecyclerView.ViewHolder {
 
         ImageView maladieImage;
         TextView maladieName, maladie_desc, maladie_url;
@@ -99,8 +100,8 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
             maladieImage = itemView.findViewById(R.id.maladie_image);
             maladieName = itemView.findViewById(R.id.maladie_name);
 //            maladie_url= itemView.findViewById(R.id.maladie_icon);
-            imbt=itemView.findViewById(R.id.btnplus);
-            rl=itemView.findViewById(R.id.disease);
+            imbt = itemView.findViewById(R.id.btnplus);
+            rl = itemView.findViewById(R.id.disease);
 
 
             Log.v("DiseaseAdapter ", "ChatHolder position ");

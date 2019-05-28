@@ -78,7 +78,7 @@ public class SyncReceiver extends BroadcastReceiver {
         }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
         try {
-            RemoteTasks.getInstance(context).getDiagnostics();
+            RemoteTasks.getInstance(context).getDiagnostics(0);
         }   catch (IOException e) {
             e.printStackTrace();
         }

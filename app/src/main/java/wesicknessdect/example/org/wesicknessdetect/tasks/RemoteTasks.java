@@ -403,11 +403,11 @@ public class RemoteTasks {
 
     //Get Diagnostic from Server
     @SuppressLint("StaticFieldLeak")
-    public List<Diagnostic> getDiagnostics() throws IOException {
+    public List<Diagnostic> getDiagnostics(int lastId) throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call call = service.getDiagnostics("Token " + token);
+            Call call = service.getDiagnostics("Token " + token,lastId);
             Response<DiagnosticResponse> response = call.execute();
             if (response.isSuccessful()) {
                 diagnostics = response.body().getResult();

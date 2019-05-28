@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.*;
 import android.view.animation.Animation;
@@ -101,7 +102,6 @@ public class ProcessActivity extends BaseActivity {
         pageObjects.add(maladies);
         pageObjects.add(alertes);
 
-
         mainAdapter = new MainAdapter(this,pageObjects);
 
         viewPager.setAdapter(mainAdapter);
@@ -110,7 +110,6 @@ public class ProcessActivity extends BaseActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //Code to implement AppBar transition acc. to Viewpager
-
                 /*Log.d("Position", String.valueOf(position));
                 Log.d("Offset", String.valueOf(positionOffset));
                 Log.d("Pixels", String.valueOf(positionOffsetPixels));
@@ -145,13 +144,6 @@ public class ProcessActivity extends BaseActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
-
-        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
-            @Override
-            public void onChanged(List<SymptomRect> symptomRects) {
-                //Log.e("Rect DB Size -> ", symptomRects.size() + "");
-            }
-        });
     }
 
     private void setupTabLayout() {
@@ -199,8 +191,13 @@ public class ProcessActivity extends BaseActivity {
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-        List<Profile> profiles=DB.profileDao().getAllSync();
-        menu.getItem(1).setIcon(BitmapDrawable.createFromPath(profiles.get(0).getAvatar()));
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                List<Profile> profiles=DB.profileDao().getAllSync();
+                menu.getItem(1).setIcon(BitmapDrawable.createFromPath(profiles.get(0).getAvatar()));
+            }
+        });
         return true;
     }
 
