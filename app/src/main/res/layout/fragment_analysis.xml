@@ -48,6 +48,23 @@
                 layout="@layout/empty"/>
     </FrameLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loading_data"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:visibility="gone" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+        android:layout_alignParentTop="true">
+
+        <ProgressBar
+            android:layout_width="100dp"
+            android:layout_gravity="center_horizontal|center"
+            android:indeterminate="true"
+            android:layout_height="100dp" />
+    </FrameLayout>
+
 
 
 </RelativeLayout>

@@ -3,16 +3,20 @@ package wesicknessdect.example.org.wesicknessdetect.activities;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
-import androidx.annotation.NonNull;
-import androidx.viewpager.widget.PagerAdapter;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
@@ -22,10 +26,6 @@ import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
@@ -36,7 +36,6 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
 /**
@@ -120,14 +119,11 @@ public class ProcessActivity extends BaseActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-//                    translateUp();
-//                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//                    actionButton.setVisibility(View.GONE);
+                if (position == 1) {
+                   //mainAdapter.notifyDataSetChanged();
                 } else if (flag) {
                     translateDown();
-                    //actionButton.setVisibility(View.VISIBLE);
+
                 }
 
 //                if (position == 1) {
@@ -195,10 +191,38 @@ public class ProcessActivity extends BaseActivity {
             @Override
             public void run() {
                 List<Profile> profiles=DB.profileDao().getAllSync();
-                menu.getItem(1).setIcon(BitmapDrawable.createFromPath(profiles.get(0).getAvatar()));
+                if(profiles.size()>0) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
+                    bitmap = getRoundBitmap(bitmap);
+                    menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                }
             }
         });
         return true;
+    }
+
+
+    //Make user avatar round
+    public Bitmap getRoundBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
     }
 
     @Override

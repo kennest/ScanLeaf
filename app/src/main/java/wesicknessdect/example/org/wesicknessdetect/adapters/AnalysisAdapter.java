@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -102,33 +103,58 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 holder.userName.setText(diagnostics.get(position).getDisease());
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
-                List<String> creation_str= Arrays.asList(diagnostics.get(position).getCreation_date().split("T"));
-                Log.d("Date Creation->",creation_str.toString());
+                String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
+                List<String> creation_str = new ArrayList<>();
                 Date date_creation = null;
-                Date str_time=null;
-                String time_creation=creation_str.get(1).substring(0,5);
-                String now_str=new SimpleDateFormat("yyyy-MM-dd").format(now);
-                long elapsedDays=0;
-                long ago=0;
-                try {
-                    date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
-                    str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
-                    Log.d("Date Elapsed->",creation_str.get(0)+"//"+now_str);
-                    ago= now.getTime() - date_creation.getTime();
-                    //ago = TimeUnit.MILLISECONDS.toMillis(ago);
-                    long secondsInMilli = 1000;
-                    long minutesInMilli = secondsInMilli * 60;
-                    long hoursInMilli = minutesInMilli * 60;
-                    long daysInMilli = hoursInMilli * 24;
-                    elapsedDays = ago / daysInMilli;
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                Date str_time = null;
+                long elapsedDays = 0;
+                long ago = 0;
+                String time_creation="";
 
-                holder.now.setText(time_creation);
+                if (diagnostics.get(position).getCreation_date().contains("T")) {
+                    creation_str = Arrays.asList(diagnostics.get(position).getCreation_date().split("T"));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = now.getTime() - date_creation.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    creation_str = Arrays.asList(diagnostics.get(position).getCreation_date().split(" "));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = date_creation.getTime() - now.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("Date Creation->", creation_str.toString());
+
+
+
+
+                //holder.now.setText(time_creation);
                 holder.itemView.setTag(diagnostics.get(position).getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                holder.analyseTime.setText("Il y a "+elapsedDays+" jours");
+                holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
                 //holder.slideview.addOnPageChangeListener(this);
                 holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
                 holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
@@ -137,23 +163,6 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         }
 
     }
-
-
-
-    public long Daybetween(String date1,String date2,String pattern)
-    {
-        SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.getDefault());
-        Date Date1 = null,Date2 = null;
-        try{
-            Date1 = sdf.parse(date1);
-            Date2 = sdf.parse(date2);
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return (Date2.getTime() - Date1.getTime())/(24*60*60*1000);
-    }
-
 
 
     public void loadNextDataFromApi(int offset) throws IOException {
@@ -174,9 +183,6 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
         @BindView(R.id.image)
         CircularImageView image;
-
-        @BindView(R.id.now)
-        TextView now;
 
         @BindView(R.id.user_name)
         TextView userName;

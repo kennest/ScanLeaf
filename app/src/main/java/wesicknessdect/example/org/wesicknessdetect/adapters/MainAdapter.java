@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -16,7 +19,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
@@ -37,6 +42,7 @@ public class MainAdapter extends PagerAdapter {
     private static AppDatabase DB;
     private EndlessRecyclerViewScrollListener scrollListener;
     AnalysisAdapter analysisAdapter;
+    Runnable InitData = null;
 
     public MainAdapter(Activity mContext, List<PageObject> pageObjects) {
         this.mContext = mContext;
@@ -53,7 +59,7 @@ public class MainAdapter extends PagerAdapter {
             layout = (ViewGroup) InitCameraView(layout);
         } else if (pageObject.getmTitleResId().equals("Historique")) {
             tmp.clear();
-            Log.d("InitHistory size 0->", tmp.size()+"");
+            Log.d("InitHistory size 0->", tmp.size() + "");
             layout = (ViewGroup) InitHistoryView(layout);
         } else if (pageObject.getmTitleResId().equals("Maladies")) {
             layout = (ViewGroup) InitMaladieView(layout);
@@ -112,78 +118,104 @@ public class MainAdapter extends PagerAdapter {
     private View InitHistoryView(View v) {
         RecyclerView recyclerView = v.findViewById(R.id.status_rv);
         View empty = v.findViewById(R.id.empty_data);
+        View loading = v.findViewById(R.id.loading_data);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setVisibility(View.VISIBLE);
-        empty.setVisibility(View.GONE);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Log.e("ListView Scroll", "Started ->" + totalItemsCount + "//" + tmp.get(0).getRemote_id());
+                if (Constants.isOnline(mContext)) {
+                    Snackbar snackbar = Snackbar.make(mContext.getWindow().getDecorView(), "Voulez vous en charger plus?", Snackbar.LENGTH_LONG);
+                    snackbar.setAction("Oui", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                analysisAdapter.loadNextDataFromApi(0);
+                                AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        GetDiagnosticsFromDB();
+                                        mContext.runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                view.addOnScrollListener(scrollListener);
+                                                //Collections.reverse(tmp);
+                                                analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                                                //view.setAdapter(analysisAdapter);
+                                                analysisAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+                                });
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    snackbar.show();
+                }
+            }
+        };
+
+        final Handler handler = new Handler();
+
+        InitData = new Runnable() {
             @Override
             public void run() {
                 GetDiagnosticsFromDB();
-                mContext.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (tmp.size() > 0) {
-                            scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                if (tmp.size() > 0) {
+                    //Toast.makeText(mContext, "Full List...", Toast.LENGTH_SHORT).show();
+                    //handler.removeCallbacks(InitData, null);
+                    recyclerView.addOnScrollListener(scrollListener);
+                    //Collections.reverse(tmp);
+                    analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                    recyclerView.setAdapter(analysisAdapter);
+                    analysisAdapter.notifyDataSetChanged();
+                    recyclerView.setVisibility(View.VISIBLE);
+                    empty.setVisibility(View.GONE);
+                    loading.setVisibility(View.GONE);
+                    handler.removeCallbacksAndMessages(null);
+                    recyclerView.scheduleLayoutAnimation();
+                } else {
+                    handler.postDelayed(InitData, 1000);
+                    Log.d("Diagnostic RV", "Is Empty");
+                    //Toast.makeText(mContext, "Empty List ->"+tmp.size(), Toast.LENGTH_SHORT).show();
+                    empty.setVisibility(View.VISIBLE);
+                    ImageButton reset = empty.findViewById(R.id.reload);
+                    recyclerView.setVisibility(View.GONE);
+                    reset.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new BaseActivity().StartSyncingData(mContext, 0);
+                            empty.setVisibility(View.GONE);
+                            loading.setVisibility(View.VISIBLE);
+                            handler.postDelayed(InitData, 1000);
+                            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                                 @Override
-                                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                                    Log.e("ListView Scroll", "Started ->" + totalItemsCount + "//" + tmp.get(0).getRemote_id());
-                                    if (Constants.isOnline(mContext)) {
-                                        Snackbar snackbar = Snackbar.make(mContext.getWindow().getDecorView(), "Voulez vous en charger plus?", Snackbar.LENGTH_LONG);
-                                        snackbar.setAction("Oui", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                try {
-                                                    analysisAdapter.loadNextDataFromApi(0);
-                                                    AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            GetDiagnosticsFromDB();
-                                                            mContext.runOnUiThread(new Runnable() {
-                                                                @Override
-                                                                public void run() {
-                                                                    view.addOnScrollListener(scrollListener);
-                                                                    //Collections.reverse(tmp);
-                                                                    analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                                                                    //view.setAdapter(analysisAdapter);
-                                                                    analysisAdapter.notifyDataSetChanged();
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        });
-                                        snackbar.show();
-                                    }
-                                }
-                            };
-                            recyclerView.addOnScrollListener(scrollListener);
-                            //Collections.reverse(tmp);
-                            analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                            recyclerView.setAdapter(analysisAdapter);
-                            recyclerView.scheduleLayoutAnimation();
-                        } else {
-                            Log.d("Diagnostic RV", "Is Empty");
-                            empty.setVisibility(View.VISIBLE);
-                            ImageButton reset = empty.findViewById(R.id.reload);
-                            recyclerView.setVisibility(View.GONE);
-                            reset.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    new BaseActivity().StartSyncingData(mContext, 0);
+                                public void run() {
+                                    GetDiagnosticsFromDB();
+                                    mContext.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            recyclerView.addOnScrollListener(scrollListener);
+                                            //Collections.reverse(tmp);
+                                            analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                                            recyclerView.setAdapter(analysisAdapter);
+                                            recyclerView.setVisibility(View.VISIBLE);
+                                            analysisAdapter.notifyDataSetChanged();
+                                        }
+                                    });
                                 }
                             });
                         }
-                    }
-                });
+                    });
+                }
             }
-        });
-
+        };
+        handler.postDelayed(InitData,500);
         return v;
     }
 
@@ -197,7 +229,7 @@ public class MainAdapter extends PagerAdapter {
             d.setPictures(pictures);
             tmp.add(d);
         }
-        //Log.d("InitHistory size N->", tmp.size()+"");
+        Log.d("InitHistory size N->", tmp.size()+"");
     }
 
     private View InitMaladieView(View v) {
@@ -227,6 +259,7 @@ public class MainAdapter extends PagerAdapter {
         RecyclerView recyclerView = v.findViewById(R.id.chat_rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_fall_down);
         AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
             public void run() {
@@ -235,6 +268,8 @@ public class MainAdapter extends PagerAdapter {
                     @Override
                     public void run() {
                         recyclerView.setAdapter(new ChatAdapter(mContext, posts));
+                        recyclerView.setLayoutAnimation(controller);
+                        recyclerView.scheduleLayoutAnimation();
                     }
                 });
             }

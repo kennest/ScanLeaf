@@ -116,8 +116,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         diagnostic.setLocalisation("SRID=4326;POINT (" + locpart[0] + " " + locpart[1] + ")");
 
+
         @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("YYYY-MM-DD HH:mm");
         String date = df.format(c.getTime());
         Log.e("Time:", date);
 
@@ -129,6 +130,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         diagnostic.setFinish(true);
         String uuid = UUID.randomUUID().toString();
         diagnostic.setUuid(uuid);
+        diagnostic.setCreation_date(date);
         diagnostic.setImages_by_parts(images_by_parts);
 
         DB.profileDao().getAll().observe(this, new Observer<List<Profile>>() {

@@ -385,7 +385,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
     //Listen for deletion on picture part
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onDeletePartPicture(DeletePartPictureEvent event) {
-        for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
+        HashMap<Integer, String> tmp_image_part=new HashMap<>(images_by_part);
+        for (Map.Entry<Integer, String> entry : tmp_image_part.entrySet()) {
             //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
             if (entry.getKey() == Integer.valueOf((Integer) event.part_id)) {
                 //Log.e("picture delete ", entry.getKey() + "//"+event.part_id);
