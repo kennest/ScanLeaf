@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -22,6 +23,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import androidx.annotation.Nullable;
@@ -193,9 +195,17 @@ public class ProcessActivity extends BaseActivity {
             public void run() {
                 List<Profile> profiles=DB.profileDao().getAllSync();
                 if(profiles.size()>0) {
-                    Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
-                    bitmap = getRoundBitmap(bitmap);
-                    menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                    Log.d("userPicture", profiles.get(0).getAvatar());
+                    File f = new File(profiles.get(0).getAvatar());
+                    if (f.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
+                        bitmap = getRoundBitmap(bitmap);
+                        menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                    }
+                    else{
+//                        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.ic_person);
+//                        bitmap = getRoundBitmap(bitmap);
+                    }
                 }
             }
         });
