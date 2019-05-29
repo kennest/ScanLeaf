@@ -188,12 +188,6 @@ public class ProcessActivity extends BaseActivity {
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
-<<<<<<< HEAD
-        List<Profile> profiles=DB.profileDao().getAllSync();
-        Drawable bitmap=BitmapDrawable.createFromPath(profiles.get(0).getAvatar());
-        menu.getItem(1).setIcon(bitmap);
-
-=======
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -205,7 +199,6 @@ public class ProcessActivity extends BaseActivity {
                 }
             }
         });
->>>>>>> affa4f399ef635f3fa194a904ab785cc3bd22404
         return true;
     }
 
