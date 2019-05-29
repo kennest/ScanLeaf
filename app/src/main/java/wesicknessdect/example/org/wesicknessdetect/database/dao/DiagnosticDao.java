@@ -12,6 +12,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
+
+import io.reactivex.Flowable;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
@@ -23,6 +25,9 @@ public abstract class DiagnosticDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long createDiagnostic(Diagnostic diagnostic);
 
+
+    @Query("SELECT * FROM Diagnostic")
+    public abstract Flowable<List<Diagnostic>> rxGetAll();
 
     @Delete
     public abstract void delete(Diagnostic diagnostic);

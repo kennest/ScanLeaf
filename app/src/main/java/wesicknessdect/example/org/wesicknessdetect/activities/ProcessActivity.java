@@ -195,16 +195,14 @@ public class ProcessActivity extends BaseActivity {
             public void run() {
                 List<Profile> profiles=DB.profileDao().getAllSync();
                 if(profiles.size()>0) {
-                    Log.d("userPicture", profiles.get(0).getAvatar());
-                    File f = new File(profiles.get(0).getAvatar());
-                    if (f.exists()) {
-                        Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
-                        bitmap = getRoundBitmap(bitmap);
-                        menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
-                    }
-                    else{
-//                        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.ic_person);
-//                        bitmap = getRoundBitmap(bitmap);
+                    if (profiles.get(0).getAvatar() != null) {
+                        Log.d("userPicture", profiles.get(0).getAvatar());
+                        File f = new File(profiles.get(0).getAvatar());
+                        if (f.exists()) {
+                            Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
+                            bitmap = getRoundBitmap(bitmap);
+                            menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                        }
                     }
                 }
             }
@@ -266,7 +264,7 @@ public class ProcessActivity extends BaseActivity {
                 builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        System.exit(1);
+                        System.exit(0);
                     }
                 });
                 builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {
