@@ -58,8 +58,6 @@ public class MainAdapter extends PagerAdapter {
         if (pageObject.getmTitleResId().equals("Camera")) {
             layout = (ViewGroup) InitCameraView(layout);
         } else if (pageObject.getmTitleResId().equals("Historique")) {
-            tmp.clear();
-            Log.d("InitHistory size 0->", tmp.size() + "");
             layout = (ViewGroup) InitHistoryView(layout);
         } else if (pageObject.getmTitleResId().equals("Maladies")) {
             layout = (ViewGroup) InitMaladieView(layout);
@@ -122,6 +120,7 @@ public class MainAdapter extends PagerAdapter {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
@@ -132,7 +131,7 @@ public class MainAdapter extends PagerAdapter {
                         @Override
                         public void onClick(View v) {
                             try {
-                                analysisAdapter.loadNextDataFromApi(0);
+                                analysisAdapter.loadNextDataFromApi(getMaxRemoteID(tmp).getRemote_id());
                                 AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                                     @Override
                                     public void run() {
@@ -143,7 +142,7 @@ public class MainAdapter extends PagerAdapter {
                                                 view.addOnScrollListener(scrollListener);
                                                 //Collections.reverse(tmp);
                                                 analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                                                //view.setAdapter(analysisAdapter);
+                                                view.setAdapter(analysisAdapter);
                                                 analysisAdapter.notifyDataSetChanged();
                                             }
                                         });
@@ -159,31 +158,30 @@ public class MainAdapter extends PagerAdapter {
                 }
             }
         };
-
-        final Handler handler = new Handler();
+        Handler handler = new Handler();
 
         InitData = new Runnable() {
             @Override
             public void run() {
                 GetDiagnosticsFromDB();
                 if (tmp.size() > 0) {
-                    //Toast.makeText(mContext, "Full List...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Full List..." + tmp.size(), Toast.LENGTH_SHORT).show();
                     //handler.removeCallbacks(InitData, null);
                     recyclerView.addOnScrollListener(scrollListener);
                     //Collections.reverse(tmp);
                     analysisAdapter = new AnalysisAdapter(mContext, tmp);
                     recyclerView.setAdapter(analysisAdapter);
-                    analysisAdapter.notifyDataSetChanged();
+                    //analysisAdapter.notifyDataSetChanged();
                     recyclerView.setVisibility(View.VISIBLE);
                     empty.setVisibility(View.GONE);
                     loading.setVisibility(View.GONE);
                     handler.removeCallbacksAndMessages(null);
+                    handler.removeCallbacks(InitData);
                     recyclerView.scheduleLayoutAnimation();
                 } else {
-                    handler.postDelayed(InitData, 1000);
                     Log.d("Diagnostic RV", "Is Empty");
-                    //Toast.makeText(mContext, "Empty List ->"+tmp.size(), Toast.LENGTH_SHORT).show();
-                    empty.setVisibility(View.VISIBLE);
+                    //Toast.makeText(mContext, "Empty List ->" + tmp.size(), Toast.LENGTH_SHORT).show();
+                    //empty.setVisibility(View.VISIBLE);
                     ImageButton reset = empty.findViewById(R.id.reload);
                     recyclerView.setVisibility(View.GONE);
                     reset.setOnClickListener(new View.OnClickListener() {
@@ -192,44 +190,54 @@ public class MainAdapter extends PagerAdapter {
                             new BaseActivity().StartSyncingData(mContext, 0);
                             empty.setVisibility(View.GONE);
                             loading.setVisibility(View.VISIBLE);
-                            handler.postDelayed(InitData, 1000);
-                            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                            mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    GetDiagnosticsFromDB();
-                                    mContext.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            recyclerView.addOnScrollListener(scrollListener);
-                                            //Collections.reverse(tmp);
-                                            analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                                            recyclerView.setAdapter(analysisAdapter);
-                                            recyclerView.setVisibility(View.VISIBLE);
-                                            analysisAdapter.notifyDataSetChanged();
-                                        }
-                                    });
+                                    recyclerView.addOnScrollListener(scrollListener);
+                                    analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                                    recyclerView.setAdapter(analysisAdapter);
+                                    analysisAdapter.notifyDataSetChanged();
                                 }
                             });
                         }
                     });
+                    handler.postDelayed(InitData,1500);
                 }
+                //handler.postDelayed(InitData,1000);
             }
         };
-        handler.postDelayed(InitData,500);
+        handler.post(InitData);
         return v;
     }
 
     private void GetDiagnosticsFromDB() {
-        Set<Diagnostic> diagnostics = new HashSet<>(DB.diagnosticDao().getAllSync());
+        List<Diagnostic> diagnostics = new ArrayList<>(DB.diagnosticDao().getAllSync());
         Collections.reverse(new ArrayList<>(diagnostics));
-        Log.e("Analysis Frag diag", diagnostics.size() + "");
-        for (Diagnostic d : diagnostics) {
-            List<Picture> pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
-            Log.e("Analysis Frag pic", pictures.size() + "");
-            d.setPictures(pictures);
-            tmp.add(d);
+        for (Diagnostic n : diagnostics) {
+            List<Picture> pictures = DB.pictureDao().getByDiagnosticIdSync(n.getX());
+            n.setPictures(pictures);
         }
-        Log.d("InitHistory size N->", tmp.size()+"");
+        Log.e("Analysis Frag diag", diagnostics.size() + "");
+        tmp=diagnostics;
+        Log.d("InitHistory size N->", tmp.size() + "");
+    }
+
+
+    private Diagnostic getMaxRemoteID(List<Diagnostic> list) {
+        Diagnostic maxObject = Collections.max(list, new Comparator<Diagnostic>() {
+            @Override
+            public int compare(Diagnostic o1, Diagnostic o2) {
+                if (o1.getRemote_id() == o2.getRemote_id()) {
+                    return 0;
+                } else if (o1.getRemote_id() > o2.getRemote_id()) {
+                    return -1;
+                } else if (o1.getRemote_id() < o2.getRemote_id()) {
+                    return 1;
+                }
+                return 0;
+            }
+        });
+        return maxObject;
     }
 
     private View InitMaladieView(View v) {
