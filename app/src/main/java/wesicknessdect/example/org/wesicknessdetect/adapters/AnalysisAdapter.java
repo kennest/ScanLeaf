@@ -57,7 +57,6 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
     Activity context;
     List<Diagnostic> diagnostics;
-    RelativeLayout container;
 
     public AnalysisAdapter(Activity context, List<Diagnostic> diagnostics) {
         this.context = context;
@@ -100,7 +99,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             .into(holder.image);
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
-                holder.userName.setText(diagnostics.get(position).getDisease());
+                holder.userName.setText(diagnostics.get(position).getDisease()+"->"+diagnostics.get(position).getRemote_id());
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
                 String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
@@ -135,43 +134,44 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                         date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
                         str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
                         Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
-                        ago = date_creation.getTime() - now.getTime();
+                        ago = now.getTime() - date_creation.getTime();
                         //ago = TimeUnit.MILLISECONDS.toMillis(ago);
                         long secondsInMilli = 1000;
                         long minutesInMilli = secondsInMilli * 60;
                         long hoursInMilli = minutesInMilli * 60;
                         long daysInMilli = hoursInMilli * 24;
                         elapsedDays = ago / daysInMilli;
+
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
                 }
                 Log.d("Date Creation->", creation_str.toString());
 
-
-
-
                 //holder.now.setText(time_creation);
                 holder.itemView.setTag(diagnostics.get(position).getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
+                if(elapsedDays<0){
+                    holder.analyseTime.setText("Aujourd'hui à " + time_creation);
+                }else{
+                    holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
+                }
                 //holder.slideview.addOnPageChangeListener(this);
                 holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
                 holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
             }
-
         }
 
     }
 
 
-    public void loadNextDataFromApi(int offset) throws IOException {
+    public void loadNextDataFromApi(int lastID) throws IOException {
         // Send an API request to retrieve appropriate paginated data
         //  --> Send the request including an offset value (i.e `page`) as a query parameter.
         //  --> Deserialize and construct new model objects from the API response
         //  --> Append the new data objects to the existing set of items inside the array of items
         //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
-        RemoteTasks.getInstance(context).getDiagnostics(diagnostics.get(offset).getRemote_id());
+        RemoteTasks.getInstance(context).getDiagnostics(lastID);
     }
 
     @Override
