@@ -23,7 +23,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/status_rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="visible"
         android:layout_below="@id/recent_updates"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
@@ -33,33 +34,35 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:visibility="gone"
-        android:background="#F8F8ED"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignTop="@+id/recent_updates"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginBottom="45dp" />
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/empty_data"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:visibility="gone" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+            android:layout_alignParentTop="true">
 
+        <include
+                layout="@layout/empty"/>
+    </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignTop="@+id/recent_updates"
+        android:id="@+id/loading_data"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:visibility="gone">
+        android:visibility="gone" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+        android:layout_alignParentTop="true">
 
-        <include
-            android:id="@+id/empty_data"
-            layout="@layout/empty" />
+        <ProgressBar
+            android:layout_width="100dp"
+            android:layout_gravity="center_horizontal|center"
+            android:indeterminate="true"
+            android:layout_height="100dp" />
     </FrameLayout>
 
 

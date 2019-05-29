@@ -15,7 +15,7 @@ import static androidx.room.ForeignKey.CASCADE;
 
 @Entity(foreignKeys = {
         @ForeignKey(
-                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE, onDelete = CASCADE
+                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE
         ),
 }, indices = {@Index(value = {"remote_id"}), @Index(value = "uuid", unique = true)})
 public class Diagnostic {
@@ -45,6 +45,9 @@ public class Diagnostic {
 
     @SerializedName(value = "symptoms")
     private String symptoms;
+
+    @SerializedName(value = "creation")
+    private String creation_date;
 
     @Ignore
     private Map<Integer, String> images_by_parts;
@@ -179,5 +182,13 @@ public class Diagnostic {
 
     public void setSymptoms(String symptoms) {
         this.symptoms = symptoms;
+    }
+
+    public String getCreation_date() {
+        return creation_date;
+    }
+
+    public void setCreation_date(String creation_date) {
+        this.creation_date = creation_date;
     }
 }

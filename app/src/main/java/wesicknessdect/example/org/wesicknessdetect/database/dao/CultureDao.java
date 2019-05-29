@@ -18,6 +18,9 @@ public interface CultureDao {
     @Query("SELECT * FROM Culture")
     LiveData<List<Culture>> getAll();
 
+    @Query("SELECT * FROM Culture")
+    List<Culture> getAllSync();
+
     @Query("SELECT * FROM Culture WHERE name=:name")
     Culture getByName(String name);
 }

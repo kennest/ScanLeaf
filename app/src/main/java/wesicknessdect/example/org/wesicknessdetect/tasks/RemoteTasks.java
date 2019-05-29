@@ -143,7 +143,7 @@ public class RemoteTasks {
                         }
                         return null;
                     }
-                }.execute();
+                }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             } else {
                 Log.i("Country getError:", response.errorBody().string());
             }
@@ -191,7 +191,7 @@ public class RemoteTasks {
                                     EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
                                     return null;
                                 }
-                            }.execute();
+                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                         }
                     } else {
                         EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides", "Inscription échouée", true));
@@ -403,11 +403,11 @@ public class RemoteTasks {
 
     //Get Diagnostic from Server
     @SuppressLint("StaticFieldLeak")
-    public List<Diagnostic> getDiagnostics() throws IOException {
+    public List<Diagnostic> getDiagnostics(int lastId) throws IOException {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call call = service.getDiagnostics("Token " + token);
+            Call call = service.getDiagnostics("Token " + token,lastId);
             Response<DiagnosticResponse> response = call.execute();
             if (response.isSuccessful()) {
                 diagnostics = response.body().getResult();
@@ -420,10 +420,11 @@ public class RemoteTasks {
                             d.setSended(1);
                             try {
                                 pictures = getDiagnosticPictures(d.getRemote_id());
+                                Log.e("GetDiagnostic Pic->",pictures.size()+"");
+                                DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, pictures);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, pictures);
                         }
                         return null;
                     }

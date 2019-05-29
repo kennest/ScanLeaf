@@ -5,36 +5,38 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
+
+import java.util.ArrayList;
 import java.util.List;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.adapters.MainAdapter;
+import wesicknessdect.example.org.wesicknessdetect.adapters.PageObject;
 import wesicknessdect.example.org.wesicknessdetect.fragments.AnalyseFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.CameraFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
 /**
@@ -55,6 +57,7 @@ public class ProcessActivity extends BaseActivity {
     AnalyseFragment analyseFragment;
     MaladiesFragment maladiesFragment;
     static MainAdapter mainAdapter;
+    List<PageObject> pageObjects=new ArrayList<>();
 
     boolean flag,sync = false;
     private Menu menu;
@@ -89,7 +92,17 @@ public class ProcessActivity extends BaseActivity {
         tabLayout = findViewById(R.id.tab_layout);
         appBarLayout = findViewById(R.id.app_bar);
 
-        mainAdapter = new MainAdapter(getSupportFragmentManager());
+        PageObject camera=new PageObject("Camera",R.layout.activity_choix_culture);
+        PageObject alertes=new PageObject("Alertes",R.layout.fragment_chat);
+        PageObject historique=new PageObject("Historique",R.layout.fragment_analysis);
+        PageObject maladies=new PageObject("Maladies",R.layout.fragment_disease);
+
+        pageObjects.add(camera);
+        pageObjects.add(historique);
+        pageObjects.add(maladies);
+        pageObjects.add(alertes);
+
+        mainAdapter = new MainAdapter(this,pageObjects);
 
         viewPager.setAdapter(mainAdapter);
         viewPager.setCurrentItem(0, true);
@@ -97,7 +110,6 @@ public class ProcessActivity extends BaseActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 //Code to implement AppBar transition acc. to Viewpager
-
                 /*Log.d("Position", String.valueOf(position));
                 Log.d("Offset", String.valueOf(positionOffset));
                 Log.d("Pixels", String.valueOf(positionOffsetPixels));
@@ -108,14 +120,11 @@ public class ProcessActivity extends BaseActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-//                    translateUp();
-//                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//                    actionButton.setVisibility(View.GONE);
+                if (position == 1) {
+                   //mainAdapter.notifyDataSetChanged();
                 } else if (flag) {
                     translateDown();
-                    //actionButton.setVisibility(View.VISIBLE);
+
                 }
 
 //                if (position == 1) {
@@ -132,13 +141,6 @@ public class ProcessActivity extends BaseActivity {
         });
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
-
-        DB.symptomRectDao().getAll().observe(this, new Observer<List<SymptomRect>>() {
-            @Override
-            public void onChanged(List<SymptomRect> symptomRects) {
-                //Log.e("Rect DB Size -> ", symptomRects.size() + "");
-            }
-        });
     }
 
     private void setupTabLayout() {
@@ -186,11 +188,49 @@ public class ProcessActivity extends BaseActivity {
         this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+<<<<<<< HEAD
         List<Profile> profiles=DB.profileDao().getAllSync();
         Drawable bitmap=BitmapDrawable.createFromPath(profiles.get(0).getAvatar());
         menu.getItem(1).setIcon(bitmap);
 
+=======
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                List<Profile> profiles=DB.profileDao().getAllSync();
+                if(profiles.size()>0) {
+                    Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
+                    bitmap = getRoundBitmap(bitmap);
+                    menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                }
+            }
+        });
+>>>>>>> affa4f399ef635f3fa194a904ab785cc3bd22404
         return true;
+    }
+
+
+    //Make user avatar round
+    public Bitmap getRoundBitmap(Bitmap bitmap) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
+                bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        // canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+        canvas.drawCircle(bitmap.getWidth() / 2, bitmap.getHeight() / 2,
+                bitmap.getWidth() / 2, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        //Bitmap _bmp = Bitmap.createScaledBitmap(output, 60, 60, false);
+        //return _bmp;
+        return output;
     }
 
     @Override
@@ -246,61 +286,6 @@ public class ProcessActivity extends BaseActivity {
        // Log.e("Req code", requestCode + "");
     }
 
-    private class MainAdapter extends FragmentStatePagerAdapter {
 
-        public MainAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0) {
-                if (cameraFragment == null) {
-                    cameraFragment = new CameraFragment();
-                    return cameraFragment;
-                }
-                return cameraFragment;
-            } else if (position == 1) {
-
-                if (analyseFragment == null) {
-                    analyseFragment = new AnalyseFragment();
-                    return analyseFragment;
-                }
-                return analyseFragment;
-            } else if (position == 2) {
-                if (maladiesFragment == null) {
-                    maladiesFragment = new MaladiesFragment();
-                    return maladiesFragment;
-                }
-                return maladiesFragment;
-            } else if (position == 3) {
-                if (chatsFragment == null) {
-                    chatsFragment = new ChatsFragment();
-                    return chatsFragment;
-                }
-                return chatsFragment;
-            }
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public CharSequence getPageTitle(int position) {
-            if (position == 0)
-                return "";
-            if (position == 1)
-                return "Historique";
-            if (position == 2)
-                return "Maladies";
-            if (position == 3)
-                return "Alertes";
-            return null;
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-    }
 
 }

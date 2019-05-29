@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -33,6 +34,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
@@ -41,7 +43,10 @@ import wesicknessdect.example.org.wesicknessdetect.activities.QuizActivity;
 import wesicknessdect.example.org.wesicknessdetect.adapters.AnalysisAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.ToggleViewEvent;
+import wesicknessdect.example.org.wesicknessdetect.listener.EndlessRecyclerViewScrollListener;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -58,14 +63,16 @@ public class AnalyseFragment extends Fragment {
     @BindView(R.id.empty_data)
     View empty;
 
-    @BindView(R.id.calendarView)
-    CalendarView calendarView;
 
-    public boolean is_calendar_view_shown =false;
+    public boolean is_calendar_view_shown = false;
 
     private static AppDatabase DB;
 
     AnalysisAdapter analysisAdapter;
+
+    private EndlessRecyclerViewScrollListener scrollListener;
+    List<Diagnostic> diagnostics = new ArrayList<>();
+    List<Diagnostic> tmp = new ArrayList<>();
     //LayoutAnimationController controller;
 
 
@@ -83,76 +90,56 @@ public class AnalyseFragment extends Fragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_analysis, null, false);
         ButterKnife.bind(this, view);
         DB = AppDatabase.getInstance(getContext());
-        calendarView=new CalendarView(getActivity());
-        //controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
-       InitView();
-
-
-    }
-
-    private void InitView(){
-
-        DB.diagnosticDao().getDiagnosticWithPictures().observe(this, new Observer<List<DiagnosticPictures>>() {
+        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
             @Override
-            public void onChanged(List<DiagnosticPictures> diagnosticPictures) {
-                if(diagnosticPictures.size()>0){
-//                    SeparatorDecoration decoration = new SeparatorDecoration(
-//                            getContext(),
-//                            Color.parseColor("#EAEAEA"),
-//                            0.5f);
-                    if(is_calendar_view_shown){
-                        Log.e("Toggle view calendar",is_calendar_view_shown+"");
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(1970, 4, 5);
-                        calendar.set(2019, 4, 6);
-                        recyclerView.setVisibility(View.GONE);
-                        calendarView.setVisibility(View.VISIBLE);
-                        calendarView.setDate(calendar.get(Calendar.DATE));
-                    }else{
-                        Log.e("Toggle view recycler",is_calendar_view_shown+"");
-                        calendarView.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-                        recyclerView.setHasFixedSize(true);
-                        Collections.reverse(diagnosticPictures);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        analysisAdapter=new AnalysisAdapter(getActivity(),diagnosticPictures);
-                        recyclerView.setAdapter(analysisAdapter);
-                        //recyclerView.setLayoutAnimation(controller);
-                        recyclerView.scheduleLayoutAnimation();
-                        //recyclerView.addItemDecoration(decoration);
-                    }
-                }else{
-                    empty.setVisibility(View.VISIBLE);
+            public void run() {
+                diagnostics = DB.diagnosticDao().getAllSync();
+                for (Diagnostic d : diagnostics) {
+                    List<Picture> pictures = DB.pictureDao().getByDiagnosticIdSync(d.getX());
+                    Log.e("Analysis Frag pic",pictures.size()+"");
+                    d.setPictures(pictures);
+                    tmp.add(d);
                 }
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        InitView();
+                    }
+                });
             }
         });
-
-
+        //controller= AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.layout_animation_fall_down);
     }
-    //Hide the loading dialog
-    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    public void toggleCalendarView(ToggleViewEvent event){
-        Log.e("Toggle view",event.show+"//"+is_calendar_view_shown);
-        if(!is_calendar_view_shown) {
-            is_calendar_view_shown = event.show;
-        }else{
-            is_calendar_view_shown=false;
+
+    private void InitView() {
+
+        if (tmp.size() > 0) {
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+
+            scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+                @Override
+                public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                    Log.e("ListView Scroll", "Started...");
+                    // Triggered only when new data needs to be appended to the list
+                    // Add whatever code is needed to append new items to the bottom of the list
+                    //loadNextDataFromApi(page);
+                }
+            };
+            recyclerView.setVisibility(View.VISIBLE);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(linearLayoutManager);
+            recyclerView.addOnScrollListener(scrollListener);
+            Collections.reverse(tmp);
+            analysisAdapter = new AnalysisAdapter(getActivity(), tmp);
+            recyclerView.setAdapter(analysisAdapter);
+            //recyclerView.setLayoutAnimation(controller);
+            recyclerView.scheduleLayoutAnimation();
+            //recyclerView.addItemDecoration(decoration);
+        } else {
+            empty.setVisibility(View.VISIBLE);
         }
-        InitView();
     }
 
-
-    @Override
-    public void onStart() {
-        Log.d("EventBus", "Register ");
-        EventBus.getDefault().register(this);
-        super.onStart();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d("EventBus", "Unregister");
-        EventBus.getDefault().unregister(this);
-    }
+//Hide the loading dialog
 }

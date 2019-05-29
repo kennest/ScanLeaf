@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.util.DateInterval;
 import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,18 +24,30 @@ import com.glide.slider.library.SliderTypes.TextSliderView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
 /**
  * Created by Jordan Adopo on 03/02/2019.
@@ -43,12 +56,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.StatusHolder> {
 
     Activity context;
-    List<DiagnosticPictures> diagnosticPictures;
+    List<Diagnostic> diagnostics;
     RelativeLayout container;
 
-    public AnalysisAdapter(Activity context, List<DiagnosticPictures> diagnosticPictures) {
+    public AnalysisAdapter(Activity context, List<Diagnostic> diagnostics) {
         this.context = context;
-        this.diagnosticPictures = diagnosticPictures;
+        this.diagnostics = diagnostics;
     }
 
     @NonNull
@@ -61,19 +74,22 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
-        Log.e("XXXX 0 " + position, diagnosticPictures.get(position).pictures.size() + "");
-                if(diagnosticPictures.get(position).pictures.size()>0){
+        if (diagnostics.get(position) != null) {
+            if (diagnostics.get(position).getPictures() != null) {
+                Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
+                if (diagnostics.get(position).getPictures().size() > 0) {
 
-                    holder.counter.setText(Integer.toString(diagnosticPictures.get(position).pictures.size()));
-                    for (Picture s : diagnosticPictures.get(position).pictures) {
+                    holder.counter.setText(Integer.toString(diagnostics.get(position).getPictures().size()));
+                    for (Picture s : diagnostics.get(position).getPictures()) {
                         Log.e("XXXX N " + position, s.getImage());
                     }
+
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inSampleSize = 8;
-                    Bitmap bm=BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage())),options);
+                    Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
                     Glide.with(context)
                             .asBitmap()
                             .load(bm)
@@ -84,35 +100,89 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             .into(holder.image);
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
-                holder.userName.setText(diagnosticPictures.get(position).diagnostic.getDisease());
-                Date   now = new Date();
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-                String result = formatter.format(now);
-                holder.now.setText(result);
-                holder.itemView.setTag(diagnosticPictures.get(position).diagnostic.getX());
+                holder.userName.setText(diagnostics.get(position).getDisease());
+                Date now = new Date();
+                @SuppressLint("SimpleDateFormat")
+                String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
+                List<String> creation_str = new ArrayList<>();
+                Date date_creation = null;
+                Date str_time = null;
+                long elapsedDays = 0;
+                long ago = 0;
+                String time_creation="";
+
+                if (diagnostics.get(position).getCreation_date().contains("T")) {
+                    creation_str = Arrays.asList(diagnostics.get(position).getCreation_date().split("T"));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = now.getTime() - date_creation.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    creation_str = Arrays.asList(diagnostics.get(position).getCreation_date().split(" "));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = date_creation.getTime() - now.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                Log.d("Date Creation->", creation_str.toString());
+
+
+
+
+                //holder.now.setText(time_creation);
+                holder.itemView.setTag(diagnostics.get(position).getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                holder.analyseTime.setText("1 min Ago");
+                holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
                 //holder.slideview.addOnPageChangeListener(this);
+                holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+                holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+            }
 
-        holder.image.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_transition_animation));
-        holder.container.setAnimation(AnimationUtils.loadAnimation(context,R.anim.fade_scale_animation));
+        }
+
+    }
 
 
-
+    public void loadNextDataFromApi(int offset) throws IOException {
+        // Send an API request to retrieve appropriate paginated data
+        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
+        //  --> Deserialize and construct new model objects from the API response
+        //  --> Append the new data objects to the existing set of items inside the array of items
+        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
+        RemoteTasks.getInstance(context).getDiagnostics(diagnostics.get(offset).getRemote_id());
     }
 
     @Override
     public int getItemCount() {
-        return diagnosticPictures.size();
+        return diagnostics.size();
     }
 
     class StatusHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.image)
         CircularImageView image;
-
-        @BindView(R.id.now)
-        TextView now;
 
         @BindView(R.id.user_name)
         TextView userName;
@@ -134,7 +204,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 @Override
                 public void onClick(View v) {
                     Log.e("History item", "CLICKED");
-                    Intent i=new Intent(context, AnalysisDetailsActivity.class);
+                    Intent i = new Intent(context, AnalysisDetailsActivity.class);
                     i.putExtra("id", (Integer) v.getTag());
                     context.startActivity(i);
                 }

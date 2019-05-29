@@ -105,7 +105,7 @@ public interface APIService {
     Call<StruggleResponse> getStruggles();
 
     @GET("api/diagnostics/")
-    Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token);
+    Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token,@Query("lastId") int last_id);
 
     @GET("api/pictures/")
     Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic,@Header("Authorization") String token);
