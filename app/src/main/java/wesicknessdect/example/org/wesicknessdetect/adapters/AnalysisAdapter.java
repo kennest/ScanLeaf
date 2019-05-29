@@ -99,7 +99,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             .into(holder.image);
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
-                holder.userName.setText(diagnostics.get(position).getDisease()+"->"+diagnostics.get(position).getRemote_id());
+                holder.userName.setText(diagnostics.get(position).getDisease());
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
                 String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);

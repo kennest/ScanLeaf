@@ -10,9 +10,15 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +62,9 @@ public class AnalysisDetailsActivity extends BaseActivity {
     @BindView(R.id.btnStruggle)
     Button btnStruggle;
 
+    @BindView(R.id.time)
+    TextView time;
+
     String symtString = "";
 
     @Override
@@ -82,6 +91,61 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 struggle = DB.struggleDao().getByIdSync(disease.getId());
                 symptomRects = DB.symptomRectDao().getAllSync();
                 toolbar.setTitle(diagnosticPictures.diagnostic.getDisease());
+
+                Date now = new Date();
+                @SuppressLint("SimpleDateFormat")
+                String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
+                List<String> creation_str = new ArrayList<>();
+                Date date_creation = null;
+                Date str_time = null;
+                long elapsedDays = 0;
+                long ago = 0;
+                String time_creation="";
+
+                if (diagnosticPictures.diagnostic.getCreation_date().contains("T")) {
+                    creation_str = Arrays.asList(diagnosticPictures.diagnostic.getCreation_date().split("T"));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = now.getTime() - date_creation.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    creation_str = Arrays.asList(diagnosticPictures.diagnostic.getCreation_date().split(" "));
+                    time_creation = creation_str.get(1).substring(0, 5);
+                    try {
+                        date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                        str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                        Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                        ago = now.getTime() - date_creation.getTime();
+                        //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+                        elapsedDays = ago / daysInMilli;
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(elapsedDays<0){
+                   time.setText("Aujourd'hui à " + time_creation);
+                }else{
+                   time.setText("Il y a " + elapsedDays + " jours à " + time_creation);
+                }
+
+
                 for (Picture p : diagnosticPictures.pictures) {
                     //Log.e("Pic exist:", p.getImage());
                     if (new File(p.getImage()).exists()) {

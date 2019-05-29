@@ -165,7 +165,7 @@ public class MainAdapter extends PagerAdapter {
             public void run() {
                 GetDiagnosticsFromDB();
                 if (tmp.size() > 0) {
-                    Toast.makeText(mContext, "Full List..." + tmp.size(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(mContext, "Full List..." + tmp.size(), Toast.LENGTH_SHORT).show();
                     //handler.removeCallbacks(InitData, null);
                     recyclerView.addOnScrollListener(scrollListener);
                     //Collections.reverse(tmp);
