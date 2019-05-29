@@ -1,10 +1,12 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
-
+import android.graphics.Canvas;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -185,7 +187,9 @@ public class ProcessActivity extends BaseActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         List<Profile> profiles=DB.profileDao().getAllSync();
-        menu.getItem(1).setIcon(BitmapDrawable.createFromPath(profiles.get(0).getAvatar()));
+        Drawable bitmap=BitmapDrawable.createFromPath(profiles.get(0).getAvatar());
+        menu.getItem(1).setIcon(bitmap);
+
         return true;
     }
 
