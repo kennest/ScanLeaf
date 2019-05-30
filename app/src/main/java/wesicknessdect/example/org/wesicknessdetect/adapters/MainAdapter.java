@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -22,6 +23,11 @@ import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import io.reactivex.Completable;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
@@ -132,20 +138,15 @@ public class MainAdapter extends PagerAdapter {
                         public void onClick(View v) {
                             try {
                                 analysisAdapter.loadNextDataFromApi(getMaxRemoteID(tmp).getRemote_id());
-                                AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                                GetDiagnosticsFromDB();
+                                mContext.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        GetDiagnosticsFromDB();
-                                        mContext.runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                view.addOnScrollListener(scrollListener);
-                                                //Collections.reverse(tmp);
-                                                analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                                                view.setAdapter(analysisAdapter);
-                                                analysisAdapter.notifyDataSetChanged();
-                                            }
-                                        });
+                                        view.addOnScrollListener(scrollListener);
+                                        //Collections.reverse(tmp);
+                                        analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                                        view.setAdapter(analysisAdapter);
+                                        analysisAdapter.notifyDataSetChanged();
                                     }
                                 });
 
@@ -201,7 +202,7 @@ public class MainAdapter extends PagerAdapter {
                             });
                         }
                     });
-                    handler.postDelayed(InitData,1500);
+                    handler.postDelayed(InitData, 1500);
                 }
                 //handler.postDelayed(InitData,1000);
             }
@@ -211,15 +212,42 @@ public class MainAdapter extends PagerAdapter {
     }
 
     private void GetDiagnosticsFromDB() {
-        List<Diagnostic> diagnostics = new ArrayList<>(DB.diagnosticDao().getAllSync());
-        Collections.reverse(new ArrayList<>(diagnostics));
-        for (Diagnostic n : diagnostics) {
-            List<Picture> pictures = DB.pictureDao().getByDiagnosticIdSync(n.getX());
-            n.setPictures(pictures);
-        }
-        Log.e("Analysis Frag diag", diagnostics.size() + "");
-        tmp=diagnostics;
-        Log.d("InitHistory size N->", tmp.size() + "");
+        DB.diagnosticDao().rxGetAll().subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Diagnostic>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @SuppressLint("CheckResult")
+                    @Override
+                    public void onSuccess(List<Diagnostic> diagnosticList) {
+                        List<Diagnostic> diagnostics = diagnosticList;
+                        Collections.reverse(new ArrayList<>(diagnostics));
+                        for (Diagnostic n : diagnostics) {
+                            Completable.fromAction(() -> {
+                                List<Picture> pictures = DB.pictureDao().getByDiagnosticUUIdSync(n.getUuid());
+                                Log.e("Analysis Rx pictures DB", pictures.size() + "");
+                                n.setPictures(pictures);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(() -> Log.d("Rx Diagnostic DB", "Completed ->"+n.getRemote_id()),// completed with success,
+                                            throwable -> throwable.printStackTrace()// there was an error
+                                    );
+                        }
+                        Log.e("Analysis Frag diag", diagnostics.size() + "");
+                        tmp = diagnostics;
+                        Log.d("InitHistory size N->", tmp.size() + "");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d("DB Error ->", e.getMessage());
+                    }
+                });
+
     }
 
 

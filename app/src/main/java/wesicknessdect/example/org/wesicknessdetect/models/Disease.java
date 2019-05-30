@@ -10,10 +10,7 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Struggle.class,
-        parentColumns = "id",
-        childColumns = "struggle_id"),
-        indices = {@Index("struggle_id")})
+@Entity
 public class Disease {
     @SerializedName(value = "id")
     @PrimaryKey

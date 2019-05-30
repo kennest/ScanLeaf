@@ -13,7 +13,10 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
@@ -26,8 +29,18 @@ public abstract class DiagnosticDao {
     public abstract long createDiagnostic(Diagnostic diagnostic);
 
 
+    //RX JAVA
     @Query("SELECT * FROM Diagnostic")
-    public abstract Flowable<List<Diagnostic>> rxGetAll();
+    public abstract Single<List<Diagnostic>> rxGetAll();
+
+    @Query("SELECT * FROM Diagnostic WHERE sended=0")
+    public abstract Single<List<Diagnostic>> rxGetNotSendedSync();
+
+    @Transaction
+    @Query("SELECT * FROM Diagnostic WHERE x=:id")
+    public abstract Maybe<DiagnosticPictures> rxGetDiagnosticWithPicturesSync(int id);
+
+    //RX JAVA
 
     @Delete
     public abstract void delete(Diagnostic diagnostic);
@@ -62,15 +75,13 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic")
     public abstract LiveData<List<Diagnostic>> getAll();
 
+
     @Query("SELECT * FROM Diagnostic")
     public abstract List<Diagnostic> getAllSync();
 
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract List<Diagnostic> getNotSendedSync();
 
-    @Transaction
-    @Query("SELECT * FROM Diagnostic WHERE x=:id")
-    public abstract LiveData<List<DiagnosticPictures>> getDiagnosticWithPictures(int id);
 
     @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")

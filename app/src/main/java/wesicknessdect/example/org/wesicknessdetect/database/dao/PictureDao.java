@@ -56,4 +56,7 @@ public abstract class PictureDao {
 
     @Query("SELECT * FROM Picture WHERE diagnostic_id=:id")
     public abstract List<Picture> getByDiagnosticIdSync(long id);
+
+    @Query("SELECT * FROM Picture WHERE diagnostic_uuid=:uuid")
+    public abstract List<Picture> getByDiagnosticUUIdSync(String uuid);
 }

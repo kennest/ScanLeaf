@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.ImagePagerAdapter;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
@@ -49,6 +50,8 @@ public class AnalysisDetailsActivity extends BaseActivity {
     List<Symptom> symptoms = new ArrayList<>();
     List<SymptomRect> symptomRects = new ArrayList<>();
     DiagnosticPictures diagnosticPictures = new DiagnosticPictures();
+    List<Picture> Pictures = new ArrayList<>();
+    Diagnostic diagnostic = new Diagnostic();
     Struggle struggle = new Struggle();
     Disease disease = new Disease();
     CulturePart cp = new CulturePart();
