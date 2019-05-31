@@ -45,6 +45,7 @@ import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.Single;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -293,39 +294,46 @@ public class RemoteTasks {
 
 
     //Send User choices of Quiz
-    @SuppressLint("StaticFieldLeak")
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
     public void sendUserChoices(UserChoice choice) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call<JsonElement> call = service.sendUserChoices("Token " + token, choice);
-            try {
-                Response<JsonElement> response = call.execute();
-                if (response.isSuccessful()) {
-                    if (response.body().getAsJsonObject().has("statut")) {
-                        if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    choice.setSended(1);
-                                    DB.userChoiceDao().update(choice);
-                                    return null;
+            service.rxSendUserChoices("Token " + token, choice)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<JsonElement>() {
+                        @Override
+                        public void onSuccess(JsonElement jsonElement) {
+                            if (jsonElement.getAsJsonObject().has("statut")) {
+                                if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
+                                    Completable.fromAction(() -> {
+                                        choice.setSended(1);
+                                        DB.userChoiceDao().update(choice);
+                                    })
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .unsubscribeOn(Schedulers.io())
+                                            .subscribe(() -> {
+                                                        Log.d("Rx Send User Choice", "Completed ->" + choice.getUuid());
+                                                    },
+                                                    throwable -> Log.e("Rx Send Choice Error ->", throwable.getMessage()));
                                 }
-                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                            }
                         }
-                    }
-                } else {
-                    Log.e("Error:", response.errorBody().string());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Rx Send User Choices:", e.getMessage());
+                        }
+                    });
         }
     }
 
     //Send SymptomRect to server
-    @SuppressLint("StaticFieldLeak")
-    public SymptomRect sendSymptomRect(SymptomRect r, @Nullable boolean sync) {
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    public void sendSymptomRect(SymptomRect r, @Nullable boolean sync) {
 
         if (Constants.isOnline(mContext)) {
             JsonObject json = new JsonObject();
@@ -340,38 +348,37 @@ public class RemoteTasks {
 
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
-            Call<JsonElement> call = service.sendSymptomRect("Token " + token, json);
-            try {
-                Response<JsonElement> response = call.execute();
-                if (response.isSuccessful()) {
-                    Log.e("SymptomRect ID:", r.getX() + "");
-                    if (response.body().getAsJsonObject().has("statut")) {
-                        if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    if (!sync) {
-                                        r.setSended(1);
-                                        DB.symptomRectDao().updateSymptomRect(r);
-                                    } else {
-                                        DB.symptomRectDao().delete(r);
-                                    }
-                                    return null;
-                                }
-                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                        }
+            service.rxSendSymptomRect("Token " + token, json).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io()).subscribeWith(new DisposableSingleObserver<JsonElement>() {
+                @Override
+                public void onSuccess(JsonElement jsonElement) {
+                    if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
+                        Completable.fromAction(() -> {
+                            if (!sync) {
+                                r.setSended(1);
+                                DB.symptomRectDao().updateSymptomRect(r);
+                            } else {
+                                DB.symptomRectDao().delete(r);
+                            }
+                        })
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .unsubscribeOn(Schedulers.io())
+                                .subscribe(() -> {
+                                            Log.d("Send Rect", "Completed ->" + r.getUuid());
+                                        },
+                                        throwable -> Log.e("Send Rect Error ->", throwable.getMessage()));
                     }
-
-                    return null;
-                } else {
-                    Log.e("Error:", response.errorBody().string());
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return symptomRect;
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("Rx Send Rect Error:", e.getMessage());
+                }
+            });
+
         }
-        return symptomRect;
     }
 
 
@@ -396,7 +403,7 @@ public class RemoteTasks {
                             s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
                             s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
                             s.setSended(1);
-                            s.setPicture_id((int) p.getRemote_id());
+                            s.setPicture_id((int) p.getX());
                             s.setPicture_uuid(p.getUuid());
                             rectList.add(s);
                         }
@@ -493,14 +500,18 @@ public class RemoteTasks {
                             p.setSended(1);
                             p.setDiagnostic_id(d.getRemote_id());
                             p.setDiagnostic_uuid(d.getUuid());
-                            getSymptomsRect(p);
+
                         })
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(() -> {
                                             Log.d("Rx Diagnostic Picture", p.getRemote_id() + "");
                                             //GET PIXELS OF THE PICTURES
-                                            Completable.fromAction(() -> DB.pictureDao().createPicture(p))
+                                            Completable.fromAction(() -> {
+                                                long id=DB.pictureDao().createPicture(p);
+                                                p.setX((int) id);
+                                                getSymptomsRect(p);
+                                            })
                                                     .subscribeOn(Schedulers.io())
                                                     .observeOn(AndroidSchedulers.mainThread())
                                                     .subscribe(() -> Log.d("Rx Picture Inserted", "Completed ->" + p.getRemote_id()),// completed with success,
@@ -522,59 +533,74 @@ public class RemoteTasks {
     }
 
     //Send Diagnostic to Server
-    @SuppressLint("StaticFieldLeak")
-    public Diagnostic sendDiagnostic(Diagnostic d, @Nullable boolean sync) {
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    public void sendDiagnostic(Diagnostic d, @Nullable boolean sync) {
 //        EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                d.setSended(0);
-                DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
-        return d;
+        Completable.fromAction(() -> {
+            d.setSended(0);
+            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .unsubscribeOn(Schedulers.io())
+                .subscribe(() -> {
+                            Log.d("Send Diag", "Completed ->" + d.getUuid());
+                            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+                        },
+                        throwable -> Log.e("Send Diag Error ->", throwable.getMessage()));
     }
 
 
-    @SuppressLint("StaticFieldLeak")
-    public void SendOfflineDiagnostic(Diagnostic d, @Nullable boolean sync) throws IOException {
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    public void SendOfflineDiagnostic(Diagnostic d, @Nullable boolean sync) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", null);
-            Call<JsonElement> call = service.sendDiagnostic("Token " + token, d);
-            Response<JsonElement> response = call.execute();
-            if (response.isSuccessful()) {
-                if (response.body().getAsJsonObject().has("statut")) {
-                    if (response.body().getAsJsonObject().get("statut").getAsInt() == (1)) {
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                //Log.e("RM diag ID", response.body() + "");
+            service.rxSendDiagnostic("Token " + token, d)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io()).subscribeWith(new SingleObserver<JsonElement>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+
+                }
+
+                @Override
+                public void onSuccess(JsonElement jsonElement) {
+                    if (jsonElement.getAsJsonObject().has("statut")) {
+                        if (jsonElement.getAsJsonObject().get("statut").getAsInt() == (1)) {
+
+                            Completable.fromAction(() -> {
                                 if (!sync) {
                                     d.setSended(1);
                                     DB.diagnosticDao().updateDiagnostic(d);
                                 } else {
                                     DB.diagnosticDao().delete(d);
                                 }
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .unsubscribeOn(Schedulers.io())
+                                    .subscribe(() -> {
+                                                Log.d("Rx Send Diag Offline", "Completed ->" + d.getUuid());
+                                                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+                                            },
+                                            throwable -> Log.e("Send Diag Error ->", throwable.getMessage()));
+                        }
                     }
                 }
-            } else {
-                Log.e("Error:", response.errorBody().string());
-            }
-        } else {
-            Log.e("Network Error:", "No Internet Connection");
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("Rx Diag Send Error ->", e.getMessage());
+                }
+            });
         }
     }
 
     //Send Picture of Diagnostic to Server
-    @SuppressLint("StaticFieldLeak")
-    public boolean SendDiagnosticPicture(Picture p, @Nullable boolean sync) throws IOException {
-        String image = p.getImage();
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    public void SendDiagnosticPicture(Picture p, @Nullable boolean sync) {
         if (Constants.isOnline(mContext)) {
             JsonObject json = new JsonObject();
             APIService service = APIClient.getClient().create(APIService.class);
@@ -589,43 +615,40 @@ public class RemoteTasks {
             json.addProperty("partCulture", p.getCulture_part_id());
 
             String token = FastSave.getInstance().getString("token", null);
-            Call<JsonElement> call = service.sendDiagnosticPictures("Token " + token, json);
-            Response<JsonElement> response = call.execute();
-            if (response.isSuccessful()) {
-                if (response.body().getAsJsonObject().has("statut")) {
-                    if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                if (!sync) {
-                                    p.setSended(1);
-                                    DB.pictureDao().updatePicture(p);
-                                } else {
-                                    DB.pictureDao().deletePicture(p);
-                                }
-                                return null;
+            service.rxSendDiagnosticPictures("Token " + token, json)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<JsonElement>() {
+                        @Override
+                        public void onSuccess(JsonElement jsonElement) {
+                            if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
+
+                                Completable.fromAction(() -> {
+                                    if (!sync) {
+                                        p.setSended(1);
+                                        DB.pictureDao().updatePicture(p);
+                                    } else {
+                                        DB.pictureDao().deletePicture(p);
+                                    }
+                                })
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .unsubscribeOn(Schedulers.io())
+                                        .subscribe(() -> {
+                                                    Log.d("Rx Send Picture Offline", "Completed ->" + p.getUuid());
+                                                },
+                                                throwable -> Log.e("Send Picture Error ->", throwable.getMessage()));
                             }
-                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                    }
-                }
-            } else {
-                Log.e("Error:", response.errorBody().string());
-            }
+                        }
 
-        } else {
-
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    p.setImage(image);
-                    p.setSended(0);
-                    DB.pictureDao().createPicture(p);
-                    return null;
-                }
-            }.execute();
-            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Rx Send Picture Error:", e.getMessage());
+                        }
+                    });
         }
-        return true;
+
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -810,63 +833,48 @@ public class RemoteTasks {
 
     //Get Cultures from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<CulturePart> getCulturePart(int id) {
+    public void getCulturePart(int id) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
 
-            service.rxGetCulturePart(id).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<CulturePart>>() {
-                @Override
-                public void onSuccess(List<CulturePart> culturePartList) {
-                    cultureParts = culturePartList;
-                    for (CulturePart c : cultureParts) {
-                        Completable.fromAction(() -> {
-                            if (c.getImage() != null) {
-                                File f = new File(c.getImage());
-                                if (!f.exists()) {
-                                    DownloadFile(c.getImage());
-                                }
-                                Uri uri = Uri.parse(c.getImage());
-                                String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
-                                c.setImage(destination + uri.getLastPathSegment());
+            service.rxGetCulturePart(id)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<List<CulturePart>>() {
+                        @Override
+                        public void onSuccess(List<CulturePart> culturePartList) {
+                            cultureParts = culturePartList;
+                            for (CulturePart c : culturePartList) {
+                                Completable.fromAction(() -> {
+                                    if (c.getImage() != null) {
+                                        File f = new File(c.getImage());
+                                        if (!f.exists()) {
+                                            DownloadFile(c.getImage());
+                                        }
+                                        Uri uri = Uri.parse(c.getImage());
+                                        String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                                        c.setImage(destination + uri.getLastPathSegment());
+                                    }
+                                    c.setCulture_id(id);
+                                    DB.culturePartsDao().createCulturePart(c);
+                                    //get the model
+                                    getModel(c);
+                                })
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(() -> Log.d("Rx CulturePart", "Completed ->" + c.getId()),// completed with success,
+                                                throwable -> throwable.printStackTrace()// there was an error
+                                        );
                             }
-                            c.setCulture_id(id);
-                            DB.culturePartsDao().createCulturePart(c);
-                            //get the model
-                            Model m = null;
-                            m = getModel((int) c.getId());
-                            m.setPart_id((int) c.getId());
-                            models.add(m);
-                            //store the model
-                            DB.modelDao().createModel(m);
-                        })
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(() -> Log.d("Rx CulturePart", "Completed ->" + c.getId()),// completed with success,
-                                        throwable -> throwable.printStackTrace()// there was an error
-                                );
-                    }
-                }
+                        }
 
-                @Override
-                public void onError(Throwable e) {
-                    Log.e("Error Body", e.getMessage());
-                }
-            });
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Error Body", e.getMessage());
+                        }
+                    });
 
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            //return new ArrayList<>();
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    cultureParts = DB.culturePartsDao().getAll().getValue();
-                    return null;
-                }
-            }.execute();
         }
-        return cultureParts;
     }
 
     //Get the Disease from Server
@@ -955,64 +963,56 @@ public class RemoteTasks {
 
     //Get the model of the given part id from the server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public Model getModel(int part_id) {
+    public void getModel(CulturePart c) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
-            service.rxGetModel(part_id).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<Model>>() {
-                @Override
-                public void onSuccess(List<Model> modelList) {
-                    model = modelList.get(0);
-                    Completable.fromAction(() -> {
-                        Uri model_uri = Uri.parse(model.getPb());
-                        Uri label_uri = Uri.parse(model.getLabel());
+            service.rxGetModel((int) c.getId())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<List<Model>>() {
+                        @Override
+                        public void onSuccess(List<Model> modelList) {
+                            Uri model_uri = Uri.parse(modelList.get(0).getPb());
+                            Uri label_uri = Uri.parse(modelList.get(0).getLabel());
 
-                        String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
+                            String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
 
-                        String modelpath = destination + model_uri.getLastPathSegment();
-                        String label_path = destination + label_uri.getLastPathSegment();
-                        //Log.e("PATHS 0", modelpath);
-                        //Log.e("PATHS 1", label_path);
+                            String modelpath = destination + model_uri.getLastPathSegment();
+                            String label_path = destination + label_uri.getLastPathSegment();
 
-                        File fmodel = new File(modelpath);
-                        File flabel = new File(label_path);
+                            File fmodel = new File(modelpath);
+                            File flabel = new File(label_path);
 
-                        if (!fmodel.exists()) {
-                            //DownloadFile(model.getPb(), part_id);
-                            mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), model.getPb(), part_id));
+                            if (!fmodel.exists()) {
+                                //DownloadFile(model.getPb(), part_id);
+                                mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), modelList.get(0).getPb(), (int) c.getId()));
+                            }
+                            modelList.get(0).setPb(fmodel.getAbsolutePath());
+
+                            if (!flabel.exists()) {
+                                //DownloadFile(model.getLabel(), part_id);
+                                mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), modelList.get(0).getLabel(), (int) c.getId()));
+                            }
+                            modelList.get(0).setLabel(flabel.getAbsolutePath());
+                            modelList.get(0).setPart_id((int) c.getId());
+
+                            Completable.fromAction(() -> {
+                                DB.modelDao().createModel(modelList.get(0));
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(() -> {
+                                                Log.d("Rx Model", "Completed ->" + modelList.get(0).getId());
+                                            },// completed with success,
+                                            throwable -> throwable.printStackTrace()// there was an error
+                                    );
                         }
-                        model.setPb(fmodel.getAbsolutePath());
 
-                        if (!flabel.exists()) {
-                            //DownloadFile(model.getLabel(), part_id);
-                            mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), model.getLabel(), part_id));
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Error Body", e.getMessage());
                         }
-                        model.setLabel(flabel.getAbsolutePath());
-                    })
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(() -> Log.d("Rx Model", "Completed ->" + model.getId()),// completed with success,
-                                    throwable -> throwable.printStackTrace()// there was an error
-                            );
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Log.e("Error Body", e.getMessage());
-                }
-            });
-            return model;
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    model = DB.modelDao().getByPart(part_id).getValue();
-                    return null;
-                }
-            }.execute();
-            return model;
+                    });
         }
 
     }
@@ -1074,7 +1074,7 @@ public class RemoteTasks {
     }
 
     //Send My Location to server
-    @SuppressLint("StaticFieldLeak")
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
     public void sendLocation(Location l) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
@@ -1086,46 +1086,48 @@ public class RemoteTasks {
                     .addFormDataPart("longi", l.getLongi())
                     .addFormDataPart("idServeur", l.getIdServeur())
                     .build();
-            Call<List<JsonElement>> call = service.sendMyLocation("Token " + token, requestBody);
-            try {
-                Response<List<JsonElement>> response = call.execute();
-                if (response.isSuccessful()) {
-                    Log.d("data_recu:", response.body().toString());
-                    if (response.body().size() != 0) {
-                        //List<Post> Alerts=DB.postDao().getAllPost();
-                        //if (Alerts.isEmpty()){
-                        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                        Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                        PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                for (JsonElement json : response.body()) {
-                                    Post p = new Post();
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
-                                    long millis = new Date().getTime();
-                                    String t = dateFormat.format(millis);
-                                    p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                                    p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                                    p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
-                                    p.setTime(t);
-                                    DB.postDao().createPost(p);
-                                    Calendar cal = Calendar.getInstance();
-                                    cal.add(Calendar.SECOND, 5);
-                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
-                                    Log.d("post_recu", "idServeur: " + json.getAsJsonObject().get("id").getAsString());
-                                }
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            service.rxSendMyLocation("Token " + token, requestBody)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<List<JsonElement>>() {
+                        @Override
+                        public void onSuccess(List<JsonElement> jsonElements) {
+                            if (jsonElements.size() != 0) {
+                                AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                                Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                Completable.fromAction(() -> {
+                                    for (JsonElement json : jsonElements) {
+                                        Post p = new Post();
+                                        SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm:ss");
+                                        long millis = new Date().getTime();
+                                        String t = dateFormat.format(millis);
+                                        p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
+                                        p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                                        p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
+                                        p.setTime(t);
+                                        DB.postDao().createPost(p);
+                                        Calendar cal = Calendar.getInstance();
+                                        cal.add(Calendar.SECOND, 5);
+                                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                                    }
+                                })
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(() -> {
+                                                    Log.d("Rx Posts Get", "Completed");
+                                                }
+                                                , throwable -> Log.e("Rx Save Posts Error->", throwable.getMessage()));
 
-                    }
-                } else {
-                    Log.e("Error:", response.errorBody().string());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Rx Get Posts Error->", e.getMessage());
+                        }
+                    });
 
         }
 

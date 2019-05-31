@@ -53,7 +53,7 @@ public class OfflineTimerTask extends TimerTask {
         diagnostics = DB.diagnosticDao().getAllSync();
         pictures = DB.pictureDao().getAllSync();
         symptomRects = DB.symptomRectDao().getAllSync();
-        userChoices=DB.userChoiceDao().getNotSended(0);
+        userChoices = DB.userChoiceDao().getNotSended(0);
 
         Log.e("Pre Task", "Started");
         String idServeur = "" + 0;
@@ -73,16 +73,13 @@ public class OfflineTimerTask extends TimerTask {
             RemoteTasks.getInstance(ctx).sendLocation(l);
         }
 
-        try {
-            SendDataOffline();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SendDataOffline();
+
         Log.e("Pre Task", "Finished");
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void SendDataOffline() throws IOException {
+    private void SendDataOffline() {
         if (diagnostics != null) {
             for (Diagnostic d : diagnostics) {
                 Log.e("Diag::Size", diagnostics.size() + "");
@@ -112,7 +109,7 @@ public class OfflineTimerTask extends TimerTask {
         if (userChoices != null) {
             for (UserChoice s : userChoices) {
                 Log.e("Choices::Size", userChoices.size() + "");
-                    RemoteTasks.getInstance(ctx).sendUserChoices(s);
+                RemoteTasks.getInstance(ctx).sendUserChoices(s);
             }
         }
     }

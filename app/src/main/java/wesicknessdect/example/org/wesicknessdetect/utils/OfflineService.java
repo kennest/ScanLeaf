@@ -3,6 +3,7 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.util.Log;
 import com.appizona.yehiahd.fastsave.FastSave;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,7 +47,7 @@ public class OfflineService extends Service {
         super.onCreate();
         //Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
-        mTimer.schedule(new OfflineTimerTask(this), 0, 60000);
+        mTimer.schedule(new OfflineTimerTask(this), 0, 600000);
         intent = new Intent(str_receiver);
     }
 

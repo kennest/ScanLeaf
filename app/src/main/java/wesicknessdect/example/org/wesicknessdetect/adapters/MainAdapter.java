@@ -19,6 +19,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.PagerAdapter;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -121,6 +122,8 @@ public class MainAdapter extends PagerAdapter {
 
     private View InitHistoryView(View v) {
         RecyclerView recyclerView = v.findViewById(R.id.status_rv);
+        SwipeRefreshLayout refreshLayout=v.findViewById(R.id.swipeToRefresh);
+
         View empty = v.findViewById(R.id.empty_data);
         View loading = v.findViewById(R.id.loading_data);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
@@ -208,6 +211,14 @@ public class MainAdapter extends PagerAdapter {
             }
         };
         handler.post(InitData);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                   handler.postDelayed(InitData,500);
+                   refreshLayout.setRefreshing(false);
+            }
+        });
         return v;
     }
 
@@ -223,8 +234,8 @@ public class MainAdapter extends PagerAdapter {
                     @SuppressLint("CheckResult")
                     @Override
                     public void onSuccess(List<Diagnostic> diagnosticList) {
+                        Collections.reverse(diagnosticList);
                         List<Diagnostic> diagnostics = diagnosticList;
-                        Collections.reverse(new ArrayList<>(diagnostics));
                         for (Diagnostic n : diagnostics) {
                             Completable.fromAction(() -> {
                                 List<Picture> pictures = DB.pictureDao().getByDiagnosticUUIdSync(n.getUuid());

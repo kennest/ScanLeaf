@@ -36,9 +36,11 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract Single<List<Diagnostic>> rxGetNotSendedSync();
 
-    @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
     public abstract Maybe<DiagnosticPictures> rxGetDiagnosticWithPicturesSync(int id);
+
+    @Query("SELECT * FROM Diagnostic WHERE x=:id")
+    public abstract Diagnostic getDiagnosticById(int id);
 
     //RX JAVA
 
@@ -62,7 +64,6 @@ public abstract class DiagnosticDao {
         }
     }
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract long createSymptomRect(SymptomRect symptomRect);
 
@@ -82,8 +83,6 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract List<Diagnostic> getNotSendedSync();
 
-
-    @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
     public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }

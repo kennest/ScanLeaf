@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.icu.util.DateInterval;
 import android.media.Image;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -78,28 +79,43 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
         if (diagnostics.get(position) != null) {
             if (diagnostics.get(position).getPictures() != null) {
-                Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
+                //Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
                 if (diagnostics.get(position).getPictures().size() > 0) {
+                    Handler handler = new Handler();
+
+                    Runnable loadImage = new Runnable() {
+                        @Override
+                        public void run() {
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inSampleSize = 8;
+                            Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
+                            Glide.with(context)
+                                    .asBitmap()
+                                    .load(bm)
+                                    .apply(new RequestOptions().centerCrop())
+                                    .apply(new RequestOptions().error(R.drawable.information))
+                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
+                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                                    .into(holder.image);
+                        }
+                    };
+
+                    File image = new File(diagnostics.get(position).getPictures().get(0).getImage());
+
+                    if (!image.exists()) {
+                        handler.postDelayed(loadImage, 500);
+                    } else {
+                        handler.removeCallbacks(loadImage);
+                    }
+                    handler.post(loadImage);
 
                     holder.counter.setText(Integer.toString(diagnostics.get(position).getPictures().size()));
-                    for (Picture s : diagnostics.get(position).getPictures()) {
-                        Log.e("XXXX N " + position, s.getImage());
-                    }
 
-                    BitmapFactory.Options options = new BitmapFactory.Options();
-                    options.inSampleSize = 8;
-                    Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
-                    Glide.with(context)
-                            .asBitmap()
-                            .load(bm)
-                            .apply(new RequestOptions().centerCrop())
-                            .apply(new RequestOptions().error(R.drawable.information))
-                            .apply(new RequestOptions().placeholder(R.drawable.restart))
-                            .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                            .into(holder.image);
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnostics.get(position).getDisease());
+
+                //Calcul du temps passe  entre la creation et la date actuelle
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
                 String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
@@ -108,7 +124,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 Date str_time = null;
                 long elapsedDays = 0;
                 long ago = 0;
-                String time_creation="";
+                String time_creation = "";
 
                 if (diagnostics.get(position).getCreation_date().contains("T")) {
                     creation_str = Arrays.asList(diagnostics.get(position).getCreation_date().split("T"));
@@ -146,19 +162,20 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                         e.printStackTrace();
                     }
                 }
+
                 Log.d("Date Creation->", creation_str.toString());
 
                 //holder.now.setText(time_creation);
                 holder.itemView.setTag(diagnostics.get(position).getX());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                if(elapsedDays<0){
+                if (elapsedDays < 0) {
                     holder.analyseTime.setText("Aujourd'hui à " + time_creation);
-                }else{
+                } else {
                     holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
                 }
                 //holder.slideview.addOnPageChangeListener(this);
-                holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
-                holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+                //holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+                //holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
             }
         }
 

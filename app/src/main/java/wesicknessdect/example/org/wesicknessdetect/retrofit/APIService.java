@@ -65,7 +65,6 @@ public interface APIService {
     Call<List<JsonElement>> sendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
 
 
-
     @GET("api/country/")
     Call<List<Country>> getCountries();
 
@@ -118,6 +117,24 @@ public interface APIService {
 
 
     /***RX JAVA**/
+
+    @POST("api/diagnostic/")
+    Single<JsonElement> rxSendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
+
+    @POST("api/picture/")
+    Single<JsonElement> rxSendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);
+
+    @Headers({"Content-Type:application/json","Accept:application/json"})
+    @POST("api/userchoices/")
+    Single<JsonElement> rxSendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
+
+
+    @POST("api/pixel/")
+    Single<JsonElement> rxSendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
+
+    @POST("api/post/")
+    Single<List<JsonElement>> rxSendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
+
     @GET("api/questions")
     Single<List<Question>> rxGetQuestion();
 
