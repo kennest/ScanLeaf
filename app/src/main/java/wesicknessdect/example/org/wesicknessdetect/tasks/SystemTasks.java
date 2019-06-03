@@ -22,6 +22,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import io.reactivex.Flowable;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayOutputStream;
@@ -158,12 +159,12 @@ public class SystemTasks {
     }
 
     //Recognized Symptoms on given bitmap
-    public Observable<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
-        Observable<ImageRecognitionProcessEvent> observable = null;
+    public Flowable<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+        Flowable<ImageRecognitionProcessEvent> observable = null;
         //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
         List<Recognition> recognitions = new ArrayList<>();
         ImageRecognitionProcessEvent event=new ImageRecognitionProcessEvent(part_id,false,recognitions);
-        observable=Observable.just(event);
+        observable=Flowable.just(event);
         if (MODE == DetectorMode.TF_OD_API) {
             try {
                 detector = TensorFlowObjectDetectionAPIModel.create(
@@ -175,11 +176,11 @@ public class SystemTasks {
                 LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
                 recognitions = detector.recognizeImage(bitmap);
                 event=new ImageRecognitionProcessEvent(part_id,true,recognitions);
-                observable=Observable.just(event);
+                observable=Flowable.just(event);
                 Log.e("Recognitions", recognitions.toString());
                 //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
             } catch (final IOException e) {
-                observable=Observable.just(event);
+                observable=Flowable.just(event);
                 //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
                 LOGGER.e("Exception initializing classifier!", e.getMessage());
             }

@@ -39,8 +39,8 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
     public abstract Maybe<DiagnosticPictures> rxGetDiagnosticWithPicturesSync(int id);
 
-    @Query("SELECT * FROM Diagnostic WHERE x=:id")
-    public abstract Diagnostic getDiagnosticById(int id);
+    @Query("SELECT * FROM Diagnostic WHERE uuid=:uuid")
+    public abstract Diagnostic getDiagnosticByUuid(String uuid);
 
     //RX JAVA
 

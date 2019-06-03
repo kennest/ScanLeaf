@@ -96,7 +96,6 @@ public class RemoteTasks {
     static final ExecutorService executor = Executors.newSingleThreadExecutor();
     String result = "";
     List<Culture> cultures = new ArrayList<>();
-    Model model = new Model();
     List<CulturePart> cultureParts = new ArrayList<>();
     List<Question> questions = new ArrayList<>();
     List<Disease> diseases = new ArrayList<>();
@@ -104,13 +103,7 @@ public class RemoteTasks {
     List<Symptom> symptoms = new ArrayList<>();
     List<Country> countries = new ArrayList<>();
     List<Diagnostic> diagnostics = new ArrayList<>();
-    List<Picture> pictures = new ArrayList<>();
     List<Profile> profiles = new ArrayList<>();
-
-    List<Model> models = new ArrayList<>();
-    Diagnostic diagnostic = new Diagnostic();
-    Picture picture = new Picture();
-    SymptomRect symptomRect = new SymptomRect();
     User user = new User();
     int downloadId = 0;
     long diagnostic_id = 0;
@@ -134,7 +127,7 @@ public class RemoteTasks {
 
     //Get the Countries from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Country> getCountries() {
+    public void getCountries() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxGetCountry().subscribeOn(Schedulers.io())
@@ -158,18 +151,7 @@ public class RemoteTasks {
                 }
             });
 
-        } else {
-            //Dispatch show loading event
-            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            Completable.fromAction(() -> countries = DB.countryDao().getAllSync())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> Log.d("Rx Country All", "Completed ->" + countries.size()),// completed with success,
-                            throwable -> throwable.printStackTrace()// there was an error
-                    );
-
         }
-        return countries;
     }
 
     //Send Signup data
@@ -435,7 +417,7 @@ public class RemoteTasks {
 
     //Get Diagnostic from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Diagnostic> getDiagnostics(int lastId) {
+    public void getDiagnostics(int lastId) {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             String token = FastSave.getInstance().getString("token", "");
@@ -473,7 +455,6 @@ public class RemoteTasks {
                 }
             });
         }
-        return diagnostics;
     }
 
     //Get diagnostic picture from server
@@ -508,7 +489,7 @@ public class RemoteTasks {
                                             Log.d("Rx Diagnostic Picture", p.getRemote_id() + "");
                                             //GET PIXELS OF THE PICTURES
                                             Completable.fromAction(() -> {
-                                                long id=DB.pictureDao().createPicture(p);
+                                                long id = DB.pictureDao().createPicture(p);
                                                 p.setX((int) id);
                                                 getSymptomsRect(p);
                                             })
@@ -544,10 +525,10 @@ public class RemoteTasks {
                 .observeOn(AndroidSchedulers.mainThread())
                 .unsubscribeOn(Schedulers.io())
                 .subscribe(() -> {
-                            Log.d("Send Diag", "Completed ->" + d.getUuid());
+                            Log.d("Rx Save Diag", "Completed ->" + d.getUuid());
                             EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
                         },
-                        throwable -> Log.e("Send Diag Error ->", throwable.getMessage()));
+                        throwable -> Log.e("Rx Save Diag Error ->", throwable.getMessage()));
     }
 
 
@@ -718,7 +699,7 @@ public class RemoteTasks {
 
     //Get Cultures from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Culture> getCultures() {
+    public void getCultures() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
 
@@ -749,28 +730,28 @@ public class RemoteTasks {
                 }
             });
 
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
-            //return new ArrayList<>();
         }
-        return cultures;
     }
 
     //Get Struggles from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Struggle> getStruggles() throws IOException {
+    public void getStruggles() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
-            service.rxGetStruggles().subscribeOn(Schedulers.io())
+            service.rxGetStruggles()
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<StruggleResponse>() {
                 @Override
                 public void onSuccess(StruggleResponse struggleResponse) {
                     struggles = struggleResponse.getResult();
                     for (Struggle s : struggles) {
-                        Completable.fromAction(() -> DB.struggleDao().createStruggle(s))
+                        Completable.fromAction(() -> {
+                            s.setLink(Constants.base_url + s.getLink());
+                            DB.struggleDao().createStruggle(s);
+                        })
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
+                                .unsubscribeOn(Schedulers.io())
                                 .subscribe(() -> Log.d("Rx Struggle", "Completed ->" + s.getId()),// completed with success,
                                         throwable -> throwable.printStackTrace()// there was an error
                                 );
@@ -782,21 +763,12 @@ public class RemoteTasks {
                     Log.e("Error Body", e.getMessage());
                 }
             });
-
-        } else {
-            Completable.fromAction(() -> struggles = DB.struggleDao().getAll().getValue())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> Log.d("Rx Struggles All", "Completed ->" + struggles.size()),// completed with success,
-                            throwable -> throwable.printStackTrace()// there was an error
-                    );
         }
-        return struggles;
     }
 
     //Get Symptoms from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Symptom> getSymptoms() {
+    public void getSymptoms() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxGetSymptoms().subscribeOn(Schedulers.io())
@@ -820,15 +792,7 @@ public class RemoteTasks {
                 }
             });
 
-        } else {
-            Completable.fromAction(() -> symptoms = DB.symptomDao().getAll().getValue())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> Log.d("Rx Symptoms All", "Completed ->" + symptoms.size()),// completed with success,
-                            throwable -> throwable.printStackTrace()// there was an error
-                    );
         }
-        return symptoms;
     }
 
     //Get Cultures from Server
@@ -840,6 +804,7 @@ public class RemoteTasks {
             service.rxGetCulturePart(id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
                     .subscribeWith(new DisposableSingleObserver<List<CulturePart>>() {
                         @Override
                         public void onSuccess(List<CulturePart> culturePartList) {
@@ -882,44 +847,39 @@ public class RemoteTasks {
     public List<Disease> getDiseases() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
-            service.rxGetDiseases().subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<Disease>>() {
-                @Override
-                public void onSuccess(List<Disease> diseaseList) {
-                    diseases = diseaseList;
-                    for (Disease d : diseases) {
-                        Completable.fromAction(() -> DB.diseaseDao().createDisease(d))
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(() -> Log.d("Rx Disease", "Completed ->" + d.getId()),// completed with success,
-                                        throwable -> throwable.printStackTrace()// there was an error
-                                );
-                    }
-                }
+            service.rxGetDiseases()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<List<Disease>>() {
+                        @Override
+                        public void onSuccess(List<Disease> diseaseList) {
+                            diseases = diseaseList;
+                            for (Disease d : diseases) {
+                                Completable.fromAction(() -> {
+                                    d.setLink(Constants.base_url + d.getLink());
+                                    DB.diseaseDao().createDisease(d);
+                                })
+                                        .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe(() -> Log.d("Rx Disease", "Completed ->" + d.getId()),// completed with success,
+                                                throwable -> throwable.printStackTrace()// there was an error
+                                        );
+                            }
+                        }
 
-                @Override
-                public void onError(Throwable e) {
-                    Log.e("Error Body", e.getMessage());
-                }
-            });
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
-            //return new ArrayList<>();
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    diseases = DB.diseaseDao().getAll().getValue();
-                    return null;
-                }
-            }.execute();
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Error Body", e.getMessage());
+                        }
+                    });
         }
         return diseases;
     }
 
     //Get the Questions from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Question> getQuestions() {
+    public void getQuestions() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxGetQuestion().subscribeOn(Schedulers.io())
@@ -946,19 +906,7 @@ public class RemoteTasks {
                         }
                     });
 //            }
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
-            //return new ArrayList<>();
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    questions = DB.questionDao().getAll().getValue();
-                    return null;
-                }
-            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
-        return questions;
     }
 
     //Get the model of the given part id from the server

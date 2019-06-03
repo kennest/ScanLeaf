@@ -92,7 +92,9 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             Glide.with(context)
                                     .asBitmap()
                                     .load(bm)
+                                    .apply(new RequestOptions().override(100, 100))
                                     .apply(new RequestOptions().centerCrop())
+                                    .override(100,100)
                                     .apply(new RequestOptions().error(R.drawable.information))
                                     .apply(new RequestOptions().placeholder(R.drawable.restart))
                                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
@@ -166,7 +168,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 Log.d("Date Creation->", creation_str.toString());
 
                 //holder.now.setText(time_creation);
-                holder.itemView.setTag(diagnostics.get(position).getX());
+                holder.itemView.setTag(diagnostics.get(position).getUuid());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
                 if (elapsedDays < 0) {
                     holder.analyseTime.setText("Aujourd'hui à " + time_creation);
@@ -220,9 +222,9 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.e("History item", "CLICKED");
+                    Log.d("History item", "CLICKED");
                     Intent i = new Intent(context, AnalysisDetailsActivity.class);
-                    i.putExtra("id", (Integer) v.getTag());
+                    i.putExtra("uuid", v.getTag().toString());
                     context.startActivity(i);
                 }
             });

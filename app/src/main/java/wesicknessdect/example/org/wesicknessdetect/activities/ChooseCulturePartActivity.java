@@ -22,6 +22,7 @@ import com.fxn.pix.Pix;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import io.reactivex.subscribers.DisposableSubscriber;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -336,14 +337,14 @@ public class ChooseCulturePartActivity extends BaseActivity {
             SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableObserver<ImageRecognitionProcessEvent>() {
+                    .subscribe(new DisposableSubscriber<ImageRecognitionProcessEvent>() {
                         @Override
                         public void onNext(ImageRecognitionProcessEvent event) {
                             getBitmapRecognizeState(event);
                         }
 
                         @Override
-                        public void onError(Throwable e) {
+                        public void onError(Throwable t) {
 
                         }
 

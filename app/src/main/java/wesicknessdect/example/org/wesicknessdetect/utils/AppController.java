@@ -3,8 +3,10 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.net.Uri;
+import android.opengl.GLES10;
 import android.os.AsyncTask;
 
+import android.util.Log;
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
@@ -20,11 +22,16 @@ import java.util.Objects;
 import java.util.Set;
 
 import io.paperdb.Paper;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class AppController extends Application {
     private static final String DATABASE_NAME = "scanleaf.db";
@@ -72,6 +79,7 @@ public class AppController extends Application {
 
         //Create data
         InitDBFromServer();
+
     }
 
     public List<SymptomRect> getSymptomsRects() {
@@ -98,52 +106,48 @@ public class AppController extends Application {
         this.pictures = pictures;
     }
 
-    @SuppressLint("StaticFieldLeak")
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
     public void InitDBFromServer(){
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+        Completable.fromAction(()->{
+            remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
 
-                Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
-                Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
-                String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
+            Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
+            Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
+            String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
 
-                String modelpath = destination + model_uri.getLastPathSegment();
-                String label_path = destination + label_uri.getLastPathSegment();
+            String modelpath = destination + model_uri.getLastPathSegment();
+            String label_path = destination + label_uri.getLastPathSegment();
 
-                FastSave.getInstance().saveString("check_model",modelpath);
-                FastSave.getInstance().saveString("check_label",label_path);
+            FastSave.getInstance().saveString("check_model",modelpath);
+            FastSave.getInstance().saveString("check_label",label_path);
 
 
-                File fmodel = new File(modelpath);
-                File flabel = new File(label_path);
+            File fmodel = new File(modelpath);
+            File flabel = new File(label_path);
 
-                if (!fmodel.exists()) {
-                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite");
-                }
-
-                if (!flabel.exists()) {
-                    remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt");
-                }
-
-
-
-                //Init all needed data
-                try {
-                    remoteTasks.getCultures();
-                    remoteTasks.getCountries();
-                    remoteTasks.getCulturePart(1);
-                    remoteTasks.getQuestions();
-                    remoteTasks.getSymptoms();
-                    remoteTasks.getStruggles();
-                    remoteTasks.getDiseases();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
+            if (!fmodel.exists()) {
+                remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite");
             }
-        }.execute();
+
+            if (!flabel.exists()) {
+                remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt");
+            }
+
+            //Init all needed data
+            remoteTasks.getCultures();
+            remoteTasks.getCountries();
+            remoteTasks.getCulturePart(1);
+            remoteTasks.getQuestions();
+            remoteTasks.getSymptoms();
+            remoteTasks.getStruggles();
+            remoteTasks.getDiseases();
+        })
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(()->{
+                    Log.d("Rx All Data","Initialized");
+                }, Throwable::printStackTrace);
     }
+
 }

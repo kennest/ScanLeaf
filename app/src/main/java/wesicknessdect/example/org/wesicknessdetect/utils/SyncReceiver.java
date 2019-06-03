@@ -61,12 +61,10 @@ public class SyncReceiver extends BroadcastReceiver {
                                     RemoteTasks.getInstance(context).sendSymptomRect(s, true);
                                 }
                             }
+                            RemoteTasks.getInstance(context).getDiagnostics(0);
                         },// completed with success,
                         throwable -> throwable.printStackTrace()// there was an error
                 );
-
-        RemoteTasks.getInstance(context).getDiagnostics(0);
-
     }
 
 }

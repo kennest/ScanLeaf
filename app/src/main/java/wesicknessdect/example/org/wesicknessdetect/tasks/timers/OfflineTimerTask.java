@@ -50,7 +50,7 @@ public class OfflineTimerTask extends TimerTask {
         //recuperation du dernier id du serveur
         //code de ça ▲
 
-        diagnostics = DB.diagnosticDao().getAllSync();
+        diagnostics = DB.diagnosticDao().getNotSendedSync();
         pictures = DB.pictureDao().getAllSync();
         symptomRects = DB.symptomRectDao().getAllSync();
         userChoices = DB.userChoiceDao().getNotSended(0);
@@ -82,10 +82,7 @@ public class OfflineTimerTask extends TimerTask {
     private void SendDataOffline() {
         if (diagnostics != null) {
             for (Diagnostic d : diagnostics) {
-                Log.e("Diag::Size", diagnostics.size() + "");
-                if (d.getSended() == 0) {
-                    RemoteTasks.getInstance(ctx).SendOfflineDiagnostic(d, false);
-                }
+                RemoteTasks.getInstance(ctx).SendOfflineDiagnostic(d, false);
             }
         }
 

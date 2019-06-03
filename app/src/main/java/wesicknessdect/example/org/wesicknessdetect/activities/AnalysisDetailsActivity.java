@@ -49,7 +49,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 public class AnalysisDetailsActivity extends BaseActivity {
-    int diagnostic_id;
+    String diagnostic_uuid;
     ImagePagerAdapter imagePagerAdapter;
 
     List<Map<String, Bitmap>> linkedPartImage = new ArrayList<>();
@@ -89,12 +89,12 @@ public class AnalysisDetailsActivity extends BaseActivity {
         setContentView(R.layout.activity_analysis_details);
         ButterKnife.bind(this);
 
-        diagnostic_id = getIntent().getIntExtra("id", 0);
-        Log.e("Rx Details diagnostic", diagnostic_id + "");
+        diagnostic_uuid = getIntent().getStringExtra("uuid");
+        Log.e("Rx Details diagnostic", diagnostic_uuid + "");
         Completable.fromAction(() -> {
             symptoms = DB.symptomDao().getAllSync();
-            diagnostic = DB.diagnosticDao().getDiagnosticById(diagnostic_id);
-            pictures = DB.pictureDao().getByDiagnosticIdSync(diagnostic.getRemote_id());
+            diagnostic = DB.diagnosticDao().getDiagnosticByUuid(diagnostic_uuid);
+            pictures = DB.pictureDao().getByDiagnosticUUIdSync(diagnostic_uuid);
             disease = DB.diseaseDao().getByName(diagnostic.getDisease());
             struggle = DB.struggleDao().getByIdSync(disease.getId());
             symptomRects = DB.symptomRectDao().getAllSync();
@@ -102,9 +102,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
                                     if (diagnostic.getAdvancedAnalysis().equals("")) {
                                         toolbar.setTitle(diagnostic.getDisease());
                                     } else {
@@ -213,9 +210,6 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                     }
                                     imagePagerAdapter = new ImagePagerAdapter(AnalysisDetailsActivity.this, linkedPartImage);
                                     viewPager.setAdapter(imagePagerAdapter);
-                                }
-                            });
-
                         },
                         throwable -> throwable.printStackTrace());
 
