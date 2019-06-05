@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.icu.util.DateInterval;
 import android.media.Image;
@@ -70,38 +69,28 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
-    @SuppressLint({"SetTextI18n", "SimpleDateFormat", "WrongConstant"})
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
-
         if (diagnostics.get(position) != null) {
             if (diagnostics.get(position).getPictures() != null) {
-                //Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
+                Log.d("Analysis Picture Size->" , diagnostics.get(0).getPictures().size()+"");
+
+                for(Picture n:diagnostics.get(position).getPictures()){
+                    Log.d("First Picture ->",n.getImage());
+                }
                 if (diagnostics.get(position).getPictures().size() > 0) {
                     Handler handler = new Handler();
 
                     Runnable loadImage = new Runnable() {
                         @Override
                         public void run() {
-                            Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())));
-
-                            if (bm.getHeight() > GL10.GL_MAX_TEXTURE_SIZE) {
-                                // this is the case when the bitmap fails to load
-                                float aspect_ratio = ((float)bm.getHeight())/((float)bm.getWidth());
-                                bm = Bitmap.createBitmap(bm, 0, 0,
-                                        (int) ((GL10.GL_MAX_TEXTURE_SIZE*0.9)*aspect_ratio),
-                                        (int) (GL10.GL_MAX_TEXTURE_SIZE*0.9));
+                            try{
+                                holder.image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage()))));
+                            }catch (IndexOutOfBoundsException e){
+                                Log.e("Error->",e.getMessage());
+                                //Log.e("Image Error->",diagnostics.get(0).getPictures().get(0).getImage());
                             }
-                            holder.image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage()))));
-//                            Glide.with(context)
-//                                    .asBitmap()
-//                                    .load(bm)
-//                                    .override(100, 100)
-//                                    .apply(new RequestOptions().centerCrop())
-//                                    .apply(new RequestOptions().error(R.drawable.information))
-//                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
-//                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-//                                    .into(holder.image);
                         }
                     };
 
@@ -120,7 +109,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnostics.get(position).getDisease());
-                holder.userName.setTypeface(Typeface.defaultFromStyle(R.font.roboto_thin));
+                //holder.userName.setTypeface(R.font.);
                 //Calcul du temps passe  entre la creation et la date actuelle
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")

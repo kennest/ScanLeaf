@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "wesicknessdect.example.org.wescanleaf"
+        applicationId "wesicknessdect.example.org.wesicknessdetect"
         minSdkVersion 22
         targetSdkVersion 28
         versionCode 1

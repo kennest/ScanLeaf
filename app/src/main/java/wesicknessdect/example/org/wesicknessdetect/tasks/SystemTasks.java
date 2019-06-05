@@ -153,10 +153,10 @@ public class SystemTasks {
     }
 
     //Recognized Symptoms on given bitmap
-    public Single<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+    public Flowable<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
                //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
 
-        return Single.fromCallable(new Callable<ImageRecognitionProcessEvent>() {
+        return Flowable.fromCallable(new Callable<ImageRecognitionProcessEvent>() {
             @Override
             public ImageRecognitionProcessEvent call(){
                 List<Recognition> recognitions = new ArrayList<>();

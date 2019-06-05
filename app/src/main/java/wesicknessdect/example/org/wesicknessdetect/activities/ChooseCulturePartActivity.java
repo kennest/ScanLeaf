@@ -98,7 +98,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         DB = AppDatabase.getInstance(this);
         controller = AnimationUtils.loadLayoutAnimation(this, R.anim.layout_animation_fall_down);
 
-        toolbar.setTitle("Choisir la Partie de la culture");
+        toolbar.setTitle("Prendre une photo pour chaque partie");
 
 
         //Diable AnalysisBtn if no image selected
@@ -333,33 +333,34 @@ public class ChooseCulturePartActivity extends BaseActivity {
         File labelfilepath = new File(labelpath);
 
         if (modelfilepath.exists() && labelfilepath.exists()) {
+            for (CulturePart c : cultureParts) {
+                if ((c.getId() == part_id)) {
+                    c.setRecognizing(true);
+                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                    parts_lv.setAdapter(culturePartAdapter);
+                    culturePartAdapter.notifyDataSetChanged();
+                    Log.d("Rx Recognizing ->", part_id + "");
+                }
+            }
             SystemTasks.getInstance(ChooseCulturePartActivity.this)
                     .recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
                     .subscribeOn(Schedulers.trampoline())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SingleObserver<ImageRecognitionProcessEvent>() {
+                    .subscribe(new DisposableSubscriber<ImageRecognitionProcessEvent>() {
                         @Override
-                        public void onSubscribe(Disposable d) {
-                            for (CulturePart c : cultureParts) {
-                                if ((c.getId() == part_id)) {
-                                    c.setRecognizing(true);
-                                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                                    parts_lv.setAdapter(culturePartAdapter);
-                                    culturePartAdapter.notifyDataSetChanged();
-                                    Log.d("Rx Recognizing ->", part_id + "");
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onSuccess(ImageRecognitionProcessEvent event) {
+                        public void onNext(ImageRecognitionProcessEvent event) {
                             getBitmapRecognizeState(event);
                         }
 
                         @Override
-                        public void onError(Throwable e) {
-                            Log.e("Recognizing Error", e.getMessage());
+                        public void onError(Throwable t) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
                         }
                     });
         } else {

@@ -17,10 +17,10 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
 
-    <uses-permission android:name="wesicknessdect.example.org.wesicknessdetect.permission.C2D_MESSAGE" />
+    <uses-permission android:name=".permission.C2D_MESSAGE" />
 
     <application
-        android:name="wesicknessdect.example.org.wesicknessdetect.utils.AppController"
+        android:name=".utils.AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -31,7 +31,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <receiver
-            android:name="wesicknessdect.example.org.wesicknessdetect.utils.BootReceiver"
+            android:name=".utils.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -48,14 +48,14 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.NotificationActivity">
+        <activity android:name=".activities.NotificationActivity">
 
         </activity>
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.SettingsActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.DiseaseActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.ProfileActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.CommunityActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity">
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.DiseaseActivity" />
+        <activity android:name=".activities.ProfileActivity" />
+        <activity android:name=".activities.CommunityActivity" />
+        <activity android:name=".activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,7 +63,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="wesicknessdect.example.org.wesicknessdetect.activities.ChooseCulturePartActivity"
+            android:name=".activities.ChooseCulturePartActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,15 +72,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity"
+            android:name=".activities.register.SignupActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.MainActivity" />
+        <activity android:name=".MainActivity" />
         <activity
-            android:name="wesicknessdect.example.org.wesicknessdetect.activities.FinalResultActivity"
+            android:name=".activities.FinalResultActivity"
             android:label="@string/title_activity_resultat_final"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity"
+            android:name=".activities.ProcessActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".activities.BaseActivity" />
         <activity android:name=".activities.ConversationActivity" />
@@ -91,11 +91,11 @@
         <activity android:name=".activities.FirstStepActivity" />
 
         <service
-            android:name="wesicknessdect.example.org.wesicknessdetect.utils.DownloadService"
+            android:name=".utils.DownloadService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="wesicknessdect.example.org.wesicknessdetect.utils.OfflineService"
+            android:name=".utils.OfflineService"
             android:enabled="true"
             android:exported="false" />
 
@@ -104,7 +104,7 @@
             android:resource="@array/preloaded_fonts" />
 
 
-        <receiver android:name="wesicknessdect.example.org.wesicknessdetect.AlarmReceiver"
+        <receiver android:name=".AlarmReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -113,7 +113,7 @@
                 <action android:name="android.intent.action.PACKAGE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name="wesicknessdect.example.org.wesicknessdetect.utils.SyncReceiver" />
+        <receiver android:name=".utils.SyncReceiver" />
     </application>
 
 </manifest>

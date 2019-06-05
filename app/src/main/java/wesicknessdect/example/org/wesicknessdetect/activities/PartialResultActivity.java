@@ -127,7 +127,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         diagnostic.setIs_share(0);
         diagnostic.setCulture_id(1);
         diagnostic.setFinish(true);
-        diagnostic.setAdvancedAnalysis("none");
+        diagnostic.setAdvancedAnalysis("");
         String uuid = UUID.randomUUID().toString();
         diagnostic.setUuid(uuid);
         diagnostic.setCreation_date(date);

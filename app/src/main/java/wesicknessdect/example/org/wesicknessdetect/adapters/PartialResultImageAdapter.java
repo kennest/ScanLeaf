@@ -2,6 +2,7 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -104,6 +105,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                     //Log.e("recognitions imgs", entry.getKey() + " ** " + images_by_part.get(position) + " ** " + entry.getValue() + " ** " + position);
 
                     if (entry.getKey().equals(position)) {
+                        com.google.android.material.chip.ChipGroup chipGroup = new com.google.android.material.chip.ChipGroup(context);
                     for (Map.Entry<Integer, String> n : entry.getValue().entrySet()) {
                         p.setCulture_part_id(n.getKey());
                         p.setImage(n.getValue());
@@ -158,25 +160,35 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                                     int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
 
                                     //For each recognitions add a layout with the corresponding color of the canvas
-                                    LinearLayout line = new LinearLayout(context);
-                                    line.setOrientation(LinearLayout.HORIZONTAL);
-                                    TextView txt = new TextView(context);
-                                    txt.setPadding(5, 5, 5, 0);
-                                    txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
-                                    txt.setTextColor(color);
-                                    txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
-                                    txt.setTextSize(15);
-                                    line.addView(txt);
-                                    holder.symptoms_txt.addView(line);
+//                                    LinearLayout line = new LinearLayout(context);
+//                                    line.setOrientation(LinearLayout.HORIZONTAL);
+                                    com.google.android.material.chip.Chip cv=new com.google.android.material.chip.Chip(context);
+                                    cv.setText(String.format("%s : %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
+                                    cv.setTextColor(Color.WHITE);
+                                    cv.setChipIcon(context.getDrawable(R.drawable.barley_off));
+//                            Log.e("color",str2[1].substring(1));
+                                    cv.setChipBackgroundColor(ColorStateList.valueOf(color));
+                                    chipGroup.addView(cv);
+//                                    TextView txt = new TextView(context);
+//                                    txt.setPadding(5, 5, 5, 0);
+//                                    txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
+//                                    txt.setTextColor(color);
+//                                    txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
+//                                    txt.setTextSize(15);
+//                                    line.addView();
+
                                     recognition_legend.put(color, r.getTitle());
                                     paint.setColor(color);
                                     paint.setAntiAlias(true);
                                     canvas.drawRect(r.getLocation(), paint);
                                 }
+
+                                holder.symptoms_txt.addView(chipGroup);
                                 p.setSymptomRects(symptomsRects);
                                 Log.e("Rect Partial 0 ->", symptomsRects.size() + "");
                                 //AppController.getInstance().setSymptomsRects(symptomsRects);
                                 holder.image.setImageBitmap(bitmap_cropped);
+
                             }
                         }
                     }

@@ -2,6 +2,10 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -11,10 +15,14 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.listener.EndlessRecyclerViewScrollListener;
@@ -41,7 +50,10 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainAdapter extends PagerAdapter {
@@ -51,7 +63,7 @@ public class MainAdapter extends PagerAdapter {
     List<Disease> diseases = new ArrayList<>();
     List<Post> posts = new ArrayList<>();
     List<Diagnostic> tmp = new ArrayList<>();
-    Diagnostic firstDiag;
+    Diagnostic header=new Diagnostic();
     private static AppDatabase DB;
     private EndlessRecyclerViewScrollListener scrollListener;
     AnalysisAdapter analysisAdapter;
@@ -127,25 +139,19 @@ public class MainAdapter extends PagerAdapter {
     }
 
     private View InitHistoryView(View v) {
+        CardView card = v.findViewById(R.id.card);
+        RelativeLayout container = v.findViewById(R.id.container);
+        ImageView image = v.findViewById(R.id.image);
+        TextView counter = v.findViewById(R.id.counter);
+        //TextView analyseTime=v.findViewById(R.id.analyse_time);
+        TextView userName = v.findViewById(R.id.user_name);
+
         RecyclerView recyclerView = v.findViewById(R.id.status_rv);
-        SwipeRefreshLayout refreshLayout=v.findViewById(R.id.swipeToRefresh);
+        SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
 
         View empty = v.findViewById(R.id.empty_data);
         View loading = v.findViewById(R.id.loading_data);
         GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
-        linearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-
-                Log.e("SPAN",position%3+" <=="+position);
-                switch (position) {
-                    case 0:
-                        return 2;
-                    default:
-                        return 1;
-                }
-            }
-        });
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -189,25 +195,133 @@ public class MainAdapter extends PagerAdapter {
             public void run() {
                 GetDiagnosticsFromDB();
                 if (tmp.size() > 0) {
-                    //Toast.makeText(mContext, "Full List..." + tmp.size(), Toast.LENGTH_SHORT).show();
-                    //handler.removeCallbacks(InitData, null);
-                    recyclerView.addOnScrollListener(scrollListener);
+                    header=tmp.get(0);
+                    if (header.getPictures() != null) {
+
+                        Log.d("Main Picture Size ->", tmp.get(0).getPictures().size() + "");
+                        for (Picture n : header.getPictures()) {
+                            Log.d("Main First Picture ->", n.getImage());
+                        }
+                        if (header.getPictures().size() > 0) {
+                            container.setVisibility(View.VISIBLE);
+                            Handler handler = new Handler();
+
+                            Runnable loadImage = new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(header.getPictures().get(0).getImage()))));
+                                    } catch (IndexOutOfBoundsException e) {
+                                        Log.e("Error->", e.getMessage());
+                                        //Log.e("Image Error->",tmp.get(0).getPictures().get(0).getImage());
+                                    }
+
+                                }
+                            };
+
+                            File image = new File(header.getPictures().get(0).getImage());
+
+                            if (!image.exists()) {
+                                handler.postDelayed(loadImage, 500);
+                            } else {
+                                handler.removeCallbacks(loadImage);
+                            }
+                            handler.post(loadImage);
+
+                            if (header.getPictures().size() > 1) {
+                                counter.setText("Avec " + Integer.toString(header.getPictures().size()) + " parties prises en compte");
+                            } else {
+                                counter.setText("Avec " + Integer.toString(header.getPictures().size()) + " partie prise en compte");
+                            }
+                            //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
+                        }
+                        userName.setText(header.getDisease());
+
+                        //Calcul du temps passe  entre la creation et la date actuelle
+                        Date now = new Date();
+                        @SuppressLint("SimpleDateFormat")
+                        String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
+                        List<String> creation_str = new ArrayList<>();
+                        Date date_creation = null;
+                        Date str_time = null;
+                        long elapsedDays = 0;
+                        long ago = 0;
+                        String time_creation = "";
+
+                        if (tmp.get(0).getCreation_date().contains("T")) {
+                            creation_str = Arrays.asList(tmp.get(0).getCreation_date().split("T"));
+                            time_creation = creation_str.get(1).substring(0, 5);
+                            try {
+                                date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                                str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                                Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                                ago = now.getTime() - date_creation.getTime();
+                                //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                                long secondsInMilli = 1000;
+                                long minutesInMilli = secondsInMilli * 60;
+                                long hoursInMilli = minutesInMilli * 60;
+                                long daysInMilli = hoursInMilli * 24;
+                                elapsedDays = ago / daysInMilli;
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            creation_str = Arrays.asList(header.getCreation_date().split(" "));
+                            time_creation = creation_str.get(1).substring(0, 5);
+                            try {
+                                date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                                str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                                Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                                ago = now.getTime() - date_creation.getTime();
+                                //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                                long secondsInMilli = 1000;
+                                long minutesInMilli = secondsInMilli * 60;
+                                long hoursInMilli = minutesInMilli * 60;
+                                long daysInMilli = hoursInMilli * 24;
+                                elapsedDays = ago / daysInMilli;
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Log.d("Date Creation->", creation_str.toString());
+
+                        card.setTag(header.getUuid());
+
+                        card.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(mContext, AnalysisDetailsActivity.class);
+                                i.putExtra("uuid", v.getTag().toString());
+                                mContext.startActivity(i);
+                            }
+                        });
+                        //holder.slideview.addOnPageChangeListener(this);
+                        //holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+                        //holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+                    }
                     //Collections.reverse(tmp);
-                    analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                    recyclerView.setAdapter(analysisAdapter);
-                    //analysisAdapter.notifyDataSetChanged();
-                    recyclerView.setVisibility(View.VISIBLE);
-                    empty.setVisibility(View.GONE);
-                    loading.setVisibility(View.GONE);
-                    handler.removeCallbacksAndMessages(null);
-                    handler.removeCallbacks(InitData);
-                    recyclerView.scheduleLayoutAnimation();
+                    tmp.remove(header);
+                    if (tmp.size() > 0) {
+                        analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                        recyclerView.setAdapter(analysisAdapter);
+                        //analysisAdapter.notifyDataSetChanged();
+                        recyclerView.setVisibility(View.VISIBLE);
+                        recyclerView.addOnScrollListener(scrollListener);
+                        empty.setVisibility(View.GONE);
+                        loading.setVisibility(View.GONE);
+                        handler.removeCallbacksAndMessages(null);
+                        handler.removeCallbacks(InitData);
+                        recyclerView.scheduleLayoutAnimation();
+                    }
                 } else {
                     Log.d("Diagnostic RV", "Is Empty");
                     //Toast.makeText(mContext, "Empty List ->" + tmp.size(), Toast.LENGTH_SHORT).show();
                     //empty.setVisibility(View.VISIBLE);
                     ImageButton reset = empty.findViewById(R.id.reload);
                     recyclerView.setVisibility(View.GONE);
+                    container.setVisibility(View.GONE);
                     reset.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -217,7 +331,7 @@ public class MainAdapter extends PagerAdapter {
                             mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    recyclerView.addOnScrollListener(scrollListener);
+                                    //recyclerView.addOnScrollListener(scrollListener);
                                     analysisAdapter = new AnalysisAdapter(mContext, tmp);
                                     recyclerView.setAdapter(analysisAdapter);
                                     analysisAdapter.notifyDataSetChanged();
@@ -235,8 +349,8 @@ public class MainAdapter extends PagerAdapter {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                   handler.postDelayed(InitData,500);
-                   refreshLayout.setRefreshing(false);
+                handler.postDelayed(InitData, 500);
+                refreshLayout.setRefreshing(false);
             }
         });
         return v;
@@ -255,7 +369,7 @@ public class MainAdapter extends PagerAdapter {
                     @Override
                     public void onSuccess(List<Diagnostic> diagnosticList) {
                         Collections.reverse(diagnosticList);
-                        List<Diagnostic> diagnostics = diagnosticList;
+                        List<Diagnostic> diagnostics = new ArrayList<>(diagnosticList);
                         for (Diagnostic n : diagnostics) {
                             Completable.fromAction(() -> {
                                 List<Picture> pictures = DB.pictureDao().getByDiagnosticUUIdSync(n.getUuid());
@@ -264,12 +378,13 @@ public class MainAdapter extends PagerAdapter {
                             })
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(() -> Log.d("Rx Diagnostic DB", "Completed ->"+n.getRemote_id()),// completed with success,
+                                    .subscribe(() -> Log.d("Rx Diagnostic DB", "Completed ->" + n.getRemote_id()),// completed with success,
                                             throwable -> throwable.printStackTrace()// there was an error
                                     );
                         }
                         Log.e("Analysis Frag diag", diagnostics.size() + "");
                         tmp = diagnostics;
+
                         Log.d("InitHistory size N->", tmp.size() + "");
                     }
 
