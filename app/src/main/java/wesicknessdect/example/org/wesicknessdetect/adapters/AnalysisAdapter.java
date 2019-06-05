@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.icu.util.DateInterval;
 import android.media.Image;
@@ -64,7 +63,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
-    @SuppressLint({"SetTextI18n", "SimpleDateFormat", "WrongConstant"})
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
 
@@ -109,7 +108,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnostics.get(position).getDisease());
-                holder.userName.setTypeface(Typeface.defaultFromStyle(R.font.roboto_thin));
+                //holder.userName.setTypeface(R.font.);
                 //Calcul du temps passe  entre la creation et la date actuelle
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")

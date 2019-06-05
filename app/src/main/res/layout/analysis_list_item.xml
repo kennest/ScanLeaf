@@ -38,13 +38,16 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
+                android:backgroundTint="#4B000000"
+                android:background="@drawable/arrondi_bas"
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="bottom|center">
                 <TextView
                     android:id="@+id/user_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:gravity="bottom"
                     android:text="Simple Title Text "
                     android:textColor="@color/white"
@@ -55,7 +58,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/user_name"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:lineSpacingExtra="8dp"
                     android:text="Lorem ipsum"
                     android:textColor="#fafafa" />

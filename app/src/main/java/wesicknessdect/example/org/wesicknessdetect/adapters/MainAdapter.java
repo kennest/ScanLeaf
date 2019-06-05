@@ -2,6 +2,10 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -11,10 +15,14 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,6 +37,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.listener.EndlessRecyclerViewScrollListener;
@@ -41,7 +50,10 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MainAdapter extends PagerAdapter {
@@ -127,25 +139,32 @@ public class MainAdapter extends PagerAdapter {
     }
 
     private View InitHistoryView(View v) {
+        CardView card=v.findViewById(R.id.card);
+        RelativeLayout container=v.findViewById(R.id.container);
+        ImageView image=v.findViewById(R.id.image);
+        TextView counter=v.findViewById(R.id.counter);
+        //TextView analyseTime=v.findViewById(R.id.analyse_time);
+        TextView userName=v.findViewById(R.id.user_name);
+
         RecyclerView recyclerView = v.findViewById(R.id.status_rv);
         SwipeRefreshLayout refreshLayout=v.findViewById(R.id.swipeToRefresh);
 
         View empty = v.findViewById(R.id.empty_data);
         View loading = v.findViewById(R.id.loading_data);
         GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
-        linearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-
-                Log.e("SPAN",position%3+" <=="+position);
-                switch (position) {
-                    case 0:
-                        return 2;
-                    default:
-                        return 1;
-                }
-            }
-        });
+//        linearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+//            @Override
+//            public int getSpanSize(int position) {
+//
+//                Log.e("SPAN",position%3+" <=="+position);
+//                switch (position) {
+//                    case 0:
+//                        return 2;
+//                    default:
+//                        return 1;
+//                }
+//            }
+//        });
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -189,10 +208,124 @@ public class MainAdapter extends PagerAdapter {
             public void run() {
                 GetDiagnosticsFromDB();
                 if (tmp.size() > 0) {
+
+                    if (tmp.get(0).getPictures() != null) {
+                        //Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
+                        if (tmp.get(0).getPictures().size() > 0) {
+                            Handler handler = new Handler();
+
+                            Runnable loadImage = new Runnable() {
+                                @Override
+                                public void run() {
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inSampleSize = 8;
+                                    Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(tmp.get(0).getPictures().get(0).getImage())), options);
+//                            Glide.with(context)
+//                                    .asBitmap()
+//                                    .load(bm)
+//                                    .apply(new RequestOptions().override(100, 100))
+//                                    .apply(new RequestOptions().centerCrop())
+//                                    .override(100,100)
+//                                    .apply(new RequestOptions().error(R.drawable.information))
+//                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
+//                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+//                                    .into(holder.image);
+                                    image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(tmp.get(0).getPictures().get(0).getImage()))));
+                                }
+                            };
+
+                            File image = new File(tmp.get(0).getPictures().get(0).getImage());
+
+                            if (!image.exists()) {
+                                handler.postDelayed(loadImage, 500);
+                            } else {
+                                handler.removeCallbacks(loadImage);
+                            }
+                            handler.post(loadImage);
+
+
+                            counter.setText("Avec "+Integer.toString(tmp.get(0).getPictures().size())+" parties prises en compte");
+
+                            //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
+                        }
+                        userName.setText(tmp.get(0).getDisease());
+                        //holder.userName.setTypeface(R.font.);
+                        //Calcul du temps passe  entre la creation et la date actuelle
+                        Date now = new Date();
+                        @SuppressLint("SimpleDateFormat")
+                        String now_str = new SimpleDateFormat("yyyy-MM-dd").format(now);
+                        List<String> creation_str = new ArrayList<>();
+                        Date date_creation = null;
+                        Date str_time = null;
+                        long elapsedDays = 0;
+                        long ago = 0;
+                        String time_creation = "";
+
+                        if (tmp.get(0).getCreation_date().contains("T")) {
+                            creation_str = Arrays.asList(tmp.get(0).getCreation_date().split("T"));
+                            time_creation = creation_str.get(1).substring(0, 5);
+                            try {
+                                date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                                str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                                Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                                ago = now.getTime() - date_creation.getTime();
+                                //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                                long secondsInMilli = 1000;
+                                long minutesInMilli = secondsInMilli * 60;
+                                long hoursInMilli = minutesInMilli * 60;
+                                long daysInMilli = hoursInMilli * 24;
+                                elapsedDays = ago / daysInMilli;
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            creation_str = Arrays.asList(tmp.get(0).getCreation_date().split(" "));
+                            time_creation = creation_str.get(1).substring(0, 5);
+                            try {
+                                date_creation = new SimpleDateFormat("yyyy-MM-dd").parse(creation_str.get(0));
+                                str_time = new SimpleDateFormat("HH:mm").parse(time_creation);
+                                Log.d("Date Elapsed->", creation_str.get(0) + "//" + now_str);
+                                ago = now.getTime() - date_creation.getTime();
+                                //ago = TimeUnit.MILLISECONDS.toMillis(ago);
+                                long secondsInMilli = 1000;
+                                long minutesInMilli = secondsInMilli * 60;
+                                long hoursInMilli = minutesInMilli * 60;
+                                long daysInMilli = hoursInMilli * 24;
+                                elapsedDays = ago / daysInMilli;
+
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Log.d("Date Creation->", creation_str.toString());
+
+                        //holder.now.setText(time_creation);
+                        card.setTag(tmp.get(0).getUuid());
+                        //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
+//                        if (elapsedDays < 0) {
+//                            analyseTime.setText("Aujourd'hui à " + time_creation);
+//                        } else {
+//                            analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
+//                        }
+                        card.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Intent i = new Intent(mContext, AnalysisDetailsActivity.class);
+                                i.putExtra("uuid", v.getTag().toString());
+                                mContext.startActivity(i);
+                            }
+                        });
+                        //holder.slideview.addOnPageChangeListener(this);
+                        //holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+                        //holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+                    }
+
                     //Toast.makeText(mContext, "Full List..." + tmp.size(), Toast.LENGTH_SHORT).show();
                     //handler.removeCallbacks(InitData, null);
                     recyclerView.addOnScrollListener(scrollListener);
                     //Collections.reverse(tmp);
+                    tmp.remove(0);
                     analysisAdapter = new AnalysisAdapter(mContext, tmp);
                     recyclerView.setAdapter(analysisAdapter);
                     //analysisAdapter.notifyDataSetChanged();
