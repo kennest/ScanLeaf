@@ -1,56 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout android:layout_height="wrap_content"
+
+<com.google.android.material.card.MaterialCardView android:layout_height="wrap_content"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center"
-    android:backgroundTint="#eee"
-    android:elevation="10dp"
+    android:backgroundTint="#fafafa"
     android:layout_margin="15dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="10dp"
     android:padding="8dp"
-    android:id="@+id/disease"
     android:background="@drawable/comment_background"
-    android:stateListAnimator="@animator/comment_selection"
-    >
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/btnplus"
-        android:background="?android:attr/selectableItemBackground"
-        android:layout_gravity="center_horizontal"
-        >
+    android:stateListAnimator="@animator/comment_selection">
+    <RelativeLayout
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/disease"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:weightSum="6">
-
-            <TextView
-                android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/btnplus"
+            android:background="?android:attr/selectableItemBackground"
+            android:layout_gravity="center_horizontal"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/maladie_name"
-                android:text="Swollen Shoot"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
+                android:orientation="horizontal"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:textSize="20dp"
-                android:fontFamily="@font/roboto_thin"
-                android:layout_weight="5"/>
-            <com.mikhaellopez.circularimageview.CircularImageView
-                android:layout_width="55dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:src="@drawable/plante"
-                android:id="@+id/maladie_image"
-                android:layout_weight="1"/>
+                android:weightSum="6">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/maladie_name"
+                    android:text="Swollen Shoot"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:textSize="20dp"
+                    android:fontFamily="@font/roboto_thin"
+                    android:layout_weight="5"/>
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="55dp"
+                    android:layout_height="80dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/plante"
+                    android:id="@+id/maladie_image"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+
 
         </LinearLayout>
+    </RelativeLayout>
 
 
-
-    </LinearLayout>
-</RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
