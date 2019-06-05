@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.icu.util.DateInterval;
 import android.media.Image;
 import android.os.Handler;
@@ -62,7 +64,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
-    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat", "WrongConstant"})
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
 
@@ -78,16 +80,17 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inSampleSize = 8;
                             Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
-                            Glide.with(context)
-                                    .asBitmap()
-                                    .load(bm)
-                                    .apply(new RequestOptions().override(100, 100))
-                                    .apply(new RequestOptions().centerCrop())
-                                    .override(100,100)
-                                    .apply(new RequestOptions().error(R.drawable.information))
-                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
-                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                                    .into(holder.image);
+//                            Glide.with(context)
+//                                    .asBitmap()
+//                                    .load(bm)
+//                                    .apply(new RequestOptions().override(100, 100))
+//                                    .apply(new RequestOptions().centerCrop())
+//                                    .override(100,100)
+//                                    .apply(new RequestOptions().error(R.drawable.information))
+//                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
+//                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+//                                    .into(holder.image);
+                            holder.image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage()))));
                         }
                     };
 
@@ -106,7 +109,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnostics.get(position).getDisease());
-
+                holder.userName.setTypeface(Typeface.defaultFromStyle(R.font.roboto_thin));
                 //Calcul du temps passe  entre la creation et la date actuelle
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
@@ -221,7 +224,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     v.setTag(itemView.getTag());
                     Log.e("History item", "CLICKED");
                     Intent i = new Intent(context, AnalysisDetailsActivity.class);
-                    i.putExtra("id", (Integer) v.getTag());
+                    i.putExtra("uuid", v.getTag().toString());
                     context.startActivity(i);
                 }
             });

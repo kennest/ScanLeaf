@@ -127,8 +127,6 @@ public class MainAdapter extends PagerAdapter {
     }
 
     private View InitHistoryView(View v) {
-
-
         RecyclerView recyclerView = v.findViewById(R.id.status_rv);
         SwipeRefreshLayout refreshLayout=v.findViewById(R.id.swipeToRefresh);
 

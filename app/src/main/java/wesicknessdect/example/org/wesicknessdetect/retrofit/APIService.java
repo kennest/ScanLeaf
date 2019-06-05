@@ -106,6 +106,8 @@ public interface APIService {
     @PUT("api/user/")
     Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
+    @POST("api/reset_password/")
+    Call<JsonElement> getNewPassword(@Body JsonObject json);
 
     /***RX JAVA**/
 
