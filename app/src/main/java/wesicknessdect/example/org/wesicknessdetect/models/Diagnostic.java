@@ -13,11 +13,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = {
-        @ForeignKey(
-                entity = User.class, parentColumns = "id", childColumns = "user_id", onUpdate = CASCADE
-        ),
-}, indices = {@Index(value = {"remote_id"}), @Index(value = "uuid", unique = true)})
+@Entity(indices = {@Index(value = {"remote_id"}), @Index(value = "uuid", unique = true)})
 public class Diagnostic {
     //@SerializedName(value = "id_mobile")
     @PrimaryKey(autoGenerate = true)

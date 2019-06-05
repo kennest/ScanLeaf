@@ -6,6 +6,9 @@ import com.google.gson.JsonObject;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -51,7 +54,6 @@ public interface APIService {
     //@Multipart
     @POST("api/post/")
     Call<List<JsonElement>> sendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
-
 
 
     @GET("api/country/")
@@ -104,7 +106,57 @@ public interface APIService {
     @PUT("api/user/")
     Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
-    @POST("api/reset_password/")
-    Call<JsonElement> getNewPassword(@Body JsonObject json);
+
+    /***RX JAVA**/
+
+    @POST("api/diagnostic/")
+    Single<JsonElement> rxSendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
+
+    @POST("api/picture/")
+    Single<JsonElement> rxSendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);
+
+    @Headers({"Content-Type:application/json","Accept:application/json"})
+    @POST("api/userchoices/")
+    Single<JsonElement> rxSendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
+
+
+    @POST("api/pixel/")
+    Single<JsonElement> rxSendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
+
+    @POST("api/post/")
+    Single<List<JsonElement>> rxSendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
+
+    @GET("api/questions")
+    Single<List<Question>> rxGetQuestion();
+
+    @GET("api/diagnostics/")
+    Single <DiagnosticResponse> rxGetDiagnostics(@Header("Authorization") String token,@Query("lastId") int last_id);
+
+    @GET("api/pictures/")
+    Single <List<Picture>> rxGetDiagnosticPictures(@Query("diagnostic") long diagnostic,@Header("Authorization") String token);
+
+    @GET("api/pixels")
+    Single<List<JsonElement>> rxGetSymptomRect(@Header("Authorization") String token, @Query("pic") int picture_id);
+
+    @GET("api/symptoms")
+    Single<List<Symptom>> rxGetSymptoms();
+
+    @GET("api/diseases")
+    Single<List<Disease>> rxGetDiseases();
+
+    @GET("api/struggles")
+    Single<StruggleResponse> rxGetStruggles();
+
+    @GET("api/country")
+    Single<List<Country>> rxGetCountry();
+
+    @GET("api/cultures")
+    Single<List<Culture>> rxGetCultures();
+
+    @GET("api/models/")
+    Single<List<Model>> rxGetModel(@Query("part") int part_id);
+
+    @GET("api/partcultures/")
+    Single<List<CulturePart>> rxGetCulturePart(@Query("culture") int id);
 
 }

@@ -28,6 +28,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:hardwareAccelerated="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -77,12 +78,13 @@
         <activity
             android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ConversationActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.QuizActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.PartialResultActivity" />
-        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity" />
+        <activity android:name=".activities.BaseActivity" />
+        <activity android:name=".activities.ConversationActivity" />
+        <activity android:name=".activities.QuizActivity" />
+        <activity android:name=".activities.login.LoginActivity" />
+        <activity android:name=".activities.PartialResultActivity" />
+        <activity android:name=".activities.AnalysisDetailsActivity" />
+        <activity android:name=".activities.FirstStepActivity"/>
 
         <service
             android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.DownloadService"

@@ -72,7 +72,6 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
         c.imbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 LancerWeb(diseases.get(position).getLink());
             }
         });

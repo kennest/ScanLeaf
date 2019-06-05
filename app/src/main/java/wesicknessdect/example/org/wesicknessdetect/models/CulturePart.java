@@ -8,10 +8,7 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = @ForeignKey(entity = Culture.class,
-        parentColumns = "id",
-        childColumns = "culture_id"),
-        indices = {@Index("culture_id")})
+@Entity
 public class CulturePart {
 
     @SerializedName(value = "id")

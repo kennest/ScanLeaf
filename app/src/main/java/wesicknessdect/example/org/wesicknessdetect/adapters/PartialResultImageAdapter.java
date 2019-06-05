@@ -84,7 +84,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                             symptomsList = AppDatabase.getInstance(context).symptomDao().getByQuestion(question.getId());
                             return null;
                         }
-                    }.execute();
+                    }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
                 }
             }
         }

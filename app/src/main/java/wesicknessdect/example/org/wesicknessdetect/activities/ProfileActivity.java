@@ -1,10 +1,17 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.annotation.SuppressLint;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
+import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,7 +63,7 @@ public class ProfileActivity extends BaseActivity {
     EditText emailBox;
     String password;
     int id;
-    File avatar_file=null;
+    File avatar_file = null;
     Country c = new Country();
     View layout;
     AlertDialog dialog = null;
@@ -83,6 +90,7 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), ProcessActivity.class);
+                intent.putExtra("page",1);
                 startActivity(intent);
             }
         });
@@ -95,12 +103,9 @@ public class ProfileActivity extends BaseActivity {
                 profil = DB.profileDao().getProfil();
                 user = DB.userDao().getAll();
                 country = DB.countryDao().getById(profil.get(0).getCountry_id());
-
-
                 username = user.get(0).getPrenom() + " " + user.get(0).getNom();
                 pseudo = user.get(0).getUsername();
                 userEmail = user.get(0).getEmail();
-
 
 
                 runOnUiThread(new Runnable() {
@@ -110,9 +115,9 @@ public class ProfileActivity extends BaseActivity {
                         pseudon.setText(pseudo);
                         email.setText(userEmail);
                         pays.setText(country.getName());
-                        if(profil.get(0).getAvatar()!=null) {
+                        if (profil.get(0).getAvatar() != null) {
                             avatar_file = new File(profil.get(0).getAvatar());
-                            if(avatar_file!=null) {
+                            if (avatar_file != null) {
                                 if (!avatar_file.exists()) {
                                     Log.e("Avatar Path ->", profil.get(0).getAvatar());
                                     pI.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add));
@@ -160,33 +165,39 @@ public class ProfileActivity extends BaseActivity {
                                 getCountryFromDBandFillSpinner();
 
                                 builder.setPositiveButton("Confirmer", new DialogInterface.OnClickListener() {
+                                    @SuppressLint("CheckResult")
                                     @Override
                                     public void onClick(DialogInterface d, int which) {
-
-                                        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                user.get(0).setNom(nameBox.getText().toString());
-                                                user.get(0).setPrenom(surnameBox.getText().toString());
-                                                user.get(0).setEmail(email.getText().toString());
-                                                user.get(0).setPassword(password);
-                                                user.get(0).setUsername(pseudoBox.getText().toString());
-                                                if (path != null) {
-                                                    if (path.equals("")) {
-                                                        path = "rien";
-                                                    }
-                                                    profil.get(0).setAvatar(path);
+                                        Completable.fromAction(() -> {
+                                            user.get(0).setNom(nameBox.getText().toString());
+                                            user.get(0).setPrenom(surnameBox.getText().toString());
+                                            user.get(0).setEmail(email.getText().toString());
+                                            user.get(0).setPassword(password);
+                                            user.get(0).setUsername(pseudoBox.getText().toString());
+                                            if (path != null) {
+                                                if (path.equals("")) {
+                                                    path = "rien";
                                                 }
-                                                profil.get(0).setCountry_id(c.getId());
-                                                user.get(0).setProfile(profil.get(0));
-
-                                                try {
-                                                    RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(path, user.get(0), profil.get(0));
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
+                                                profil.get(0).setAvatar(path);
                                             }
-                                        });
+                                            profil.get(0).setCountry_id(c.getId());
+                                            user.get(0).setProfile(profil.get(0));
+
+                                            try {
+                                                RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(path, user.get(0), profil.get(0));
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        })
+                                                .subscribeOn(Schedulers.io())
+                                                .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe(() -> {
+                                                            Log.d("Rx Send Update->", "Finished");
+                                                        },
+                                                        throwable -> {
+                                                            throwable.printStackTrace();
+                                                        });
+
                                     }
                                 });
 
@@ -194,7 +205,7 @@ public class ProfileActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface d, int which) {
                                         d.dismiss();
-                                        Intent current=getIntent();
+                                        Intent current = getIntent();
                                         finish();
                                         current.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(current);
@@ -219,10 +230,13 @@ public class ProfileActivity extends BaseActivity {
                 builder.setMessage("Voulez-vous deconnecter le compte courant et supprimer les données?");
                 // Add the buttons
                 builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    @SuppressLint("CheckResult")
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
-                        deleteCache(getApplicationContext());
-                        restartApp();
+                        Completable.fromAction(ProfileActivity.this::clearAppData)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(ProfileActivity.this::restartApp, Throwable::printStackTrace);
                     }
                 });
                 builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {

@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+import org.apache.commons.io.FileUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -41,9 +43,8 @@ public class BaseActivity extends AppCompatActivity {
     IOSDialog dialog;
     boolean dialogIsCancelable;
     public static AppDatabase DB;
-    public  static APIService service;
+    public static APIService service;
     private static final String DATABASE_NAME = "scanleaf.db";
-
 
 
     @Override
@@ -51,10 +52,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        DB=AppDatabase.getInstance(this);
+        DB = AppDatabase.getInstance(this);
         service = APIClient.getClient().create(APIService.class);
     }
-
 
 
     @Override
@@ -81,34 +81,34 @@ public class BaseActivity extends AppCompatActivity {
 
     //Show the loading Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoadingEvent(ShowLoadingEvent event){
-        if(dialog!=null) {
+    public void onLoadingEvent(ShowLoadingEvent event) {
+        if (dialog != null) {
             if (dialog.isShowing() && dialogIsCancelable) {
                 dialog.dismiss();
             }
         }
-        dialogIsCancelable=event.cancelable;
-        dialog=LoaderProgress(event.title,event.content,event.cancelable);
+        dialogIsCancelable = event.cancelable;
+        dialog = LoaderProgress(event.title, event.content, event.cancelable);
         dialog.show();
     }
 
     //Show the failed SignUp Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFailEvent(FailedSignUpEvent event){
-        Log.e("Signup Event dismissed",event.msg+": "+dialogIsCancelable);
-        if(dialog.isShowing() && dialogIsCancelable) {
+    public void onFailEvent(FailedSignUpEvent event) {
+        Log.e("Signup Event dismissed", event.msg + ": " + dialogIsCancelable);
+        if (dialog.isShowing() && dialogIsCancelable) {
             dialog.dismiss();
         }
-        dialogIsCancelable=event.cancelable;
-        dialog=LoaderProgress(event.title,event.msg,event.cancelable);
+        dialogIsCancelable = event.cancelable;
+        dialog = LoaderProgress(event.title, event.msg, event.cancelable);
         dialog.show();
     }
 
     //Hide the loading dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onHideLoadingEvent(HideLoadingEvent event){
-        Log.e("Event dismissed",event.msg+": "+dialogIsCancelable);
-        if(dialog.isShowing() && dialogIsCancelable!=true) {
+    public void onHideLoadingEvent(HideLoadingEvent event) {
+        Log.e("Event dismissed", event.msg + ": " + dialogIsCancelable);
+        if (dialog.isShowing() && dialogIsCancelable != true) {
             dialog.dismiss();
         }
     }
@@ -116,43 +116,42 @@ public class BaseActivity extends AppCompatActivity {
 
     //To Do if User is authenticated
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onUserAuthenticated(UserAuthenticatedEvent event){
-        Log.e("User authenticated",event.token);
-        Intent i=new Intent(BaseActivity.this,ProcessActivity.class);
+    public void onUserAuthenticated(UserAuthenticatedEvent event) {
+        Log.e("User authenticated", event.token);
+        Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
         startActivity(i);
         finish();
     }
 
     //launch Pix camera activity
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showPixActivity(ShowPixScreenEvent event){
-        Log.e("Pix activity started",event.part_id+"");
+    public void showPixActivity(ShowPixScreenEvent event) {
+        Log.e("Pix activity started", event.part_id + "");
         Pix.start((FragmentActivity) BaseActivity.this, Options.init().setRequestCode(event.part_id).setCount(1).setFrontfacing(true));
         //finish();
     }
 
     //launch part chooser activity
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showPartChooserActivity(ShowPartScreenEvent event){
-        Log.e("Part activity started",event.message);
-        Intent i=new Intent(BaseActivity.this,ChooseCulturePartActivity.class);
+    public void showPartChooserActivity(ShowPartScreenEvent event) {
+        Log.e("Part activity started", event.message);
+        Intent i = new Intent(BaseActivity.this, ChooseCulturePartActivity.class);
         startActivity(i);
         //finish();
     }
 
     //launch part chooser activity
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showProcessScreen(ShowProcessScreenEvent event){
-        Log.e("Process started",event.message);
-        Intent i=new Intent(BaseActivity.this,ProcessActivity.class);
+    public void showProcessScreen(ShowProcessScreenEvent event) {
+        Log.e("Process started", event.message);
+        Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
         startActivity(i);
         finish();
     }
 
 
-
     //Base loading dialog function
-    private IOSDialog LoaderProgress(String title, String content,boolean cancelable) {
+    private IOSDialog LoaderProgress(String title, String content, boolean cancelable) {
         IOSDialog d = new IOSDialog.Builder(BaseActivity.this)
                 .setTitle(title)
                 .setMessageContent(content)
@@ -165,9 +164,8 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-
     //Reload the current Activity
-    protected void Reload(){
+    protected void Reload() {
         if (Build.VERSION.SDK_INT >= 11) {
             recreate();
         } else {
@@ -181,34 +179,24 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     public void StartSyncingData(Context ctx, int delay) {
-        Timer timer=new Timer();
-        timer.schedule(new SyncTimerTask(ctx),delay);
+        Timer timer = new Timer();
+        timer.schedule(new SyncTimerTask(ctx), delay);
         // Init Necessary Data
     }
 
 
-    public void deleteCache(Context context) {
+    public void clearAppData() {
         try {
-            File dir = context.getCacheDir();
-            deleteDir(dir);
-            getApplicationContext().deleteDatabase(getApplicationContext().getExternalFilesDir(null).getPath()+ File.separator+DATABASE_NAME);
-        } catch (Exception e) { e.printStackTrace();}
-    }
-
-    public static boolean deleteDir(File dir) {
-        if (dir != null && dir.isDirectory()) {
-            String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-            return dir.delete();
-        } else if(dir!= null && dir.isFile()) {
-            return dir.delete();
-        } else {
-            return false;
+            String packageName = getPackageName();
+            String appDir=getExternalFilesDir(null).getPath() + File.separator;
+            Log.d("clearing app data ->",packageName);
+            Log.d("clearing app dir ->",appDir);
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("pm clear "+packageName);
+            File dir = new File(appDir);
+            FileUtils.deleteDirectory(dir);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

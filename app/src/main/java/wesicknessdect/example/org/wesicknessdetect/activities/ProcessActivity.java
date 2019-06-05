@@ -58,6 +58,7 @@ public class ProcessActivity extends BaseActivity {
     MaladiesFragment maladiesFragment;
     static MainAdapter mainAdapter;
     List<PageObject> pageObjects=new ArrayList<>();
+    int page=0;
 
     boolean flag,sync = false;
     private Menu menu;
@@ -70,6 +71,7 @@ public class ProcessActivity extends BaseActivity {
         setContentView(R.layout.activity_process);
         ButterKnife.bind(this);
 
+        page=getIntent().getIntExtra("page",0);
 
         Intent offline = new Intent(this, OfflineService.class);
         stopService(offline);
@@ -106,7 +108,11 @@ public class ProcessActivity extends BaseActivity {
         mainAdapter = new MainAdapter(this,pageObjects);
 
         viewPager.setAdapter(mainAdapter);
-        viewPager.setCurrentItem(0, true);
+        if(page==0) {
+            viewPager.setCurrentItem(0, true);
+        }else{
+            viewPager.setCurrentItem(1, true);
+        }
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -194,16 +200,14 @@ public class ProcessActivity extends BaseActivity {
             public void run() {
                 List<Profile> profiles=DB.profileDao().getAllSync();
                 if(profiles.size()>0) {
-                    Log.d("userPicture", profiles.get(0).getAvatar());
-                    File f = new File(profiles.get(0).getAvatar());
-                    if (f.exists()) {
-                        Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
-                        bitmap = getRoundBitmap(bitmap);
-                        menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
-                    }
-                    else{
-//                        Bitmap bitmap= BitmapFactory.decodeResource(getResources(), R.drawable.ic_person);
-//                        bitmap = getRoundBitmap(bitmap);
+                    if (profiles.get(0).getAvatar() != null) {
+                        Log.d("userPicture", profiles.get(0).getAvatar());
+                        File f = new File(profiles.get(0).getAvatar());
+                        if (f.exists()) {
+                            Bitmap bitmap = BitmapFactory.decodeFile(profiles.get(0).getAvatar());
+                            bitmap = getRoundBitmap(bitmap);
+                            menu.getItem(1).setIcon(new BitmapDrawable(getResources(), bitmap));
+                        }
                     }
                 }
             }
@@ -265,7 +269,9 @@ public class ProcessActivity extends BaseActivity {
                 builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        System.exit(1);
+                        finishAffinity();
+                        finishAndRemoveTask();
+                        System.exit(0);
                     }
                 });
                 builder.setNegativeButton("Non", new DialogInterface.OnClickListener() {

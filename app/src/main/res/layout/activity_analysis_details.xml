@@ -28,6 +28,12 @@
             android:layout_height="500dp">
         </androidx.viewpager.widget.ViewPager>
 
+        <TextView
+            android:id="@+id/time"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="elapsed time"/>
         <Button
             android:id="@+id/btnStruggle"
             android:layout_width="match_parent"

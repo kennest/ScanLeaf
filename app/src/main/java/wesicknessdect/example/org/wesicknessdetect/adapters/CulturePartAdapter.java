@@ -74,6 +74,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
 
                 //Si la partie es en cours de traitement
                 if (cultureParts.get(position).isRecognizing()) {
+                    Log.d("Rx Recognizing ->",cultureParts.get(position).getId()+"");
                     holder.progressBar_recognize.setVisibility(View.VISIBLE);
                     holder.imageButton.setEnabled(false);
                     holder.imageButton.setClickable(false);

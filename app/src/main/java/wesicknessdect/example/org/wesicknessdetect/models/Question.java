@@ -10,8 +10,7 @@ import androidx.room.PrimaryKey;
 
 import java.util.List;
 
-@Entity(foreignKeys = {@ForeignKey(entity = CulturePart.class,parentColumns = "id",childColumns = "part_culture_id")},
-        indices = {@Index("part_culture_id")})
+@Entity
 public class Question  {
     @SerializedName(value = "id")
     @PrimaryKey
