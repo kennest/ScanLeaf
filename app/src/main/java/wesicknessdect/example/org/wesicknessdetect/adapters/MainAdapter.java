@@ -63,7 +63,7 @@ public class MainAdapter extends PagerAdapter {
     List<Disease> diseases = new ArrayList<>();
     List<Post> posts = new ArrayList<>();
     List<Diagnostic> tmp = new ArrayList<>();
-    Diagnostic header=new Diagnostic();
+    Diagnostic header = new Diagnostic();
     private static AppDatabase DB;
     private EndlessRecyclerViewScrollListener scrollListener;
     AnalysisAdapter analysisAdapter;
@@ -195,15 +195,13 @@ public class MainAdapter extends PagerAdapter {
             public void run() {
                 GetDiagnosticsFromDB();
                 if (tmp.size() > 0) {
-                    header=tmp.get(0);
+                    header = tmp.get(0);
                     if (header.getPictures() != null) {
 
-                        Log.d("Main Picture Size ->", tmp.get(0).getPictures().size() + "");
-                        for (Picture n : header.getPictures()) {
-                            Log.d("Main First Picture ->", n.getImage());
-                        }
                         if (header.getPictures().size() > 0) {
                             container.setVisibility(View.VISIBLE);
+                            empty.setVisibility(View.GONE);
+                            loading.setVisibility(View.GONE);
                             Handler handler = new Handler();
 
                             Runnable loadImage = new Runnable() {
@@ -234,6 +232,9 @@ public class MainAdapter extends PagerAdapter {
                                 counter.setText("Avec " + Integer.toString(header.getPictures().size()) + " partie prise en compte");
                             }
                             //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
+                        } else {
+                            empty.setVisibility(View.VISIBLE);
+                            container.setVisibility(View.GONE);
                         }
                         userName.setText(header.getDisease());
 
@@ -298,23 +299,23 @@ public class MainAdapter extends PagerAdapter {
                             }
                         });
                         //holder.slideview.addOnPageChangeListener(this);
-                        //holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
-                        //holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+                        image.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_transition_animation));
+                        container.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.fade_scale_animation));
                     }
                     //Collections.reverse(tmp);
                     tmp.remove(header);
-                    if (tmp.size() > 0) {
-                        analysisAdapter = new AnalysisAdapter(mContext, tmp);
-                        recyclerView.setAdapter(analysisAdapter);
-                        //analysisAdapter.notifyDataSetChanged();
-                        recyclerView.setVisibility(View.VISIBLE);
-                        recyclerView.addOnScrollListener(scrollListener);
-                        empty.setVisibility(View.GONE);
-                        loading.setVisibility(View.GONE);
-                        handler.removeCallbacksAndMessages(null);
-                        handler.removeCallbacks(InitData);
-                        recyclerView.scheduleLayoutAnimation();
-                    }
+                    analysisAdapter = new AnalysisAdapter(mContext, tmp);
+                    recyclerView.setAdapter(analysisAdapter);
+                    //analysisAdapter.notifyDataSetChanged();
+                    recyclerView.setVisibility(View.VISIBLE);
+                    container.setVisibility(View.VISIBLE);
+                    recyclerView.addOnScrollListener(scrollListener);
+                    empty.setVisibility(View.GONE);
+                    loading.setVisibility(View.GONE);
+                    handler.removeCallbacksAndMessages(null);
+                    handler.removeCallbacks(InitData);
+                    recyclerView.scheduleLayoutAnimation();
+
                 } else {
                     Log.d("Diagnostic RV", "Is Empty");
                     //Toast.makeText(mContext, "Empty List ->" + tmp.size(), Toast.LENGTH_SHORT).show();
