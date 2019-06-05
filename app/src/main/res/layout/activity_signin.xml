@@ -95,8 +95,7 @@
                     android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_secret"
                     android:drawablePadding="20dp"
-                    android:hint="username"
-                    />
+                    android:hint="username" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -161,8 +160,7 @@
                     android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_profil"
                     android:drawablePadding="20dp"
-                    android:hint="fonction"
-                     />
+                    android:hint="fonction" />
 
                 <TextView
                     android:layout_width="wrap_content"

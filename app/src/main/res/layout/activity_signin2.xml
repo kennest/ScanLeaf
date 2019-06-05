@@ -64,8 +64,7 @@
                     android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_secret"
                     android:drawablePadding="20dp"
-                    android:hint="username"
-                    />
+                    android:hint="username" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -166,6 +165,7 @@
         android:layout_marginBottom="5dp"
         android:padding="5dp"
         android:src="@drawable/ic_launcher" />
+
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/myPhoto"
         android:layout_width="110dp"

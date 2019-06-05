@@ -6,12 +6,11 @@
         android:key="show_base"
         android:summaryOff="Bass will not be shown currently."
         android:summaryOn="Bass will be shown currently."
-        android:title="Show Bass"
-        />
+        android:title="Show Bass" />
 
     <SwitchPreferenceCompat
         app:key="synchronisation"
-        app:title="Activer synchronisation automatique"/>
+        app:title="Activer synchronisation automatique" />
 
     <EditTextPreference
         android:key="number"

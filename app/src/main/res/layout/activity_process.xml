@@ -23,7 +23,6 @@
         android:background="@color/white">
 
 
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -35,6 +34,7 @@
 
 
         </androidx.appcompat.widget.Toolbar>
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
@@ -54,10 +54,7 @@
         </com.google.android.material.tabs.TabLayout>
 
 
-
     </com.google.android.material.appbar.AppBarLayout>
-
-
 
 
     <LinearLayout

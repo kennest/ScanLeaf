@@ -77,7 +77,6 @@ public class AppController extends Application {
 
         //Create data
         InitDBFromServer();
-
     }
 
     public List<SymptomRect> getSymptomsRects() {

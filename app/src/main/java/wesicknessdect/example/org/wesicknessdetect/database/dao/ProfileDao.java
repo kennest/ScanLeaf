@@ -23,6 +23,9 @@ public interface ProfileDao {
     @Query("SELECT * FROM Profile")
     List<Profile> getAllSync();
 
+    @Query("SELECT * FROM Profile WHERE updated=0")
+    Profile getNotUpdated();
+
     @Query("SELECT * FROM Profile")
     List<Profile> getProfil();
 

@@ -633,18 +633,18 @@ public class RemoteTasks {
 
     //Update the user informations
     @SuppressLint("StaticFieldLeak")
-    public void SendUpdatedUser(String path, User u, Profile p) throws IOException {
+    public void SendUpdatedUser(User u, Profile p) {
         if (Constants.isOnline(mContext)) {
             String base_64 = "";
             JsonObject json = new JsonObject();
             JsonObject profile = new JsonObject();
 
             APIService service = APIClient.getClient().create(APIService.class);
-            if (path != null) {
-                if (path.equals("")) {
+            if (p.getAvatar() != null) {
+                if (p.getAvatar().equals("")) {
                     base_64 = "rien";
                 } else {
-                    base_64 = new EncodeBase64().encode(path);
+                    base_64 = new EncodeBase64().encode(p.getAvatar());
                     profile.addProperty("avatar", base_64);
                 }
             }
@@ -663,37 +663,44 @@ public class RemoteTasks {
             Log.e("Update User Json ->", json.toString());
 
             String token = FastSave.getInstance().getString("token", null);
-            Call<JsonElement> call = service.updateProfile("Token " + token, json);
-            Response<JsonElement> response = call.execute();
-            if (response.isSuccessful()) {
-                Log.d("updated_user_response:", response.body().toString());
-                if (response.body().getAsJsonObject().has("statut")) {
-                    if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
-                        new AsyncTask<Void, Void, Void>() {
-                            @Override
-                            protected Void doInBackground(Void... voids) {
-                                p.setAvatar(path);
-                                DB.userDao().update(u);
-                                DB.profileDao().update(p);
-                                return null;
-                            }
-                        }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-                    }
-                }
-            } else {
-                Log.e("Error:", response.errorBody().string());
-            }
+            service.rxUpdateProfile("Token " + token, json)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<JsonElement>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-        } else {
-            new AsyncTask<Void, Void, Void>() {
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    DB.profileDao().update(p);
-                    DB.userDao().update(u);
-                    return null;
-                }
-            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+                        }
+
+                        @SuppressLint("CheckResult")
+                        @Override
+                        public void onSuccess(JsonElement jsonElement) {
+                            Log.d("updated_user_response:", jsonElement.toString());
+                            if (jsonElement.getAsJsonObject().has("statut")) {
+                                if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
+                                    Completable.fromAction(() -> {
+                                        p.setAvatar(p.getAvatar());
+                                        p.setUpdated(1);
+                                        DB.userDao().update(u);
+                                        DB.profileDao().update(p);
+                                    })
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(() -> {
+                                                Log.d("Rx User Updated->", "Succeed ->" + p.getId());
+                                            }, throwable -> {
+                                                Log.d("Rx User Updated Error->", throwable.getMessage());
+                                            });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Rx Error:", e.getMessage());
+                        }
+                    });
+
         }
     }
 
@@ -718,7 +725,7 @@ public class RemoteTasks {
                         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
 // 2. Chain together various setter methods to set the dialog characteristics
-                        builder.setMessage("Votre requête a été prise en compte! \n Veuillez vérifier votre adresse email ("+Email+") pour le nouveau mot de passe généré...")
+                        builder.setMessage("Votre requête a été prise en compte! \n Veuillez vérifier votre adresse email (" + Email + ") pour le nouveau mot de passe généré...")
                                 .setTitle("Nouveau mot de passe")
                                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
@@ -737,7 +744,7 @@ public class RemoteTasks {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
 // 2. Chain together various setter methods to set the dialog characteristics
-                builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email ("+Email+") n'existe pas dans la base de donnée...")
+                builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email (" + Email + ") n'existe pas dans la base de donnée...")
                         .setTitle("Erreur!!!")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
@@ -756,7 +763,7 @@ public class RemoteTasks {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
 // 2. Chain together various setter methods to set the dialog characteristics
-            builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email ("+Email+") n'existe pas dans la base de donnée...")
+            builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email (" + Email + ") n'existe pas dans la base de donnée...")
                     .setTitle("Erreur!!!")
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
@@ -765,7 +772,7 @@ public class RemoteTasks {
                         }
                     });
 
-// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
             AlertDialog dialog = builder.create();
             dialog.show();
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));

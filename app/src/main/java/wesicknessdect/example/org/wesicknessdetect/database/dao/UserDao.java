@@ -23,6 +23,7 @@ public interface UserDao {
     @Query("SELECT * FROM User")
     List<User> getAll();
 
+
     @Update
     void update(User user);
 

@@ -34,6 +34,8 @@ public class Profile {
     @SerializedName(value = "mobile")
     private String mobile;
 
+    private int updated=0;
+
     public int getId() {
         return id;
     }
@@ -98,4 +100,11 @@ public class Profile {
         this.fonction = fonction;
     }
 
+    public int getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(int updated) {
+        this.updated = updated;
+    }
 }

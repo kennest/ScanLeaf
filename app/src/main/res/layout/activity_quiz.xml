@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textColor="@color/white"
-            android:text="Maladie detectée"/>
+            android:text="Maladie detectée" />
 
         <TextView
             android:id="@+id/result"
@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:textColor="#FFC107"
             android:layout_height="wrap_content"
-            android:text="RESULT"/>
+            android:text="RESULT" />
     </LinearLayout>
 
     <Button

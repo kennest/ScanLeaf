@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -34,13 +33,14 @@
             android:backgroundTint="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <LinearLayout
                 android:id="@+id/symptoms_txt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="5dp"
-                >
+                android:paddingBottom="5dp">
+
                 <TextView
                     android:id="@+id/part_name"
                     android:padding="5dp"
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:textColor="@color/white"
                     android:layout_height="wrap_content"
-                    android:text="PART_NAME"/>
+                    android:text="PART_NAME" />
             </LinearLayout>
         </ScrollView>
 

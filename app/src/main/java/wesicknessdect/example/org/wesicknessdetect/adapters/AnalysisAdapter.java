@@ -32,6 +32,10 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+
 import javax.microedition.khronos.opengles.GL10;
 
 import butterknife.BindView;
@@ -88,16 +92,16 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                                         (int) ((GL10.GL_MAX_TEXTURE_SIZE*0.9)*aspect_ratio),
                                         (int) (GL10.GL_MAX_TEXTURE_SIZE*0.9));
                             }
-                            Glide.with(context)
-                                    .asBitmap()
-                                    .load(bm)
-                                    .override(100, 100)
-                                    .fitCenter()
-                                    .apply(new RequestOptions().centerCrop())
-                                    .apply(new RequestOptions().error(R.drawable.information))
-                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
-                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
-                                    .into(holder.image);
+                            holder.image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage()))));
+//                            Glide.with(context)
+//                                    .asBitmap()
+//                                    .load(bm)
+//                                    .override(100, 100)
+//                                    .apply(new RequestOptions().centerCrop())
+//                                    .apply(new RequestOptions().error(R.drawable.information))
+//                                    .apply(new RequestOptions().placeholder(R.drawable.restart))
+//                                    .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+//                                    .into(holder.image);
                         }
                     };
 
@@ -176,8 +180,8 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);
                 }
                 //holder.slideview.addOnPageChangeListener(this);
-                //holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
-                //holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
+                holder.image.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_transition_animation));
+                holder.container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
             }
         }
 

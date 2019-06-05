@@ -6,21 +6,21 @@
     android:backgroundTint="#fff"
     android:layout_marginBottom="5dp"
     android:layout_marginHorizontal="5dp"
-    android:background="@drawable/bordershadow"
->
+    android:background="@drawable/bordershadow">
 
     <com.glide.slider.library.SliderLayout
         android:id="@+id/slider"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@drawable/arrondi_haut"
-        android:backgroundTint="#fff"/>
+        android:backgroundTint="#fff" />
+
     <com.glide.slider.library.Indicators.PagerIndicator
         android:id="@+id/custom_indicator"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="#ededed"
-        android:gravity="center"/>
+        android:gravity="center" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_weight="0.8"/>
+            android:layout_weight="0.8" />
 
         <TextView
             android:id="@+id/analyse_time"
@@ -55,7 +55,8 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_weight="1.2"
-            android:textAlignment="textEnd"/>
+            android:textAlignment="textEnd" />
+
         <ImageButton
             android:id="@+id/seeAnalysis"
             android:layout_width="match_parent"
@@ -65,8 +66,8 @@
             android:backgroundTint="@color/colorPrimaryPix"
             android:foregroundGravity="right"
             android:background="@drawable/radius"
-           android:layout_marginStart="60dp"
-            android:layout_gravity="right"/>
+            android:layout_marginStart="60dp"
+            android:layout_gravity="right" />
 
     </LinearLayout>
 </LinearLayout>

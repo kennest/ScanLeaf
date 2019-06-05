@@ -4,157 +4,165 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:floatingMenuActionButton="http://schemas.android.com/tools">
+
     <ScrollView android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@color/colorPrimary">
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.MainActivity">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/culturename"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="19dp"
-            android:text="Votre analyse de "
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:background="@drawable/arrondi_haut"
-            android:textColor="#ededed"/>
-    <LinearLayout
-        android:id="@+id/l1"
-        android:visibility="visible"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginBottom="30dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp" android:orientation="horizontal">
-
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <Button
-            android:id="@+id/Bil"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimaryDark"
-            android:text="Bilan de la première image"
-            android:textColor="#dddddd"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            />
-        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
-            android:id="@+id/expandableLayout"
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:ael_expanded="false"
-            app:ael_duration="500"
-            app:ael_interpolator="linearOutSlowIn"
-            app:ael_orientation="vertical"
+            tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.MainActivity">
 
-            >
-
-            <TextView
-                android:id="@+id/text"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center"
-                android:background="#ededed"
-                android:text="contenu" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView2"
-            android:layout_width="wrap_content"
-            android:layout_height="200dp" android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/culturename"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="19dp"
+                    android:text="Votre analyse de "
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:background="@drawable/arrondi_haut"
+                    android:textColor="#ededed" />
+
+                <LinearLayout
+                    android:id="@+id/l1"
+                    android:visibility="visible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="30dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="200dp"
+                        android:orientation="horizontal">
 
 
-        </androidx.recyclerview.widget.RecyclerView>
-        <Button
-            android:id="@+id/Bil2"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimaryDark"
-            android:text="Bilan de la deuxième image"
-            android:textColor="#dddddd"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            />
-        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
-            android:id="@+id/expandableLayout2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:ael_expanded="false"
-            app:ael_duration="500"
-            app:ael_interpolator="linearOutSlowIn"
-            app:ael_orientation="vertical"
-            >
+                    </androidx.recyclerview.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/text2"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center"
-                android:background="#ededed"
-                android:text="contenu" />
+                    <Button
+                        android:id="@+id/Bil"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:text="Bilan de la première image"
+                        android:textColor="#dddddd"
+                        android:textStyle="bold"
+                        android:textSize="18dp" />
 
-        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+                    <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                        android:id="@+id/expandableLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:ael_expanded="false"
+                        app:ael_duration="500"
+                        app:ael_interpolator="linearOutSlowIn"
+                        app:ael_orientation="vertical"
 
-        <Button
-            android:id="@+id/result"
-            android:layout_marginTop="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@drawable/background_gradient"
-            android:text="Résultat final"
-            android:textColor="#ededed"
-            android:textStyle="bold"
-            android:textSize="18dp"
-            />
+                        >
 
-    </LinearLayout>
-        <Button
+                        <TextView
+                            android:id="@+id/text"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:gravity="center"
+                            android:background="#ededed"
+                            android:text="contenu" />
 
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
-            android:id="@+id/suivre"
-            android:layout_width="wrap_content"
-            android:layout_height="50dp"
-            android:text="Continuer"
-            android:textColor="@color/colorPrimaryDark"
-            android:background="@drawable/radius"
-            android:backgroundTint="@color/white"
-            android:layout_gravity="center"/>
-    </LinearLayout>
-</FrameLayout>
+                    </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="200dp"
+                        android:orientation="horizontal">
+
+
+                    </androidx.recyclerview.widget.RecyclerView>
+
+                    <Button
+                        android:id="@+id/Bil2"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@color/colorPrimaryDark"
+                        android:text="Bilan de la deuxième image"
+                        android:textColor="#dddddd"
+                        android:textStyle="bold"
+                        android:textSize="18dp" />
+
+                    <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                        android:id="@+id/expandableLayout2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:ael_expanded="false"
+                        app:ael_duration="500"
+                        app:ael_interpolator="linearOutSlowIn"
+                        app:ael_orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/text2"
+                            android:layout_width="match_parent"
+                            android:layout_height="100dp"
+                            android:gravity="center"
+                            android:background="#ededed"
+                            android:text="contenu" />
+
+                    </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+                    <Button
+                        android:id="@+id/result"
+                        android:layout_marginTop="15dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:background="@drawable/background_gradient"
+                        android:text="Résultat final"
+                        android:textColor="#ededed"
+                        android:textStyle="bold"
+                        android:textSize="18dp" />
+
+                </LinearLayout>
+
+                <Button
+
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/suivre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Continuer"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:background="@drawable/radius"
+                    android:backgroundTint="@color/white"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+        </FrameLayout>
     </ScrollView>
     <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--android:id="@+id/fab"-->
-        <!--app:fabSize="normal"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_gravity="right|bottom"-->
-        <!--android:layout_marginEnd="17dp"-->
-        <!--android:layout_marginRight="17dp"-->
-        <!--android:layout_marginBottom="14dp"-->
-        <!--android:src="@drawable/ic_menu_black_24dp"-->
-        <!--android:backgroundTint="@color/colorPrimaryDark"-->
-        <!--android:tint="@color/colorAccent" />-->
+    <!--android:id="@+id/fab"-->
+    <!--app:fabSize="normal"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentEnd="true"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_gravity="right|bottom"-->
+    <!--android:layout_marginEnd="17dp"-->
+    <!--android:layout_marginRight="17dp"-->
+    <!--android:layout_marginBottom="14dp"-->
+    <!--android:src="@drawable/ic_menu_black_24dp"-->
+    <!--android:backgroundTint="@color/colorPrimaryDark"-->
+    <!--android:tint="@color/colorAccent" />-->
     <rjsv.floatingmenu.floatingmenubutton.FloatingMenuButton
         android:id="@+id/my_floating_button"
         android:layout_width="80dp"
@@ -188,7 +196,6 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/search" />
-
 
 
     </rjsv.floatingmenu.floatingmenubutton.FloatingMenuButton>

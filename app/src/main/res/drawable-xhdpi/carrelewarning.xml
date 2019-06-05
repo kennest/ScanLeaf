@@ -3,8 +3,9 @@
 
     <stroke
         android:color="#d85c15"
-        android:width="2dp"/>
-    <padding android:bottom="15dp"
+        android:width="2dp" />
+    <padding
+        android:bottom="15dp"
         android:top="15dp"
         android:right="15dp"
         android:left="15dp" />

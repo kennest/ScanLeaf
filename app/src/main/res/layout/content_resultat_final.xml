@@ -8,70 +8,77 @@
     tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.FinalResultActivity"
     tools:showIn="@layout/activity_resultat_final"
     android:background="@color/white">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/text_margin"
-        android:layout_marginLeft="@dimen/h0"
-        android:padding="3dp"
-        android:text="MALADIE"
-        android:textColor="#ffffffff"
-        android:background="@drawable/arrondi_haut"
-        android:backgroundTint="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        />
-    <TextView
-        android:id="@+id/maladie"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:paddingVertical="@dimen/text_margin"
-        android:textColor="@color/colorPrimaryDark"
-        android:background="@drawable/carrele"
-        android:text="Votre plante est contaminée par "/>
 
-</LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/text_margin"
-            android:layout_marginLeft="@dimen/h0"
-            android:padding="3dp"
-            android:text="CAUSE"
-            android:textColor="#ffffffff"
-            android:background="@drawable/arrondi_haut"
-            android:backgroundTint="@color/danger"
-            android:textStyle="bold"
-            />
-        <TextView
-            android:id="@+id/cause"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:paddingVertical="@dimen/text_margin"
-            android:textColor="@color/danger"
-            android:background="@drawable/carreledanger"
-            android:text="Cela est dû à "/>
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginLeft="@dimen/h0"
+                android:padding="3dp"
+                android:text="MALADIE"
+                android:textColor="#ffffffff"
+                android:background="@drawable/arrondi_haut"
+                android:backgroundTint="@color/colorPrimaryDark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/maladie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingVertical="@dimen/text_margin"
+                android:textColor="@color/colorPrimaryDark"
+                android:background="@drawable/carrele"
+                android:text="Votre plante est contaminée par " />
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/text_margin"
+                android:layout_marginLeft="@dimen/h0"
+                android:padding="3dp"
+                android:text="CAUSE"
+                android:textColor="#ffffffff"
+                android:background="@drawable/arrondi_haut"
+                android:backgroundTint="@color/danger"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/cause"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:paddingVertical="@dimen/text_margin"
+                android:textColor="@color/danger"
+                android:background="@drawable/carreledanger"
+                android:text="Cela est dû à " />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,8 +89,8 @@
                 android:textColor="#ffffffff"
                 android:background="@drawable/arrondi_haut"
                 android:backgroundTint="#d85c15"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/propagation"
                 android:layout_width="match_parent"
@@ -93,13 +100,15 @@
                 android:paddingVertical="@dimen/text_margin"
                 android:textColor="@color/warning"
                 android:background="@drawable/carrelewarning"
-                android:text="Cette maladie risque de se propager dans la zone de "/>
+                android:text="Cette maladie risque de se propager dans la zone de " />
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,8 +119,8 @@
                 android:textColor="#ffffffff"
                 android:background="@drawable/arrondi_haut"
                 android:backgroundTint="@color/solution"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/solution"
                 android:layout_width="match_parent"
@@ -126,7 +135,7 @@
     -blablablabla blablablablabal blablablablab alblablablanlanla
     -blablablabla blablablablabal blablablablab alblablablanlanla
     -blablablabla blablablablabal blablablablab alblablablanlanla
-    -blablablabla blablablablabal blablablablab alblablablanlanla"/>
+    -blablablabla blablablablabal blablablablab alblablablanlanla" />
 
         </LinearLayout>
 

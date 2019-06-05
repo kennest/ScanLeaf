@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/camerapage"
+<RelativeLayout android:id="@+id/camerapage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:floatingMenuActionButton="http://schemas.android.com/tools"
     android:background="@color/black">
+
     <ScrollView android:layout_width="match_parent"
         android:layout_height="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:background="@color/colorPrimary"
         android:visibility="gone">
+
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.MainActivity">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/culturename"
                     android:layout_width="match_parent"
@@ -32,7 +35,8 @@
                     android:text="Votre analyse de "
                     android:backgroundTint="@color/colorPrimaryDark"
                     android:background="@drawable/arrondi_haut"
-                    android:textColor="#ededed"/>
+                    android:textColor="#ededed" />
+
                 <LinearLayout
                     android:id="@+id/l1"
 
@@ -44,11 +48,13 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerView"
                         android:layout_width="wrap_content"
-                        android:layout_height="200dp" android:orientation="horizontal">
+                        android:layout_height="200dp"
+                        android:orientation="horizontal">
 
 
                     </androidx.recyclerview.widget.RecyclerView>
                 </LinearLayout>
             </LinearLayout>
         </FrameLayout>
-    </ScrollView></RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

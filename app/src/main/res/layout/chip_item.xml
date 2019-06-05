@@ -7,5 +7,4 @@
     app:chipIcon="@drawable/barley_off"
     app:chipIconTint="@color/white"
     android:background="@color/colorPrimaryDark"
-    app:closeIconEnabled="false">
-</com.google.android.material.chip.Chip>
+    app:closeIconEnabled="false"></com.google.android.material.chip.Chip>

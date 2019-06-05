@@ -15,21 +15,21 @@
         app:showAsAction="always" />
 
     <!--<item-->
-        <!--android:id="@+id/menu_communaute"-->
-        <!--android:title="Communauté"-->
-        <!--android:icon="@drawable/ic_group_black_24dp"-->
-        <!--app:showAsAction="always" />-->
+    <!--android:id="@+id/menu_communaute"-->
+    <!--android:title="Communauté"-->
+    <!--android:icon="@drawable/ic_group_black_24dp"-->
+    <!--app:showAsAction="always" />-->
 
     <item
         android:id="@+id/menu_settings"
         android:title="Réglages"
         android:icon="@drawable/ic_settings"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/menu_quit"
         android:title="Quitter"
         android:icon="@drawable/ic_power_settings_new_black_24dp"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 </menu>

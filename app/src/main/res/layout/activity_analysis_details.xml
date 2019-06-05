@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:orientation="vertical"
         android:weightSum="5"
@@ -21,19 +21,20 @@
             app:titleTextColor="@color/white">
 
         </androidx.appcompat.widget.Toolbar>
+
         <androidx.viewpager.widget.ViewPager
             android:layout_weight="3"
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="500dp">
-        </androidx.viewpager.widget.ViewPager>
+            android:layout_height="500dp"></androidx.viewpager.widget.ViewPager>
 
         <TextView
             android:id="@+id/time"
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="elapsed time"/>
+            android:hint="elapsed time" />
+
         <Button
             android:id="@+id/btnStruggle"
             android:layout_width="match_parent"

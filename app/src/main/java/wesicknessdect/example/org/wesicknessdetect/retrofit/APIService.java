@@ -161,4 +161,7 @@ public interface APIService {
     @GET("api/partcultures/")
     Single<List<CulturePart>> rxGetCulturePart(@Query("culture") int id);
 
+    @PUT("api/user/")
+    Single<JsonElement> rxUpdateProfile(@Header("Authorization") String token,@Body JsonObject json);
+
 }

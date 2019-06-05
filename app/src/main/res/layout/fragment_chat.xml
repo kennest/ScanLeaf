@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#fff">
+
     <TextView
         android:id="@+id/recent_updates"
         android:layout_width="match_parent"
@@ -18,21 +19,21 @@
         android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"
         android:textStyle="bold" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_rv"
         android:layout_marginBottom="30dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </androidx.recyclerview.widget.RecyclerView>
-<!--<ScrollView-->
+        android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+    <!--<ScrollView-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="match_parent">-->
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:orientation="vertical"-->
-        <!--android:id="@+id/ll">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:orientation="vertical"-->
+    <!--android:id="@+id/ll">-->
 
     <!--</LinearLayout>-->
-<!--</ScrollView>-->
+    <!--</ScrollView>-->
 </LinearLayout>

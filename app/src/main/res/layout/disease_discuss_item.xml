@@ -8,69 +8,74 @@
     android:paddingVertical="5dp"
     android:background="#ededed"
     tools:targetApi="o">
+
     <com.mikhaellopez.circularimageview.CircularImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/pbrune"
-        android:layout_marginRight="20dp"/>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+        android:layout_marginRight="20dp" />
 
-    android:layout_margin="3dp"
-    android:padding="3dp"
-android:layout_gravity="center_vertical"    >
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:textColor="@color/colorPrimaryDark"
-        android:textStyle="bold"
-        android:textSize="18dp"
-        android:layout_gravity="left"
-        android:id="@+id/detectedMaladie"
-        android:text="Swollen Shoot détecté" />
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:weightSum="3"
-        >
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_gravity="start"
-            android:src="@drawable/ic_history_black_24dp"
-            android:tint="@color/dark_gray"/>
-        <TextView
-            android:id="@+id/heureMaladie"
-            android:layout_width="wrap_content"
-            android:gravity="start"
-            android:layout_weight="1"
-            android:layout_height="20dp"
-            android:textStyle="bold"
 
-            android:textColor="@color/dark_gray"
-            android:textSize="15dp"
-            android:text="1h" />
+        android:layout_margin="3dp"
+        android:padding="3dp"
+        android:layout_gravity="center_vertical">
+
         <TextView
-            android:id="@+id/distanceMaladie"
-            android:layout_width="wrap_content"
-            android:gravity="right"
+            android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_gravity="center"
+            android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16dp"
-            android:text="7 Km de vous"
-            android:layout_weight="1"/>
+            android:textSize="18dp"
+            android:layout_gravity="left"
+            android:id="@+id/detectedMaladie"
+            android:text="Swollen Shoot détecté" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:weightSum="3">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="start"
+                android:src="@drawable/ic_history_black_24dp"
+                android:tint="@color/dark_gray" />
+
+            <TextView
+                android:id="@+id/heureMaladie"
+                android:layout_width="wrap_content"
+                android:gravity="start"
+                android:layout_weight="1"
+                android:layout_height="20dp"
+                android:textStyle="bold"
+
+                android:textColor="@color/dark_gray"
+                android:textSize="15dp"
+                android:text="1h" />
+
+            <TextView
+                android:id="@+id/distanceMaladie"
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16dp"
+                android:text="7 Km de vous"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
-
-
-</LinearLayout>
 </LinearLayout>

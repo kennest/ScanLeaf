@@ -57,7 +57,7 @@ public class ProfileActivity extends BaseActivity {
     String path;
 
     ImageView imageBox;
-    EditText nameBox;
+    EditText nameBox,passBox;
     EditText surnameBox;
     EditText pseudoBox;
     EditText emailBox;
@@ -107,7 +107,6 @@ public class ProfileActivity extends BaseActivity {
                 pseudo = user.get(0).getUsername();
                 userEmail = user.get(0).getEmail();
 
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -145,6 +144,7 @@ public class ProfileActivity extends BaseActivity {
                                 pseudoBox = layout.findViewById(R.id.userNewPseudo);
                                 emailBox = layout.findViewById(R.id.userNewEmail);
                                 imageBox = layout.findViewById(R.id.userNewImage);
+                                passBox=layout.findViewById(R.id.userPass);
                                 builder.setView(layout);
 
                                 nameBox.setText(user.get(0).getNom());
@@ -152,6 +152,7 @@ public class ProfileActivity extends BaseActivity {
                                 pseudoBox.setText(pseudo);
                                 id = user.get(0).getId();
                                 emailBox.setText(userEmail);
+                                passBox.setText(user.get(0).getPassword());
 
                                 imageBox.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -172,7 +173,7 @@ public class ProfileActivity extends BaseActivity {
                                             user.get(0).setNom(nameBox.getText().toString());
                                             user.get(0).setPrenom(surnameBox.getText().toString());
                                             user.get(0).setEmail(email.getText().toString());
-                                            user.get(0).setPassword(password);
+                                            user.get(0).setPassword(passBox.getText().toString());
                                             user.get(0).setUsername(pseudoBox.getText().toString());
                                             if (path != null) {
                                                 if (path.equals("")) {
@@ -182,12 +183,8 @@ public class ProfileActivity extends BaseActivity {
                                             }
                                             profil.get(0).setCountry_id(c.getId());
                                             user.get(0).setProfile(profil.get(0));
+                                                RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user.get(0), profil.get(0));
 
-                                            try {
-                                                RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(path, user.get(0), profil.get(0));
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
                                         })
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
@@ -284,6 +281,7 @@ public class ProfileActivity extends BaseActivity {
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         c = DB.countryDao().getByNameSync(countri.getItemAtPosition(position).toString());
                         profil.get(0).setCountry_id(c.getId());
+                        pays.setText(c.getName());
                     }
 
                     @Override
