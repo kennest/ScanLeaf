@@ -7,6 +7,7 @@ import android.icu.util.Calendar;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.appizona.yehiahd.fastsave.FastSave;
 
@@ -45,7 +46,7 @@ public class OfflineService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Toast.makeText(getApplicationContext(), "Offline service Started", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "ScanLeaf Offline service Started", Toast.LENGTH_LONG).show();
         mTimer = new Timer();
         mTimer.schedule(new OfflineTimerTask(this), 0, 600000);
         intent = new Intent(str_receiver);

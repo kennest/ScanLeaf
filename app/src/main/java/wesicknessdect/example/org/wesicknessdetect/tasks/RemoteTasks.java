@@ -521,9 +521,7 @@ public class RemoteTasks {
             d.setSended(0);
             DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .unsubscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .subscribe(() -> {
                             Log.d("Rx Save Diag", "Completed ->" + d.getUuid());
                             EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));

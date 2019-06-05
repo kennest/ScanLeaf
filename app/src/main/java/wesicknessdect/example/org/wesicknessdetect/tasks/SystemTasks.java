@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 import androidx.fragment.app.FragmentActivity;
 
 import io.reactivex.Observable;
-import rx.Single;
+import io.reactivex.Single;
 import rx.functions.Action1;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier.Recognition;
@@ -159,32 +159,39 @@ public class SystemTasks {
     }
 
     //Recognized Symptoms on given bitmap
-    public Flowable<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
-        Flowable<ImageRecognitionProcessEvent> observable = null;
-        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
-        List<Recognition> recognitions = new ArrayList<>();
-        ImageRecognitionProcessEvent event=new ImageRecognitionProcessEvent(part_id,false,recognitions);
-        observable=Flowable.just(event);
-        if (MODE == DetectorMode.TF_OD_API) {
-            try {
-                detector = TensorFlowObjectDetectionAPIModel.create(
-                        model,
-                        label,
-                        TF_OD_API_INPUT_SIZE);
-                cropSize = TF_OD_API_INPUT_SIZE;
+    public Single<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+               //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
 
-                LOGGER.e("Model loaded infos", model + "//" + label + "//" + detector.getStatString());
-                recognitions = detector.recognizeImage(bitmap);
-                event=new ImageRecognitionProcessEvent(part_id,true,recognitions);
-                observable=Flowable.just(event);
-                Log.e("Recognitions", recognitions.toString());
-                //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
-            } catch (final IOException e) {
-                observable=Flowable.just(event);
-                //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
-                LOGGER.e("Exception initializing classifier!", e.getMessage());
+        return Single.fromCallable(new Callable<ImageRecognitionProcessEvent>() {
+            @Override
+            public ImageRecognitionProcessEvent call(){
+                List<Recognition> recognitions = new ArrayList<>();
+                ImageRecognitionProcessEvent event=new ImageRecognitionProcessEvent(part_id,false,recognitions);
+                if (MODE == DetectorMode.TF_OD_API) {
+                    try {
+                        detector = TensorFlowObjectDetectionAPIModel.create(
+                                model,
+                                label,
+                                TF_OD_API_INPUT_SIZE);
+                        cropSize = TF_OD_API_INPUT_SIZE;
+
+                        LOGGER.e("Rx Model loaded infos", model + "//" + label + "//" + detector.getStatString());
+                        recognitions = detector.recognizeImage(bitmap);
+                        event=new ImageRecognitionProcessEvent(part_id,true,recognitions);
+                        Log.e("Rx Recognitions ->", recognitions.toString());
+                        detector.close();
+                      return event;
+
+                        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+                    } catch (final IOException e) {
+                        LOGGER.e("Rx Exception initializing classifier!", e.getMessage());
+                        detector.close();
+                       return event;
+                        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
+                    }
+                }
+                return event;
             }
-        }
-        return observable;
+        });
     }
 }

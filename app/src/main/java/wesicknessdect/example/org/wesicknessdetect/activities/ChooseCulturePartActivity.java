@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -22,10 +23,16 @@ import com.fxn.pix.Pix;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import io.reactivex.FlowableSubscriber;
+import io.reactivex.Notification;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subscribers.DisposableSubscriber;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.reactivestreams.Subscription;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -295,7 +302,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                                 Log.d("Rx PIX SIZE ->", images_by_part.size() + "");
                                 for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
                                     DB.modelDao().rxGetByPart((long) entry.getKey())
-                                            .subscribeOn(Schedulers.io())
+                                            .subscribeOn(Schedulers.newThread())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new DisposableSingleObserver<Model>() {
 
@@ -323,34 +330,35 @@ public class ChooseCulturePartActivity extends BaseActivity {
     private void doRecognizingImage(String modelpath, String labelpath, int part_id, Bitmap bitmap) {
         File modelfilepath = new File(modelpath);
         File labelfilepath = new File(labelpath);
-        if (modelfilepath.exists() && labelfilepath.exists()) {
-            for (CulturePart c : cultureParts) {
-                if ((c.getId() == part_id)) {
-                    c.setRecognizing(true);
-                    if(culturePartAdapter!=null) {
-                        culturePartAdapter.notifyDataSetChanged();
-                        Log.d("Rx Recognizing ->", part_id + "");
-                    }
-                }
-            }
 
-            SystemTasks.getInstance(ChooseCulturePartActivity.this).recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
-                    .subscribeOn(Schedulers.io())
+        if (modelfilepath.exists() && labelfilepath.exists()) {
+            SystemTasks.getInstance(ChooseCulturePartActivity.this)
+                    .recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
+                    .subscribeOn(Schedulers.trampoline())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableSubscriber<ImageRecognitionProcessEvent>() {
+                    .subscribe(new SingleObserver<ImageRecognitionProcessEvent>() {
                         @Override
-                        public void onNext(ImageRecognitionProcessEvent event) {
+                        public void onSubscribe(Disposable d) {
+                            for (CulturePart c : cultureParts) {
+                                if ((c.getId() == part_id)) {
+                                    c.setRecognizing(true);
+                                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                                    parts_lv.setAdapter(culturePartAdapter);
+                                    culturePartAdapter.notifyDataSetChanged();
+                                    Log.d("Rx Recognizing ->", part_id + "");
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onSuccess(ImageRecognitionProcessEvent event) {
                             getBitmapRecognizeState(event);
                         }
 
                         @Override
-                        public void onError(Throwable t) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
+                        public void onError(Throwable e) {
+                            Log.e("Recognizing Error", e.getMessage());
                         }
                     });
         } else {

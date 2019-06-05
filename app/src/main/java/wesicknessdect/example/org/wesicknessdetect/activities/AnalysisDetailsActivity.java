@@ -82,13 +82,12 @@ public class AnalysisDetailsActivity extends BaseActivity {
     }
 
 
-    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    @SuppressLint({"CheckResult"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_analysis_details);
         ButterKnife.bind(this);
-
         diagnostic_uuid = getIntent().getStringExtra("uuid");
         Log.e("Rx Details diagnostic", diagnostic_uuid + "");
         Completable.fromAction(() -> {
@@ -159,7 +158,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
                                         }
                                     }
 
-                                    if (elapsedDays < 0) {
+                                    if (elapsedDays <= 0) {
                                         time.setText("Aujourd'hui à " + time_creation);
                                     } else {
                                         time.setText("Il y a " + elapsedDays + " jours à " + time_creation);

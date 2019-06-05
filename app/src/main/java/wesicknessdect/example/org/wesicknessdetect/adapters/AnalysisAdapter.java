@@ -41,6 +41,8 @@ import java.util.concurrent.TimeUnit;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import javax.microedition.khronos.opengles.GL10;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
@@ -86,15 +88,21 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     Runnable loadImage = new Runnable() {
                         @Override
                         public void run() {
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inSampleSize = 8;
-                            Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())), options);
+                            Bitmap bm = BitmapFactory.decodeFile(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage())));
+
+                            if (bm.getHeight() > GL10.GL_MAX_TEXTURE_SIZE) {
+                                // this is the case when the bitmap fails to load
+                                float aspect_ratio = ((float)bm.getHeight())/((float)bm.getWidth());
+                                bm = Bitmap.createBitmap(bm, 0, 0,
+                                        (int) ((GL10.GL_MAX_TEXTURE_SIZE*0.9)*aspect_ratio),
+                                        (int) (GL10.GL_MAX_TEXTURE_SIZE*0.9));
+                            }
                             Glide.with(context)
                                     .asBitmap()
                                     .load(bm)
-                                    .apply(new RequestOptions().override(100, 100))
+                                    .override(100, 100)
+                                    .fitCenter()
                                     .apply(new RequestOptions().centerCrop())
-                                    .override(100,100)
                                     .apply(new RequestOptions().error(R.drawable.information))
                                     .apply(new RequestOptions().placeholder(R.drawable.restart))
                                     .apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
@@ -170,7 +178,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                 //holder.now.setText(time_creation);
                 holder.itemView.setTag(diagnostics.get(position).getUuid());
                 //holder.analyseTime.setText(diagnosticPictures.get(position).diagnostic.getAdvancedAnalysis()+" Ago");
-                if (elapsedDays < 0) {
+                if (elapsedDays <= 0) {
                     holder.analyseTime.setText("Aujourd'hui à " + time_creation);
                 } else {
                     holder.analyseTime.setText("Il y a " + elapsedDays + " jours à " + time_creation);

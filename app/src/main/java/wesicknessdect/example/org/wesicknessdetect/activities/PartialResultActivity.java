@@ -170,7 +170,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                     item = item.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
                     for (String n : symptoms_set) {
-                        Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
+                        //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
                         if (item.toUpperCase().equals(n)) {
                             img_symptoms_id.add(s.getId());
                             if (symptoms_ids == "") {
@@ -238,18 +238,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @OnClick(R.id.btn_save_diagnostic)
     public void SendDiagnostic() {
-        try {
             diagnostic.setPictures(AppController.getInstance().getPictures());
             RemoteTasks.getInstance(this).sendDiagnostic(diagnostic, false);
-            finish();
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-//            for(Map.Entry<Integer,List<Classifier.Recognition>> entry:recognitions_by_part.entrySet()){
-//                entry.setValue(entry.getValue().subList(0,4));
-//            }
         AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
     }
 
@@ -314,7 +304,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     @Override
     public void onCardSwiped(Direction direction) {
-        Log.e("Card Swiped", manager.getTopPosition() + "/****/" + partialResultImageAdapter.getItemCount());
+        //Log.e("Card Swiped", manager.getTopPosition() + "/****/" + partialResultImageAdapter.getItemCount());
         if (manager.getTopPosition() == partialResultImageAdapter.getItemCount()) {
             this.Reload();
         }
