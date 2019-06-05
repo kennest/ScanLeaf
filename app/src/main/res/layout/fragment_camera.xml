@@ -17,7 +17,7 @@
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context="wesicknessdect.example.org.wescanleaf.MainActivity">
+            tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.MainActivity">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

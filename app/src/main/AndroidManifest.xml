@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="wesicknessdect.example.org.wescanleaf">
+    package="wesicknessdect.example.org.wesicknessdetect">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -17,13 +17,13 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
-        android:name="wesicknessdect.example.org.wescanleaf.permission.C2D_MESSAGE"
+        android:name="wesicknessdect.example.org.wesicknessdetect.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
     <uses-permission android:name="wesicknessdect.example.org.wesicknessdetect.permission.C2D_MESSAGE" />
 
     <application
-        android:name="wesicknessdect.example.org.wescanleaf.utils.AppController"
+        android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -33,7 +33,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <receiver
-            android:name="wesicknessdect.example.org.wescanleaf.utils.BootReceiver"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.BootReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -43,14 +43,14 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.NotificationActivity">
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.NotificationActivity">
 
         </activity>
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.SettingsActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.DiseaseActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.ProfileActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.CommunityActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.SplashActivity">
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.SettingsActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.DiseaseActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ProfileActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.CommunityActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -58,7 +58,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="wesicknessdect.example.org.wescanleaf.activities.ChooseCulturePartActivity"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ChooseCulturePartActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,29 +67,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="wesicknessdect.example.org.wescanleaf.activities.register.SignupActivity"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.MainActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.MainActivity" />
         <activity
-            android:name="wesicknessdect.example.org.wescanleaf.activities.FinalResultActivity"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.FinalResultActivity"
             android:label="@string/title_activity_resultat_final"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="wesicknessdect.example.org.wescanleaf.activities.ProcessActivity"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.BaseActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.ConversationActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.QuizActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.login.LoginActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.PartialResultActivity" />
-        <activity android:name="wesicknessdect.example.org.wescanleaf.activities.AnalysisDetailsActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ConversationActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.QuizActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.PartialResultActivity" />
+        <activity android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity" />
 
         <service
-            android:name="wesicknessdect.example.org.wescanleaf.utils.DownloadService"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.DownloadService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name="wesicknessdect.example.org.wescanleaf.utils.OfflineService"
+            android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.OfflineService"
             android:enabled="true"
             android:exported="false" />
 
@@ -98,8 +98,8 @@
             android:resource="@array/preloaded_fonts" />
 
 
-        <receiver android:name="wesicknessdect.example.org.wescanleaf.AlarmReceiver" />
-        <receiver android:name="wesicknessdect.example.org.wescanleaf.utils.SyncReceiver" />
+        <receiver android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.AlarmReceiver" />
+        <receiver android:name="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.utils.SyncReceiver" />
     </application>
 
 </manifest>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="wesicknessdect.example.org.wescanleaf.activities.login.LoginActivity"
+    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity"
     >
 
     <LinearLayout

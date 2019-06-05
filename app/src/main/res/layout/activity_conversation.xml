@@ -12,7 +12,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="wesicknessdect.example.org.wescanleaf.activities.ConversationActivity"
+    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ConversationActivity"
     android:orientation="vertical">
 
     <TextView
