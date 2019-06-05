@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
-    tools:context=".activities.login.LoginActivity">
+    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

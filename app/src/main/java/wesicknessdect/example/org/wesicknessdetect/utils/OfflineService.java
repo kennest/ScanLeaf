@@ -15,17 +15,9 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import androidx.annotation.Nullable;
 
-import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
-import wesicknessdect.example.org.wesicknessdetect.models.Location;
-import wesicknessdect.example.org.wesicknessdetect.models.Picture;
-import wesicknessdect.example.org.wesicknessdetect.models.Post;
-import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.tasks.timers.OfflineTimerTask;
 
 public class OfflineService extends Service {

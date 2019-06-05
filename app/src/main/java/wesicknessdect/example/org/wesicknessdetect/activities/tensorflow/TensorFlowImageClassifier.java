@@ -1,6 +1,5 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.tensorflow;
 
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Trace;
 import android.util.Log;

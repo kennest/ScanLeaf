@@ -1,8 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.retrofit;
 
 
-import androidx.room.Update;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -15,18 +13,12 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.QueryMap;
 import retrofit2.http.Url;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
@@ -35,7 +27,6 @@ import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticResponse;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
-import wesicknessdect.example.org.wesicknessdetect.models.Location;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
@@ -107,14 +98,16 @@ public interface APIService {
     Call<StruggleResponse> getStruggles();
 
     @GET("api/diagnostics/")
-    Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token,@Query("lastId") int last_id);
+    Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token, @Query("lastId") int last_id);
 
     @GET("api/pictures/")
-    Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic,@Header("Authorization") String token);
+    Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic, @Header("Authorization") String token);
 
     @PUT("api/user/")
     Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
+    @POST("api/reset_password/")
+    Call<JsonElement> getNewPassword(@Body JsonObject json);
 
     /***RX JAVA**/
 

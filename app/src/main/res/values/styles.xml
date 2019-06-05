@@ -10,6 +10,8 @@
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
         <item name="android:windowContentTransitions">true</item>
 
+        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">

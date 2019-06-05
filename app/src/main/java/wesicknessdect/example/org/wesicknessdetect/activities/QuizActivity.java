@@ -25,12 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import androidx.lifecycle.Observer;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.QuizAdapter;
 import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;

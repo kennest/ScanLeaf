@@ -10,7 +10,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
-import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
+
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.PictureSymptomRects;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;

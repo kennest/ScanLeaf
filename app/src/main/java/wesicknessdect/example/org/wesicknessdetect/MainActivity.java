@@ -1,12 +1,12 @@
 package wesicknessdect.example.org.wesicknessdetect;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import rjsv.floatingmenu.floatingmenubutton.FloatingMenuButton;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.FinalResultActivity;
 import wesicknessdect.example.org.wesicknessdetect.adapters.MyAdapter;
+import wesicknessdect.example.org.wesicknessdetect.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;

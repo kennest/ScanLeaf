@@ -1,6 +1,5 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import wesicknessdect.example.org.wesicknessdetect.R;
 
 import android.os.Bundle;

@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import wesicknessdect.example.org.wesicknessdetect.models.User;
-import wesicknessdect.example.org.wesicknessdetect.mvp.presenters.ILoginPresenter;
 import wesicknessdect.example.org.wesicknessdetect.views.ILoginView;
 
 public class LoginPresenter implements ILoginPresenter {

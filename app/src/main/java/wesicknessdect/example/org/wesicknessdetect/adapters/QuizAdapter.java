@@ -9,13 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import org.greenrobot.eventbus.EventBus;
 import java.util.HashMap;

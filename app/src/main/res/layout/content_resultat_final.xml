@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activities.FinalResultActivity"
+    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.FinalResultActivity"
     tools:showIn="@layout/activity_resultat_final"
     android:background="@color/white">
     <LinearLayout

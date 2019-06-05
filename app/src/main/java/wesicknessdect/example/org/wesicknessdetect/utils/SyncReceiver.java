@@ -17,10 +17,10 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
-import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
 public class SyncReceiver extends BroadcastReceiver {
     List<SymptomRect> symptomRects;

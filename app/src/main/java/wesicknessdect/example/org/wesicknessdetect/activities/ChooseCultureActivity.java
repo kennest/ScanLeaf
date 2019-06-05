@@ -1,14 +1,10 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -22,11 +18,6 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CultureAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
-import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
-import wesicknessdect.example.org.wesicknessdetect.models.Question;
-import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
-
-import static wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity.DB;
 
 public class ChooseCultureActivity extends Fragment {
     @BindView(R.id.culture_lv)

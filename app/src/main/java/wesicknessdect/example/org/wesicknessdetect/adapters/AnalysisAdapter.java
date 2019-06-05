@@ -1,10 +1,12 @@
 package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.icu.util.DateInterval;
 import android.media.Image;
 import android.os.Handler;
@@ -13,42 +15,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.glide.slider.library.Animations.DescriptionAnimation;
-import com.glide.slider.library.SliderLayout;
-import com.glide.slider.library.SliderTypes.TextSliderView;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import javax.microedition.khronos.opengles.GL10;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
-import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
@@ -58,10 +48,10 @@ import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
 public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.StatusHolder> {
 
-    Activity context;
+    Context context;
     List<Diagnostic> diagnostics;
 
-    public AnalysisAdapter(Activity context, List<Diagnostic> diagnostics) {
+    public AnalysisAdapter(Context context, List<Diagnostic> diagnostics) {
         this.context = context;
         this.diagnostics = diagnostics;
     }
@@ -76,9 +66,10 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         return new StatusHolder(view);
     }
 
-    @SuppressLint({"SetTextI18n", "SimpleDateFormat"})
+    @SuppressLint({"SetTextI18n", "SimpleDateFormat", "WrongConstant"})
     @Override
     public void onBindViewHolder(@NonNull StatusHolder holder, int position) {
+
         if (diagnostics.get(position) != null) {
             if (diagnostics.get(position).getPictures() != null) {
                 //Log.e("XXXX 0 " + position, diagnostics.get(position).getPictures().size() + "");
@@ -119,12 +110,13 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                     }
                     handler.post(loadImage);
 
+
                     holder.counter.setText(Integer.toString(diagnostics.get(position).getPictures().size()));
 
                     //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                 }
                 holder.userName.setText(diagnostics.get(position).getDisease());
-
+                holder.userName.setTypeface(Typeface.defaultFromStyle(R.font.roboto_thin));
                 //Calcul du temps passe  entre la creation et la date actuelle
                 Date now = new Date();
                 @SuppressLint("SimpleDateFormat")
@@ -208,8 +200,13 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
     class StatusHolder extends RecyclerView.ViewHolder {
 
+
+
         @BindView(R.id.image)
-        CircularImageView image;
+        ImageView image;
+
+        CardView card;
+
 
         @BindView(R.id.user_name)
         TextView userName;
@@ -226,7 +223,18 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
         public StatusHolder(View itemView) {
             super(itemView);
 
+            card= itemView.findViewById(R.id.card);
             ButterKnife.bind(this, itemView);
+            card.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setTag(itemView.getTag());
+                    Log.e("History item", "CLICKED");
+                    Intent i = new Intent(context, AnalysisDetailsActivity.class);
+                    i.putExtra("uuid", v.getTag().toString());
+                    context.startActivity(i);
+                }
+            });
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

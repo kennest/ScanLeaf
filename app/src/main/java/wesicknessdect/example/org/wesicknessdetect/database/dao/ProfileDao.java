@@ -10,9 +10,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
-import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 @Dao
 public interface ProfileDao {

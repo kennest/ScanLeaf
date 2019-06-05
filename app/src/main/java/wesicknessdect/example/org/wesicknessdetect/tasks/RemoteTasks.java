@@ -2,8 +2,10 @@ package wesicknessdect.example.org.wesicknessdetect.tasks;
 
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -20,7 +22,6 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -54,10 +55,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
-import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
@@ -82,10 +81,12 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
-import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 import wesicknessdect.example.org.wesicknessdetect.utils.DownloadService;
 import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
+import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
+import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
+import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 
 public class RemoteTasks {
 
@@ -630,6 +631,7 @@ public class RemoteTasks {
 
     }
 
+    //Update the user informations
     @SuppressLint("StaticFieldLeak")
     public void SendUpdatedUser(String path, User u, Profile p) throws IOException {
         if (Constants.isOnline(mContext)) {
@@ -691,6 +693,81 @@ public class RemoteTasks {
                     return null;
                 }
             }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+        }
+    }
+
+    //Claim new password from server if forgotten
+    @SuppressLint("StaticFieldLeak")
+    public void ClaimNewPassword(String Email) throws IOException {
+        if (Constants.isOnline(mContext)) {
+            JsonObject json = new JsonObject();
+            APIService service = APIClient.getClient().create(APIService.class);
+            json.addProperty("email", Email);
+
+            Log.e("Update User Json ->", json.toString());
+
+            //String token = FastSave.getInstance().getString("token", null);
+            Call<JsonElement> call = service.getNewPassword(json);
+            Response<JsonElement> response = call.execute();
+            if (response.isSuccessful()) {
+                Log.d("user_password_response:", response.body().toString());
+                if (response.body().getAsJsonObject().has("statut")) {
+                    if (response.body().getAsJsonObject().get("statut").getAsInt() == 1) {
+                        // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+                        builder.setMessage("Votre requête a été prise en compte! \n Veuillez vérifier votre adresse email ("+Email+") pour le nouveau mot de passe généré...")
+                                .setTitle("Nouveau mot de passe")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                });
+
+// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+                }
+            } else {
+                Log.e("Error:", response.errorBody().string());
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+                builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email ("+Email+") n'existe pas dans la base de donnée...")
+                        .setTitle("Erreur!!!")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+
+        } else {
+            // 1. Instantiate an <code><a href="/reference/android/app/AlertDialog.Builder.html">AlertDialog.Builder</a></code> with its constructor
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+
+// 2. Chain together various setter methods to set the dialog characteristics
+            builder.setMessage("Votre requête n'a pas été prise en compte! \n Votre adresse email ("+Email+") n'existe pas dans la base de donnée...")
+                    .setTitle("Erreur!!!")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
+            AlertDialog dialog = builder.create();
+            dialog.show();
             //EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
         }
     }

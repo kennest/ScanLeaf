@@ -6,7 +6,6 @@ import android.util.Patterns;
 import com.google.gson.annotations.SerializedName;
 
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;

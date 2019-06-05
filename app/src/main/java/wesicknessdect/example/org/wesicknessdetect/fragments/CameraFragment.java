@@ -1,6 +1,5 @@
 package wesicknessdect.example.org.wesicknessdetect.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,23 +8,17 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
-import com.fxn.pix.Options;
-import com.fxn.pix.Pix;
-
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import wesicknessdect.example.org.wesicknessdetect.R;
-import wesicknessdect.example.org.wesicknessdetect.activities.ChooseCultureActivity;
-import wesicknessdect.example.org.wesicknessdetect.activities.ChooseCulturePartActivity;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CultureAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;

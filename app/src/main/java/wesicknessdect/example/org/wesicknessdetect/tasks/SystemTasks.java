@@ -9,7 +9,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 
 import com.appizona.yehiahd.fastsave.FastSave;
@@ -25,11 +24,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import io.reactivex.Flowable;
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -47,7 +42,6 @@ import rx.functions.Action1;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier.Recognition;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.ImageClassifier;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowImageClassifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;

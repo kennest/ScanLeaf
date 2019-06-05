@@ -1,15 +1,13 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
-import androidx.room.Room;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.paperdb.Paper;
+import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
-import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 import com.hotmail.or_dvir.easysettings.pojos.BasicSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.CheckBoxSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.EasySettings;
-import com.hotmail.or_dvir.easysettings.pojos.SeekBarSettingsObject;
 import com.hotmail.or_dvir.easysettings.pojos.SettingsObject;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;

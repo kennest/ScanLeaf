@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.login.LoginActivity"
+    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.login.LoginActivity"
     >
 
     <LinearLayout
@@ -90,6 +90,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/gotosign"/>
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@drawable/radius"
+            android:backgroundTint="@color/colorAccent"
+            android:textAllCaps="false"
+            android:text="Mot de passe oublié?"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/newPassword"/>
     </LinearLayout>
 
     <com.mikhaellopez.circularimageview.CircularImageView

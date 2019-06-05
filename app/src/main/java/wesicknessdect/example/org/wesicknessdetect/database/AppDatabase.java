@@ -1,7 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.database;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 import androidx.room.Database;
@@ -17,14 +16,16 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.DiagnosticDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.DiseaseSymptomsDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.ModelDao;
-import wesicknessdect.example.org.wesicknessdetect.database.dao.PictureDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.PostDao;
-import wesicknessdect.example.org.wesicknessdetect.database.dao.ProfileDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.StruggleDao;
-import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomRectDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserChoiceDao;
+import wesicknessdect.example.org.wesicknessdetect.models.Profile;
+import wesicknessdect.example.org.wesicknessdetect.models.User;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.PictureDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.ProfileDao;
+import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserDao;
 import wesicknessdect.example.org.wesicknessdetect.models.Attack;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
@@ -46,11 +47,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.Parcel;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.PictureSymptom;
 import wesicknessdect.example.org.wesicknessdetect.models.PossibleAnswer;
-import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
-import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
 

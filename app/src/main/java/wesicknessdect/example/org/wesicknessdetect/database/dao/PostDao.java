@@ -7,7 +7,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import wesicknessdect.example.org.wesicknessdetect.models.Culture;
+
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
 
 @Dao

@@ -9,7 +9,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
-import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
+
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 @Dao

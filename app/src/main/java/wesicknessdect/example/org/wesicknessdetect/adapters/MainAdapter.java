@@ -15,7 +15,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,7 +32,13 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.listener.EndlessRecyclerViewScrollListener;
-import wesicknessdect.example.org.wesicknessdetect.models.*;
+import wesicknessdect.example.org.wesicknessdetect.models.Culture;
+import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
+import wesicknessdect.example.org.wesicknessdetect.models.Disease;
+import wesicknessdect.example.org.wesicknessdetect.models.Picture;
+import wesicknessdect.example.org.wesicknessdetect.models.Post;
+import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
 import java.io.IOException;
@@ -46,6 +51,7 @@ public class MainAdapter extends PagerAdapter {
     List<Disease> diseases = new ArrayList<>();
     List<Post> posts = new ArrayList<>();
     List<Diagnostic> tmp = new ArrayList<>();
+    Diagnostic firstDiag;
     private static AppDatabase DB;
     private EndlessRecyclerViewScrollListener scrollListener;
     AnalysisAdapter analysisAdapter;
@@ -126,7 +132,21 @@ public class MainAdapter extends PagerAdapter {
 
         View empty = v.findViewById(R.id.empty_data);
         View loading = v.findViewById(R.id.loading_data);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
+        GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
+        linearLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+
+                Log.e("SPAN",position%3+" <=="+position);
+                switch (position) {
+                    case 0:
+                        return 2;
+                    default:
+                        return 1;
+                }
+            }
+        });
+
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 

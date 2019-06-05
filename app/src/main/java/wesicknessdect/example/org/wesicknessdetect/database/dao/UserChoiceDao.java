@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 import java.util.List;
-import wesicknessdect.example.org.wesicknessdetect.models.Struggle;
+
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 
 @Dao

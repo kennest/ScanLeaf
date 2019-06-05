@@ -35,8 +35,6 @@ import androidx.lifecycle.Observer;
 
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
-import com.fxn.utility.ImageQuality;
-import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.io.File;
 import java.io.IOException;

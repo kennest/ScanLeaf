@@ -1,13 +1,9 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import wesicknessdect.example.org.wesicknessdetect.R;
-import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;

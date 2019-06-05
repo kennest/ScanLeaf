@@ -2,7 +2,6 @@ package wesicknessdect.example.org.wesicknessdetect.tasks.timers;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.appizona.yehiahd.fastsave.FastSave;

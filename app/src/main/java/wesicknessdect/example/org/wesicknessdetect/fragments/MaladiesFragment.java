@@ -1,7 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.fragments;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,11 +19,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.adapters.DiseaseAdapter;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
-import wesicknessdect.example.org.wesicknessdetect.ui.SeparatorDecoration;
+import wesicknessdect.example.org.wesicknessdetect.adapters.DiseaseAdapter;
+import wesicknessdect.example.org.wesicknessdetect.R;
 
 /**
  * Created by Jordan Adopo on 10/02/2019.

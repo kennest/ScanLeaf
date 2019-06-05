@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import java.util.TimerTask;
+
 import wesicknessdect.example.org.wesicknessdetect.utils.SyncReceiver;
 
 public class SyncTimerTask extends TimerTask{

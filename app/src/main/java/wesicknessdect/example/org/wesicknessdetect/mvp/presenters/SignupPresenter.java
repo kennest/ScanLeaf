@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.View;
 import java.util.concurrent.ExecutionException;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
+import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.mvp.view.ISignupView;
 
 public class SignupPresenter implements ISignupPresenter {

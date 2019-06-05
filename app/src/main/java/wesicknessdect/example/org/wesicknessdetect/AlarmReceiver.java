@@ -18,6 +18,7 @@ import java.util.List;
 import wesicknessdect.example.org.wesicknessdetect.activities.NotificationActivity;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.models.Post;
+import wesicknessdect.example.org.wesicknessdetect.R;
 
 import static android.app.NotificationManager.IMPORTANCE_DEFAULT;
 

@@ -34,9 +34,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.Question;
@@ -80,7 +80,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            question=AppDatabase.getInstance(context).questionDao().getByPartSync(n.getKey());
+                            question= AppDatabase.getInstance(context).questionDao().getByPartSync(n.getKey());
                             symptomsList = AppDatabase.getInstance(context).symptomDao().getByQuestion(question.getId());
                             return null;
                         }

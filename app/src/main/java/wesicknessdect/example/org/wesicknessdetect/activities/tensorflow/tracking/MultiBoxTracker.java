@@ -32,9 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.ImageUtils;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.BorderedText;
-import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.ImageUtils;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 
 /**

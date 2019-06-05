@@ -24,17 +24,17 @@ import androidx.fragment.app.FragmentActivity;
 import java.io.File;
 import java.util.Timer;
 
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
+import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
+import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPixScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowQuizPageEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
-import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIService;
 import wesicknessdect.example.org.wesicknessdetect.tasks.timers.SyncTimerTask;
 

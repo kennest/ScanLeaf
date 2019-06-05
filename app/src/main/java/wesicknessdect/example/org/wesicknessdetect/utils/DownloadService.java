@@ -1,12 +1,9 @@
 package wesicknessdect.example.org.wesicknessdetect.utils;
 
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Parcelable;
 import android.system.ErrnoException;
 import android.util.Log;
 
@@ -18,17 +15,15 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
-import com.gmail.samehadar.iosdialog.IOSDialog;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 
