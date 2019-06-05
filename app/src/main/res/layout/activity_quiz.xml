@@ -6,7 +6,7 @@
     android:background="@color/colorPrimaryDark"
     android:orientation="vertical"
     android:weightSum="4"
-    tools:context=".activities.QuizActivity">
+    tools:context="wesicknessdect.example.org.wescanleaf.activities.QuizActivity">
 
     <ListView
         android:id="@+id/quiz_lv"

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="45dp">
 
 
@@ -9,27 +10,97 @@
         android:id="@+id/recent_updates"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/white"
         android:paddingBottom="2dp"
         android:paddingEnd="12dp"
         android:paddingStart="12dp"
         android:paddingTop="2dp"
         android:text="Dernières analyses"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"
         android:textStyle="bold" />
 
+    <RelativeLayout
+        android:visibility="gone"
+        android:paddingBottom="1dp"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="5dp"
+        android:layout_height="300dp"
+        android:layout_below="@+id/recent_updates"
+        >
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardCornerRadius="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="10dp">
+            <ImageView
+                android:contentDescription="Image analysée"
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom|center">
+                <TextView
+                    android:id="@+id/user_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:gravity="bottom"
+                    android:text="Simple Title Text "
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/analyse_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/user_name"
+                    android:layout_marginTop="8dp"
+                    android:lineSpacingExtra="8dp"
+                    android:text="Lorem ipsum"
+                    android:textColor="#fafafa" />
+
+            </RelativeLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <TextView
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/counter"
+            android:id="@+id/counter"
+            android:text="10"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:gravity="center_horizontal|center_vertical"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:elevation="30dp"/>
+    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/status_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:visibility="visible"
-        android:layout_below="@id/recent_updates"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_below="@id/container"
         android:background="#fff">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -55,7 +126,9 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
-        android:visibility="gone" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+        android:visibility="gone"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
         android:layout_alignParentTop="true">
 
         <ProgressBar

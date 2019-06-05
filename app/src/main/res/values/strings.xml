@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ScanLeaf</string>
+    <string name="app_name">ScanLeaf_v2</string>
     <string name="title_activity_historique">historique</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

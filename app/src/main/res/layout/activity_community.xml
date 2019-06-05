@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".activities.CommunityActivity"
+    tools:context="wesicknessdect.example.org.wescanleaf.activities.CommunityActivity"
     xmlns:tools="http://schemas.android.com/tools">
 
 <LinearLayout

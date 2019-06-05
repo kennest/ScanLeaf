@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".activities.ProcessActivity">
+    tools:context="wesicknessdect.example.org.wescanleaf.activities.ProcessActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/mainViewPager"
@@ -20,7 +20,7 @@
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark">
+        android:background="@color/white">
 
 
 
@@ -30,32 +30,34 @@
             android:layout_height="70dp"
             android:background="@drawable/foret"
             android:theme="@style/ToolBarStyle"
+            app:titleTextColor="@color/colorPrimaryDark"
             app:layout_scrollFlags="scroll|enterAlways">
 
 
         </androidx.appcompat.widget.Toolbar>
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@drawable/card_bg"
+            android:clipToPadding="false"
+            android:backgroundTint="@color/white"
+            app:tabBackground="@color/white"
+            app:tabIndicatorColor="@color/colorliht"
+            app:tabIndicatorHeight="3dp"
+            app:tabMinWidth="10dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="@color/colorliht"
+            app:tabTextColor="@color/colorPrimaryDark">
+
+        </com.google.android.material.tabs.TabLayout>
 
 
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tab_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/colorPrimaryDark"
-        android:clipToPadding="false"
-        android:backgroundTint="@color/colorPrimaryDark"
-        app:tabBackground="@drawable/radius"
-        app:tabIndicatorColor="#ededed"
-        app:tabIndicatorHeight="3dp"
-        app:tabMinWidth="10dp"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="#ededed"
-        app:tabTextColor="@color/white">
 
-    </com.google.android.material.tabs.TabLayout>
 
 
     <LinearLayout
