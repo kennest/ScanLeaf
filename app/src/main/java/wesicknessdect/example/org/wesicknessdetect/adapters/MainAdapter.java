@@ -243,9 +243,11 @@ public class MainAdapter extends PagerAdapter {
                             }
                             handler.post(loadImage);
 
-
-                            counter.setText("Avec "+Integer.toString(tmp.get(0).getPictures().size())+" parties prises en compte");
-
+                            if (tmp.get(0).getPictures().size() >1) {
+                                counter.setText("Avec " + Integer.toString(tmp.get(0).getPictures().size()) + " parties prises en compte");
+                            }else{
+                                counter.setText("Avec " + Integer.toString(tmp.get(0).getPictures().size()) + " partie prise en compte");
+                            }
                             //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                         }
                         userName.setText(tmp.get(0).getDisease());
@@ -350,7 +352,7 @@ public class MainAdapter extends PagerAdapter {
                             mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    recyclerView.addOnScrollListener(scrollListener);
+                                    //recyclerView.addOnScrollListener(scrollListener);
                                     analysisAdapter = new AnalysisAdapter(mContext, tmp);
                                     recyclerView.setAdapter(analysisAdapter);
                                     analysisAdapter.notifyDataSetChanged();

@@ -3,7 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/card_bg"
+    android:elevation="20dp">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn_save_diagnostic"
@@ -14,6 +19,7 @@
         android:clickable="true"
         android:focusable="true"
         android:backgroundTint="@color/colorPrimaryPix"
+        android:tint="@color/white"
         android:src="@drawable/ic_check_circle_white_48dp"
         app:layout_anchor="@+id/scrollView2"
         android:tooltipText="ou Arrêter l'analyse"/>
@@ -26,7 +32,7 @@
         android:focusable="true"
         android:tint="@color/colorPrimaryPix"
         android:backgroundTint="@color/standard_white"
-        android:src="@drawable/ic_skip_next_black_24dp"
+        android:src="@drawable/ic_navigate_next_black_24dp"
         android:tooltipText="Continuer vers le questionnaire"
         app:layout_anchor="@+id/scrollView2"
         app:layout_anchorGravity="right|bottom" />
@@ -43,7 +49,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="0dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <LinearLayout
@@ -59,13 +65,15 @@
 
                 <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:background="@color/colorPrimaryDark"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
                     android:gravity="center"
                     android:typeface="monospace"
                     android:fontFamily="@font/roboto"
                     android:text="ANALYSE"
-                    android:textColor="#ededed"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textSize="19dp"
                     android:textStyle="bold" />
 
@@ -82,7 +90,7 @@
                     android:layout_height="450dp"
                     android:layout_above="@+id/button_container"
                     android:clipToPadding="false"
-                    android:padding="4dp">
+                    >
 
                 </com.yuyakaido.android.cardstackview.CardStackView>
 
@@ -99,19 +107,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:background="@color/white"
-                    android:orientation="vertical">
+                    android:background="@drawable/arrondi_haut"
+                    android:backgroundTint="@color/white"
+                    android:orientation="vertical"
+                    android:elevation="10dp">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/carrele"
-                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:backgroundTint="@color/white"
+                        android:background="@drawable/radius"
                         android:gravity="center"
                         android:typeface="monospace"
-                        android:fontFamily="@font/roboto"
                         android:text="Résultat global"
-                        android:textColor="@color/white"
+                        android:elevation="20dp"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="19dp" />
 
                     <TextView
@@ -121,7 +131,8 @@
                         android:gravity="center"
                         android:padding="10dp"
                         android:text="RECOGNITION"
-                        android:textColor="@color/colorPrimaryDark"
+                        android:textColor="@color/white"
+                        android:background="@color/colorPrimaryDark"
                         android:textSize="19sp"
                         android:textStyle="bold"
                         android:typeface="monospace" />
