@@ -107,7 +107,7 @@ public class OfflineService extends Service {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(()->{
-                    Log.d("Rx Offline","Succeeded");
+                    Log.d("Rx Offline->","Succeeded");
                 },throwable -> {
                     Log.e("Rx Offline Error->",throwable.getMessage());
                 });
@@ -120,6 +120,7 @@ public class OfflineService extends Service {
         return START_STICKY;
     }
 
+    //Send Offline Data
     private void SendDataOffline() {
         if (diagnostics != null) {
             for (Diagnostic d : diagnostics) {

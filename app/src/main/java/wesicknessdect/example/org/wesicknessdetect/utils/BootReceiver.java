@@ -27,7 +27,7 @@ public class BootReceiver extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         long startTime = System.currentTimeMillis();
-        long intervalTime = 60*1000;
+        long intervalTime = 60*10000;
 
         String message = "Start service use repeat alarm. ";
 
