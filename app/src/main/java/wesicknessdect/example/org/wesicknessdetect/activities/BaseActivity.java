@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
+
+import com.appizona.yehiahd.fastsave.FastSave;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.gmail.samehadar.iosdialog.IOSDialog;
@@ -193,6 +195,7 @@ public class BaseActivity extends AppCompatActivity {
             Log.d("clearing app dir ->",appDir);
             Runtime runtime = Runtime.getRuntime();
             runtime.exec("pm clear "+packageName);
+            FastSave.getInstance().deleteValue("token");
             File dir = new File(appDir);
             FileUtils.deleteDirectory(dir);
         } catch (Exception e) {
@@ -206,6 +209,7 @@ public class BaseActivity extends AppCompatActivity {
         PendingIntent mPendingIntent = PendingIntent.getActivity(getApplicationContext(), mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager mgr = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
         mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        finishAffinity();
         System.exit(0);
     }
 }

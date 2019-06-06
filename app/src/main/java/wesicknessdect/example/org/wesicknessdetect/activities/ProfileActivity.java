@@ -230,7 +230,9 @@ public class ProfileActivity extends BaseActivity {
                     @SuppressLint("CheckResult")
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
-                        Completable.fromAction(ProfileActivity.this::clearAppData)
+                        Completable.fromAction(()->{
+                            clearAppData();
+                        })
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(ProfileActivity.this::restartApp, Throwable::printStackTrace);

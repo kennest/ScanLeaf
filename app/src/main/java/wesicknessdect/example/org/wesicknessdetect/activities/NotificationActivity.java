@@ -11,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
@@ -35,8 +36,6 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
         Gson gson=new Gson();
         post=gson.fromJson(postData,Post.class);
 
-        Log.d("Notification Data ->",postData);
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -48,16 +47,21 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.getUiSettings().isZoomControlsEnabled();
+        mMap.setMaxZoomPreference(20.0f);
 
         // Add a marker in Sydney, Australia, and move the camera.
         String[] me_str= FastSave.getInstance().getString("location","0,0:0,0").split(":");
 
-        LatLng sydney = new LatLng(-34, 151);
+        LatLng post_loc = new LatLng(post.getLatitude(), post.getLongitude());
         LatLng me = new LatLng(Double.parseDouble(me_str[0]), Double.parseDouble(me_str[1]));
 
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.addMarker(new MarkerOptions().position(me).title("Je suis Ici!"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(me));
+        Log.d("Post Data ->",me.toString()+"//"+post_loc.toString());
 
+        mMap.addMarker(new MarkerOptions().position(post_loc).title(post.getDiseaseName()));
+        mMap.addMarker(new MarkerOptions().position(me).title("Je suis Ici!"));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(me));
+        LatLngBounds bounds=new LatLngBounds(me,post_loc);
+        mMap.setLatLngBoundsForCameraTarget(bounds);
     }
 }

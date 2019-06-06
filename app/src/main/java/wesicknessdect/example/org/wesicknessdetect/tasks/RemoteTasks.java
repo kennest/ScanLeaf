@@ -81,6 +81,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 import wesicknessdect.example.org.wesicknessdetect.utils.DownloadService;
 import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
@@ -230,6 +231,10 @@ public class RemoteTasks {
                             new AsyncTask<Void, Void, Void>() {
                                 @Override
                                 protected Void doInBackground(Void... voids) {
+                                    //Try to init Data Again
+                                    AppController.getInstance().InitDBFromServer();
+
+                                    //Do other Stuffs
                                     profiles = DB.profileDao().getAllSync();
                                     if (profiles.size() > 0) {
                                         profile_id = profiles.get(0).getId();
@@ -1135,6 +1140,8 @@ public class RemoteTasks {
                                         String t = dateFormat.format(millis);
                                         p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
                                         p.setDistance(json.getAsJsonObject().get("distance").getAsString());
+                                        p.setLatitude(json.getAsJsonObject().get("latitude").getAsDouble());
+                                        p.setLongitude(json.getAsJsonObject().get("longitude").getAsDouble());
                                         p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                                         p.setTime(t);
                                         DB.postDao().createPost(p);

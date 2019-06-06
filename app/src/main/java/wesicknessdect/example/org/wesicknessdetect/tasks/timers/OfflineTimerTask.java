@@ -85,7 +85,6 @@ public class OfflineTimerTask extends TimerTask {
 
     }
 
-    @SuppressLint("StaticFieldLeak")
     private void SendDataOffline() {
         if (diagnostics != null) {
             for (Diagnostic d : diagnostics) {

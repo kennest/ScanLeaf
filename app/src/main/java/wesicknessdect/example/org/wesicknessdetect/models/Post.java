@@ -20,6 +20,12 @@ public class Post {
     @SerializedName(value = "idServeur")
     private String idServeur;
 
+    @SerializedName(value = "latitude")
+    private Double latitude;
+
+    @SerializedName(value = "longitude")
+    private Double longitude;
+
     @SerializedName(value = "time")
     private String time;
 
@@ -65,5 +71,19 @@ public class Post {
     }
 
 
+    public Double getLatitude() {
+        return latitude;
+    }
 
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }
