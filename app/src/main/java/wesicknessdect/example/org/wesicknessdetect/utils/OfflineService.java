@@ -2,23 +2,12 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.icu.util.Calendar;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
-
 import com.appizona.yehiahd.fastsave.FastSave;
-
-import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-
 import androidx.annotation.Nullable;
-
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -32,7 +21,6 @@ import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
-import wesicknessdect.example.org.wesicknessdetect.tasks.timers.OfflineTimerTask;
 
 public class OfflineService extends Service {
     public static String str_receiver = "scanleaf.offline.service";

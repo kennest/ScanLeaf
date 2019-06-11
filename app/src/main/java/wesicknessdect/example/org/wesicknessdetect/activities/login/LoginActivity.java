@@ -88,6 +88,7 @@ public class LoginActivity extends BaseActivity {
                 Logintask();
             }
         });
+
         passwordNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,6 +103,7 @@ public class LoginActivity extends BaseActivity {
                 startActivity(i2);
             }
         });
+
     }
 
 
