@@ -23,15 +23,11 @@ public class SignupPresenter implements ISignupPresenter {
 
     @Override
     public void doSignup(User u) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
                 try {
                     signupView.onSignupResuslt(RemoteTasks.getInstance(ctx).doSignUp(u).toString());
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-            }
-        }).start();
     }
 }

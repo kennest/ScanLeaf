@@ -52,7 +52,7 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         textView=(TextView) findViewById(R.id.textView);
-        subtitle_header=(TextView) findViewById(R.id.subtitle_header);
+        //subtitle_header=(TextView) findViewById(R.id.subtitle_header);
         smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
         btta = AnimationUtils.loadAnimation(this, R.anim.btta);
         btta2 = AnimationUtils.loadAnimation(this, R.anim.btta2);
@@ -70,7 +70,7 @@ public class LoginActivity extends BaseActivity {
         civ.startAnimation(smalltobig);
 
         textView.startAnimation(btta);
-        subtitle_header.startAnimation(btta);
+        //subtitle_header.startAnimation(btta);
 
         username.startAnimation(btta2);
         password.startAnimation(btta2);
