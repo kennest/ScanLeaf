@@ -10,7 +10,14 @@
     <io.fotoapparat.view.CameraView
         android:id="@+id/camera_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        >
+        <io.fotoapparat.view.FocusView
+            android:id="@+id/focusView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </io.fotoapparat.view.CameraView>
 
     <FrameLayout
         android:id="@+id/mainFrameLayout"
@@ -176,7 +183,6 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginRight="8dp"
                 android:padding="5dp"
-                android:text="0"
                 android:textColor="#fff"
                 android:textSize="11sp" />
         </FrameLayout>
@@ -220,7 +226,7 @@
                 android:layout_marginTop="7dp"
                 android:background="@drawable/circle"
                 android:padding="11dp"
-                android:src="@drawable/ic_photo_devant" />
+                android:src="@drawable/ic_photo_camera" />
 
             <TextView
                 android:layout_width="wrap_content"

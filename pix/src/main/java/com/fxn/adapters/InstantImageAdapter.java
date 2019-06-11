@@ -34,13 +34,12 @@ public class InstantImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private float size;
     private int margin = 2;
     private int padding;
-    private Context ctx;
 
     public InstantImageAdapter(Context context) {
         this.list = new ArrayList<>();
-        this.ctx=context;
         size = Utility.convertDpToPixel(72, context) - 2;
         padding = (int) (size / 3.5);
+        glide = Glide.with(context);
         options = new RequestOptions().override(256).transform(new CenterCrop()).transform(new FitCenter());
     }
 
@@ -62,7 +61,6 @@ public class InstantImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         list.addAll(images);
         notifyDataSetChanged();
     }
-
 
     public void clearList() {
         list.clear();
@@ -103,14 +101,9 @@ public class InstantImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) size, (int) size);
             layoutParams.setMargins(margin, margin, margin, margin);
             imageHolder.itemView.setLayoutParams(layoutParams);
-
             imageHolder.selection.setPadding(padding, padding, padding, padding);
             imageHolder.preview.setLayoutParams(layoutParams);
-
-            Glide.with(ctx)
-                    .load(image.getContentUrl())
-                    .apply(options)
-                    .into(imageHolder.preview);
+            glide.load(image.getContentUrl()).apply(options).into(imageHolder.preview);
 
             imageHolder.selection.setVisibility(image.getSelected() ? View.VISIBLE : View.GONE);
         } else {
