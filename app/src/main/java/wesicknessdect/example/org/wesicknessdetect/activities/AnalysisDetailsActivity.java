@@ -9,8 +9,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import java.io.File;
 import java.text.ParseException;
@@ -62,7 +65,7 @@ public class AnalysisDetailsActivity extends BaseActivity {
     public Toolbar toolbar;
 
     @BindView(R.id.btnStruggle)
-    Button btnStruggle;
+    FloatingActionButton btnStruggle;
 
     @BindView(R.id.time)
     TextView time;
@@ -96,10 +99,15 @@ public class AnalysisDetailsActivity extends BaseActivity {
                 .subscribe(() -> {
                             if (diagnostic.getAdvancedAnalysis() != null) {
                                 if (diagnostic.getAdvancedAnalysis().equals("")) {
+//                                    TextView tx=new TextView(this);
+//                                    tx.setText(diagnostic.getDisease());
+//                                    tx.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
                                     toolbar.setTitle(diagnostic.getDisease());
+                                    toolbar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                 } else {
                                     if (!diagnostic.getAdvancedAnalysis().equals(diagnostic.getDisease())) {
                                         toolbar.setTitle(diagnostic.getDisease() + " et " + diagnostic.getAdvancedAnalysis());
+                                        toolbar.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                                     }
                                 }
                             }else {

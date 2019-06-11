@@ -21,6 +21,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
@@ -35,26 +37,57 @@ public class LoginActivity extends BaseActivity {
 
     EditText emailBox;
 
+    CircularImageView civ;
+    TextView textView, subtitle_header;
     Button passwordNew;
     TextView tv;
+
+    Animation smalltobig, btta, btta2;
     Button loginBtn;
     Button signupPageBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login2);
         ButterKnife.bind(this);
 
+        textView=(TextView) findViewById(R.id.textView);
+        subtitle_header=(TextView) findViewById(R.id.subtitle_header);
+        smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
+        btta = AnimationUtils.loadAnimation(this, R.anim.btta);
+        btta2 = AnimationUtils.loadAnimation(this, R.anim.btta2);
         clignoter= AnimationUtils.loadAnimation(this, R.anim.clignotement);
         slide_up= AnimationUtils.loadAnimation(this, R.anim.item_animation_fall_down);
 
-        getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(slide_up);
+        //getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(slide_up);
 
+        civ=(CircularImageView) findViewById(R.id.imageView);
         signupPageBtn =(Button) findViewById(R.id.gotosign);
         passwordNew =(Button) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
         tv.startAnimation(clignoter);
 
+        civ.startAnimation(smalltobig);
+
+        textView.startAnimation(btta);
+        subtitle_header.startAnimation(btta);
+
+        username.startAnimation(btta2);
+        password.startAnimation(btta2);
+
+        passwordNew.startAnimation(btta2);
+        signupPageBtn.startAnimation(btta2);
+
+        loginBtn=(Button) findViewById(R.id.loginsubmit);
+        loginBtn.startAnimation(btta2);
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btta2.cancel();
+                Logintask();
+            }
+        });
         passwordNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +104,7 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
-    @OnClick(R.id.loginsubmit)
+
     public void Logintask() {
         Credential c = new Credential();
         c.setEmail(username.getText().toString());

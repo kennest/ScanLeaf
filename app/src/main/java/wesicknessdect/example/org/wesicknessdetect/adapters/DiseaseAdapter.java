@@ -60,7 +60,12 @@ public class DiseaseAdapter extends RecyclerView.Adapter<DiseaseAdapter.ChatHold
         //Log.v("DiseaseAdapter ", "onBindViewHolder position "+position);
         final boolean isExpanded = position == mExpandedPosition;
 
-        c.maladieImage.setImageResource(R.drawable.swollen);
+        if (position==0){
+            c.maladieImage.setImageResource(R.drawable.pourriture_cacao);
+        }else{
+            c.maladieImage.setImageResource(R.drawable.swollen_shoot);
+        }
+
         c.maladieName.setText(diseases.get(position).getName());
 //                if(diseases.get(position).getDescription().length()>55) {
 //                    c.maladie_desc.setText(String.format("%s...", diseases.get(position).getDescription().substring(0, 35)));

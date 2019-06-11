@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageButton;
@@ -150,6 +152,12 @@ public class MainAdapter extends PagerAdapter {
         SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
 
         View empty = v.findViewById(R.id.empty_data);
+        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(500); //You can manage the time
+        anim.setStartOffset(20);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(Animation.INFINITE);
+empty.setAnimation(anim);
         View loading = v.findViewById(R.id.loading_data);
         GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
 
@@ -199,9 +207,11 @@ public class MainAdapter extends PagerAdapter {
                     if (header.getPictures() != null) {
 
                         if (header.getPictures().size() > 0) {
-                            container.setVisibility(View.VISIBLE);
+                            anim.cancel();
                             empty.setVisibility(View.GONE);
                             loading.setVisibility(View.GONE);
+                            container.setVisibility(View.VISIBLE);
+
                             Handler handler = new Handler();
 
                             Runnable loadImage = new Runnable() {
@@ -327,6 +337,7 @@ public class MainAdapter extends PagerAdapter {
                         @Override
                         public void onClick(View v) {
                             new BaseActivity().StartSyncingData(mContext, 0);
+                            anim.cancel();
                             empty.setVisibility(View.GONE);
                             loading.setVisibility(View.VISIBLE);
                             mContext.runOnUiThread(new Runnable() {
