@@ -90,7 +90,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
         }
 
         public void bind(final Post post) {
-            userImage.setImageDrawable(itemView.getResources().getDrawable(R.drawable.swollen));
+            if (post.getDiseaseName().charAt(0)=='S'){
+                userImage.setImageDrawable(itemView.getResources().getDrawable(R.drawable.swollen_shoot));
+            }else{
+                userImage.setImageDrawable(itemView.getResources().getDrawable(R.drawable.pourriture_cacao));
+            }
+
             String f = post.getDiseaseName();
             userName.setText(f);
 

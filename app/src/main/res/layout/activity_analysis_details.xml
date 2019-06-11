@@ -17,8 +17,11 @@
             android:layout_height="50dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:background="@color/colorPrimaryDark"
-            app:titleTextColor="@color/white">
+            android:background="@color/white"
+            android:layout_gravity="center"
+            android:foregroundGravity="center"
+            android:textAlignment="center"
+            app:titleTextColor="@color/colorPrimaryDark">
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -31,22 +34,35 @@
         <TextView
             android:id="@+id/time"
             android:padding="10dp"
-            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:drawableLeft="@drawable/ic_access_time_black_24dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="elapsed time" />
 
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnStruggle"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/radius_right"
-            android:backgroundTint="@color/colorPrimary"
-            android:elevation="10dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="15dp"
-            android:gravity="center"
-            android:text="Methode de Lutte"
-            android:textAlignment="center"
-            android:textColor="@color/white" />
+            android:layout_gravity="end"
+            app:backgroundTint="#fafafa"
+            app:fabSize="normal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="5dp"
+        app:tint="#ff0000"
+        app:srcCompat="@drawable/ic_local_hospital_black_24dp"/>
+    <!--<com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--android:id="@+id/btnStruggle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--app:backgroundTint="@color/white"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--android:layout_marginEnd="5dp"-->
+            <!--android:src="@drawable/icon_hospital"-->
+            <!--android:elevation="10dp"-->
+            <!--android:layout_gravity="end" />-->
     </LinearLayout>
 </ScrollView>
