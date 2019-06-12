@@ -1,5 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.login;
 
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,8 +85,10 @@ public class LoginActivity extends BaseActivity {
         password.startAnimation(btta2);
 
         passwordNew.startAnimation(btta2);
+        SpannableString text = new SpannableString("Vous n'avez pas de compte? Inscrivez-vous.");
+        text.setSpan(new UnderlineSpan(), 27, 41, 0);
         passwordNew.setPaintFlags(passwordNew.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        signupPageBtn.setPaintFlags(signupPageBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        signupPageBtn.setText(text);
         signupPageBtn.startAnimation(btta2);
 
         loginBtn=(Button) findViewById(R.id.loginsubmit);
