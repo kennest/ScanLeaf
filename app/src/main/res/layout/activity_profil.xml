@@ -174,9 +174,9 @@
                         android:weightSum="2">
 
                         <Button
-                            android:layout_width="125dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="20dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
+                            android:layout_margin="8dp"
                             android:layout_gravity="center"
                             android:layout_weight="1"
                             android:id="@+id/voirAnalyses"
@@ -188,10 +188,11 @@
                             tools:ignore="ButtonStyle" />
 
                         <Button
-                            android:layout_width="125dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="70dp"
                             android:layout_weight="1"
+                            android:layout_margin="8dp"
+                            android:layout_gravity="center"
                             android:id="@+id/modifyProfil"
                             android:backgroundTint="@color/colorAccent"
                             android:drawableEnd="@drawable/ic_edit_black_24dp"

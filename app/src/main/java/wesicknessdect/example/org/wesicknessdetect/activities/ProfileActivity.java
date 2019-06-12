@@ -61,7 +61,7 @@ public class ProfileActivity extends BaseActivity {
     private int RequestCode = 100;
     String path;
     ImageView imageBox;
-    EditText nameBox,passBox;
+    EditText nameBox, passBox;
     EditText surnameBox;
     EditText pseudoBox;
     EditText emailBox;
@@ -94,7 +94,7 @@ public class ProfileActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), ProcessActivity.class);
-                intent.putExtra("page",1);
+                intent.putExtra("page", 1);
                 startActivity(intent);
             }
         });
@@ -138,7 +138,7 @@ public class ProfileActivity extends BaseActivity {
                             public void onClick(View v) {
 
                                 //Building dialog
-                                builder = new AlertDialog.Builder(new ContextThemeWrapper(ProfileActivity.this,  R.style.DialogTheme));
+                                builder = new AlertDialog.Builder(new ContextThemeWrapper(ProfileActivity.this, R.style.DialogTheme));
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View layout = inflater.inflate(R.layout.ediit_profil, null, true);
                                 //layout_root should be the name of the "top-level" layout node in the dialog_layout.xml file.
@@ -148,7 +148,7 @@ public class ProfileActivity extends BaseActivity {
                                 pseudoBox = layout.findViewById(R.id.userNewPseudo);
                                 emailBox = layout.findViewById(R.id.userNewEmail);
                                 imageBox = layout.findViewById(R.id.userNewImage);
-                                passBox=layout.findViewById(R.id.userPass);
+                                passBox = layout.findViewById(R.id.userPass);
                                 builder.setView(layout);
 
                                 nameBox.setText(user.get(0).getNom());
@@ -188,8 +188,9 @@ public class ProfileActivity extends BaseActivity {
                                             }
                                             profil.get(0).setCountry_id(c.getId());
                                             user.get(0).setProfile(profil.get(0));
-                                                RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user.get(0), profil.get(0));
-
+                                            DB.userDao().update(user.get(0));
+                                            DB.profileDao().update(profil.get(0));
+                                            RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user.get(0), profil.get(0));
                                         })
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
@@ -207,10 +208,6 @@ public class ProfileActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface d, int which) {
                                         d.dismiss();
-                                        Intent current = getIntent();
-                                        finish();
-                                        current.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(current);
                                     }
                                 });
                                 dialog = builder.create();
@@ -235,7 +232,7 @@ public class ProfileActivity extends BaseActivity {
                     @SuppressLint("CheckResult")
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK button
-                        Completable.fromAction(()->{
+                        Completable.fromAction(() -> {
                             clearAppData();
                         })
                                 .subscribeOn(Schedulers.io())
@@ -304,6 +301,5 @@ public class ProfileActivity extends BaseActivity {
             }
         });
     }
-
 
 }

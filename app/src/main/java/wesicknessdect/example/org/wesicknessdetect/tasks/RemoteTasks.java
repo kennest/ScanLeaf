@@ -654,7 +654,11 @@ public class RemoteTasks {
                 }
             }
 
-            json.addProperty("password", u.getPassword());
+            if(u.getPassword()!=null) {
+                json.addProperty("password", u.getPassword());
+            }else{
+                json.addProperty("password", "");
+            }
             json.addProperty("first_name", u.getNom());
             json.addProperty("last_name", u.getPrenom());
             profile.addProperty("country", p.getCountry_id());

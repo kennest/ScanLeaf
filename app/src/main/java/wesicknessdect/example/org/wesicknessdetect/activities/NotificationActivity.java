@@ -48,20 +48,23 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.getUiSettings().isZoomControlsEnabled();
-        mMap.setMaxZoomPreference(20.0f);
+        mMap.setMaxZoomPreference(10.0f);
+        //mMap.setMinZoomPreference(10.0f);
 
-        // Add a marker in Sydney, Australia, and move the camera.
+        // Get my current location from prefs
         String[] me_str= FastSave.getInstance().getString("location","0,0:0,0").split(":");
 
         LatLng post_loc = new LatLng(post.getLatitude(), post.getLongitude());
         LatLng me = new LatLng(Double.parseDouble(me_str[0]), Double.parseDouble(me_str[1]));
+        LatLng SYDNEY = new LatLng(-33.88,151.21);
 
         Log.d("Post Data ->",me.toString()+"//"+post_loc.toString());
 
         mMap.addMarker(new MarkerOptions().position(post_loc).title(post.getDiseaseName()));
         mMap.addMarker(new MarkerOptions().position(me).title("Je suis Ici!"));
+        mMap.addMarker(new MarkerOptions().position(SYDNEY).title("SYDNEY"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(me));
-        LatLngBounds bounds=new LatLngBounds(me,post_loc);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,18));
+        LatLngBounds bounds=new LatLngBounds(SYDNEY,post_loc);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(),1));
     }
 }
