@@ -1,10 +1,16 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.login;
 
+import android.util.Log;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
+import wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.register.SignupActivity;
+import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.R;
@@ -107,6 +113,7 @@ public class LoginActivity extends BaseActivity {
     }
 
 
+    //To start login task
     public void Logintask() {
         Credential c = new Credential();
         c.setEmail(username.getText().toString());
@@ -118,6 +125,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    //To get a new Password
     public void NewPassword(){
         AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
 
@@ -150,5 +158,13 @@ public class LoginActivity extends BaseActivity {
 // 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    //To Do if User is authenticated
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void UserAuthenticated(UserAuthenticatedEvent event) {
+        Log.e("User authenticated", event.token);
+        finish();
     }
 }
