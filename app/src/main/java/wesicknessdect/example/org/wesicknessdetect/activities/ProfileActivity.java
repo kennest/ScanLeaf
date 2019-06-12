@@ -1,6 +1,10 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.graphics.Point;
+import android.os.Build;
+import android.view.ContextThemeWrapper;
+import android.view.WindowManager;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -55,7 +59,6 @@ public class ProfileActivity extends BaseActivity {
     Spinner countri;
     private int RequestCode = 100;
     String path;
-
     ImageView imageBox;
     EditText nameBox,passBox;
     EditText surnameBox;
@@ -134,7 +137,7 @@ public class ProfileActivity extends BaseActivity {
                             public void onClick(View v) {
 
                                 //Building dialog
-                                builder = new AlertDialog.Builder(ProfileActivity.this);
+                                builder = new AlertDialog.Builder(new ContextThemeWrapper(ProfileActivity.this,  R.style.DialogTheme));
                                 LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
                                 View layout = inflater.inflate(R.layout.ediit_profil, null, true);
                                 //layout_root should be the name of the "top-level" layout node in the dialog_layout.xml file.
@@ -153,6 +156,7 @@ public class ProfileActivity extends BaseActivity {
                                 id = user.get(0).getId();
                                 emailBox.setText(userEmail);
                                 passBox.setText(user.get(0).getPassword());
+                                imageBox.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
 
                                 imageBox.setOnClickListener(new View.OnClickListener() {
                                     @Override

@@ -62,6 +62,6 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
         mMap.addMarker(new MarkerOptions().position(me).title("Je suis Ici!"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(me));
         LatLngBounds bounds=new LatLngBounds(me,post_loc);
-        mMap.setLatLngBoundsForCameraTarget(bounds);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds,18));
     }
 }
