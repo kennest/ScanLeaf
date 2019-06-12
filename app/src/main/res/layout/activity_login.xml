@@ -99,7 +99,7 @@
             android:layout_marginTop="10dp"
             android:textColor="@color/colorPrimaryDark"
             android:background="@drawable/radius"
-            android:backgroundTint="@color/colorAccent"
+            android:backgroundTint="#00000005"
             android:textAllCaps="false"
             android:text="Mot de passe oublié?"
             android:layout_width="match_parent"
