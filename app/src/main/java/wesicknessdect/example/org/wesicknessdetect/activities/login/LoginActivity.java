@@ -12,6 +12,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,12 +40,12 @@ public class LoginActivity extends BaseActivity {
 
     CircularImageView civ;
     TextView textView, subtitle_header;
-    Button passwordNew;
+    TextView passwordNew;
     TextView tv;
 
     Animation smalltobig, btta, btta2;
     Button loginBtn;
-    Button signupPageBtn;
+    TextView signupPageBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +63,8 @@ public class LoginActivity extends BaseActivity {
         //getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(slide_up);
 
         civ=(CircularImageView) findViewById(R.id.imageView);
-        signupPageBtn =(Button) findViewById(R.id.gotosign);
-        passwordNew =(Button) findViewById(R.id.newPassword);
+        signupPageBtn =(TextView) findViewById(R.id.gotosign);
+        passwordNew =(TextView) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
         tv.startAnimation(clignoter);
 
@@ -76,6 +77,8 @@ public class LoginActivity extends BaseActivity {
         password.startAnimation(btta2);
 
         passwordNew.startAnimation(btta2);
+        passwordNew.setPaintFlags(passwordNew.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        signupPageBtn.setPaintFlags(signupPageBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         signupPageBtn.startAnimation(btta2);
 
         loginBtn=(Button) findViewById(R.id.loginsubmit);

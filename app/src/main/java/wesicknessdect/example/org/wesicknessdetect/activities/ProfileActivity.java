@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
@@ -251,6 +252,11 @@ public class ProfileActivity extends BaseActivity {
 
                 // Create the AlertDialog
                 AlertDialog dialog = builder.create();
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE);
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(getResources().getColor(R.color.gray));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.WHITE);
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
                 dialog.show();
 
             }

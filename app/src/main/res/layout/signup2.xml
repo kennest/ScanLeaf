@@ -44,9 +44,9 @@
         app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/tex1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
         android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
         android:layout_marginTop="20dp"
         android:text="Inscription"
         android:textColor="#FFFF"
@@ -134,18 +134,17 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/countrySpin" />
-    <Button
+    <TextView
         android:id="@+id/gotolog"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="45dp"
+        android:gravity="center"
         android:layout_marginStart="36dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="36dp"
-        android:background="@drawable/bg_input"
-        android:backgroundTint="@color/white"
-        android:text="Déjà inscrit?"
+        android:text="Êtes-vous déjà inscrit? Connectez vous."
         android:textAllCaps="false"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/white"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
