@@ -153,11 +153,11 @@ public class MainAdapter extends PagerAdapter {
 
         View empty = v.findViewById(R.id.empty_data);
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
-        anim.setDuration(500); //You can manage the time
+        anim.setDuration(1000); //You can manage the time
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
-empty.setAnimation(anim);
+        empty.setAnimation(anim);
         View loading = v.findViewById(R.id.loading_data);
         GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
 
