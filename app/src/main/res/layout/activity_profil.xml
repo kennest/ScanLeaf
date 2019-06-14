@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="wesicknessdect.example.org.wesicknessdetect.activities.ProfileActivity">
+            android:layout_height="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:context="wesicknessdect.example.org.wesicknessdetect.activities.ProfileActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <View
-            android:layout_width="match_parent"
-            android:layout_height="230dp"
-            android:background="@drawable/bg_header_2" />
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:background="@drawable/bg_header_2"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:orientation="vertical">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
             <TextView
                     android:layout_width="wrap_content"
@@ -28,29 +28,29 @@
                     android:layout_gravity="center_horizontal"
                     android:textColor="@color/white"
                     android:textSize="25sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
             <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp">
-
-                <com.mikhaellopez.circularimageview.CircularImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_centerHorizontal="true"
-                    android:elevation="0.5dp"
-                    android:id="@+id/userImage"
-                    android:src="@drawable/ic_add_a_photo_black_24dp" />
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="140dp"
-                    android:layout_marginBottom="30dp"
-                    android:orientation="vertical">
+                    android:layout_marginTop="10dp">
 
-                        <LinearLayout
+                <com.mikhaellopez.circularimageview.CircularImageView
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:layout_centerHorizontal="true"
+                        android:elevation="0.5dp"
+                        android:id="@+id/userImage"
+                        android:src="@drawable/ic_add_a_photo_black_24dp"/>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="140dp"
+                        android:layout_marginBottom="30dp"
+                        android:orientation="vertical">
+
+                    <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
@@ -58,7 +58,7 @@
                             android:padding="15dp">
 
 
-                            <TextView
+                        <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
@@ -73,7 +73,7 @@
                                 android:textStyle="bold"/>
 
 
-                            <TextView
+                        <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
@@ -87,7 +87,7 @@
                                 android:textSize="18sp"
                                 android:textStyle="bold"/>
 
-                            <TextView
+                        <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
@@ -100,125 +100,125 @@
                                 android:text="@string/pays"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="18sp"
-                                android:textStyle="bold" />
+                                android:textStyle="bold"/>
 
-                        </LinearLayout>
+                    </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:id="@+id/nbAnalyses"
-                                android:text="25"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="analyses efectuées"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:id="@+id/nbAnalyses"
+                                    android:text="25"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"/>
 
-                                android:textColor="@color/black"
-                                android:textSize="18sp" />
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="analyses efectuées"
+
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp"/>
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:text="16"
-                                android:id="@+id/nbDetect"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
+                                android:layout_weight="1"
+                                android:orientation="vertical">
 
                             <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:text="maladies détectées"
-                                android:textColor="@color/black"
-                                android:textSize="18sp" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="16"
+                                    android:id="@+id/nbDetect"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold"/>
+
+                            <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="maladies détectées"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp"/>
                         </LinearLayout>
 
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="30dp"
-                        android:orientation="horizontal"
-                        android:weightSum="2">
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30dp"
+                            android:orientation="horizontal"
+                            android:weightSum="2">
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="70dp"
-                            android:layout_margin="8dp"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:id="@+id/voirAnalyses"
-                            android:backgroundTint="@color/colorPrimary"
-                            android:drawableEnd="@drawable/ic_visibility_black_24dp"
-                            android:drawableTint="@color/white"
-                            android:text="Mes analyses"
-                            android:textColor="@color/white"
-                            tools:ignore="ButtonStyle" />
+                                android:layout_width="match_parent"
+                                android:layout_height="70dp"
+                                android:layout_margin="8dp"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:id="@+id/voirAnalyses"
+                                android:backgroundTint="@color/colorPrimary"
+                                android:drawableEnd="@drawable/ic_visibility_black_24dp"
+                                android:drawableTint="@color/white"
+                                android:text="Mes analyses"
+                                android:textColor="@color/white"
+                                tools:ignore="ButtonStyle"/>
 
                         <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="70dp"
-                            android:layout_weight="1"
-                            android:layout_margin="8dp"
-                            android:layout_gravity="center"
-                            android:id="@+id/modifyProfil"
-                            android:backgroundTint="@color/colorAccent"
-                            android:drawableEnd="@drawable/ic_edit_black_24dp"
-                            android:drawableTint="@color/white"
-                            android:text="Modifier"
-                            android:textColor="@color/colorPrimaryDark"
-                            tools:ignore="ButtonStyle" />
+                                android:layout_width="match_parent"
+                                android:layout_height="70dp"
+                                android:layout_weight="1"
+                                android:layout_margin="8dp"
+                                android:layout_gravity="center"
+                                android:id="@+id/modifyProfil"
+                                android:backgroundTint="@color/colorAccent"
+                                android:drawableEnd="@drawable/ic_edit_black_24dp"
+                                android:drawableTint="@color/white"
+                                android:text="Modifier"
+                                android:textColor="@color/colorPrimaryDark"
+                                tools:ignore="ButtonStyle"/>
 
 
                     </LinearLayout>
 
                     <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_weight="1"
-                        android:layout_marginTop="20dp"
-                        android:id="@+id/logout"
-                        android:backgroundTint="#B71C1C"
-                        android:drawableEnd="@drawable/ic_edit_black_24dp"
-                        android:drawableTint="@color/white"
-                        android:text="Déconnecter"
-                        android:textStyle="bold"
-                        android:layout_gravity="center"
-                        android:textColor="@color/white"
-                        tools:ignore="ButtonStyle" />
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_weight="1"
+                            android:layout_marginTop="20dp"
+                            android:id="@+id/logout"
+                            android:backgroundTint="#B71C1C"
+                            android:drawableEnd="@drawable/ic_edit_black_24dp"
+                            android:drawableTint="@color/white"
+                            android:text="Déconnecter"
+                            android:textStyle="bold"
+                            android:layout_gravity="center"
+                            android:textColor="@color/white"
+                            tools:ignore="ButtonStyle"/>
 
                 </LinearLayout>
 

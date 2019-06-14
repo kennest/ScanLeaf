@@ -64,7 +64,6 @@ public class ProfileActivity extends BaseActivity {
     EditText surnameBox;
     EditText pseudoBox;
     EditText emailBox;
-    String password;
     int id;
     File avatar_file = null;
     Country c = new Country();
@@ -72,6 +71,7 @@ public class ProfileActivity extends BaseActivity {
     AlertDialog dialog = null;
     AlertDialog.Builder builder = null;
 
+    @SuppressLint("CheckResult")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,136 +89,121 @@ public class ProfileActivity extends BaseActivity {
         logout = findViewById(R.id.logout);
 
 
-        analyseView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), ProcessActivity.class);
-                intent.putExtra("page", 1);
-                startActivity(intent);
-            }
-        });
-
-        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                nbAna = DB.diagnosticDao().getAllSync().size() + "";
-                nbDete = DB.postDao().getAllPost().size() + "";
-                profil = DB.profileDao().getProfil();
-                user = DB.userDao().getAll();
-                country = DB.countryDao().getById(profil.get(0).getCountry_id());
-                username = user.get(0).getPrenom() + " " + user.get(0).getNom();
-                pseudo = user.get(0).getUsername();
-                userEmail = user.get(0).getEmail();
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        nom.setText(username);
-                        pseudon.setText(pseudo);
-                        email.setText(userEmail);
-                        pays.setText(country.getName());
-                        if (profil.get(0).getAvatar() != null) {
-                            avatar_file = new File(profil.get(0).getAvatar());
-                            if (avatar_file != null) {
-                                if (!avatar_file.exists()) {
-                                    Log.e("Avatar Path ->", profil.get(0).getAvatar());
-                                    pI.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add));
-                                } else {
-                                    Log.e("Avatar Path ->", profil.get(0).getAvatar());
-                                    pI.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
-                                }
-                            }
-                        }
-
-                        nbAnalyses.setText(nbAna);
-                        nbDetect.setText(nbDete);
-                        modifyProf.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                //Building dialog
-                                builder = new AlertDialog.Builder(new ContextThemeWrapper(ProfileActivity.this, R.style.DialogTheme));
-                                LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-                                View layout = inflater.inflate(R.layout.ediit_profil, null, true);
-                                //layout_root should be the name of the "top-level" layout node in the dialog_layout.xml file.
-                                nameBox = layout.findViewById(R.id.userNewNom);
-                                countri = layout.findViewById(R.id.userNewPays);
-                                surnameBox = layout.findViewById(R.id.userNewPrenoms);
-                                pseudoBox = layout.findViewById(R.id.userNewPseudo);
-                                emailBox = layout.findViewById(R.id.userNewEmail);
-                                imageBox = layout.findViewById(R.id.userNewImage);
-                                passBox = layout.findViewById(R.id.userPass);
-                                builder.setView(layout);
-
-                                nameBox.setText(user.get(0).getNom());
-                                surnameBox.setText(user.get(0).getPrenom());
-                                pseudoBox.setText(pseudo);
-                                id = user.get(0).getId();
-                                emailBox.setText(userEmail);
-                                passBox.setText(user.get(0).getPassword());
-                                imageBox.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
-
-                                imageBox.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        Pix.start(ProfileActivity.this, Options.init()
-                                                .setRequestCode(RequestCode)                                                 //Request code for activity results
-                                                .setCount(1));
-                                    }
-                                });
-
-                                getCountryFromDBandFillSpinner();
-
-                                builder.setPositiveButton("Confirmer", new DialogInterface.OnClickListener() {
-                                    @SuppressLint("CheckResult")
-                                    @Override
-                                    public void onClick(DialogInterface d, int which) {
-                                        Completable.fromAction(() -> {
-                                            user.get(0).setNom(nameBox.getText().toString());
-                                            user.get(0).setPrenom(surnameBox.getText().toString());
-                                            user.get(0).setEmail(email.getText().toString());
-                                            user.get(0).setPassword(passBox.getText().toString());
-                                            user.get(0).setUsername(pseudoBox.getText().toString());
-                                            if (path != null) {
-                                                if (path.equals("")) {
-                                                    path = "rien";
-                                                }
-                                                profil.get(0).setAvatar(path);
-                                            }
-                                            profil.get(0).setCountry_id(c.getId());
-                                            user.get(0).setProfile(profil.get(0));
-                                            DB.userDao().update(user.get(0));
-                                            DB.profileDao().update(profil.get(0));
-                                            RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user.get(0), profil.get(0));
-                                        })
-                                                .subscribeOn(Schedulers.io())
-                                                .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe(() -> {
-                                                            Log.d("Rx Send Update->", "Finished");
-                                                        },
-                                                        throwable -> {
-                                                            throwable.printStackTrace();
-                                                        });
-
-                                    }
-                                });
-
-                                builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface d, int which) {
-                                        d.dismiss();
-                                    }
-                                });
-                                dialog = builder.create();
-                                dialog.show();
-                            }
-                        });
+        Completable.fromAction(() -> {
+            nbAna = DB.diagnosticDao().getAllSync().size() + "";
+            nbDete = DB.postDao().getAllPost().size() + "";
+            profil = DB.profileDao().getProfil();
+            user = DB.userDao().getAll();
+            country = DB.countryDao().getById(profil.get(0).getCountry_id());
+            username = user.get(0).getPrenom() + " " + user.get(0).getNom();
+            pseudo = user.get(0).getUsername();
+            userEmail = user.get(0).getEmail();
+            nom.setText(username);
+            pseudon.setText(pseudo);
+            email.setText(userEmail);
+            pays.setText(country.getName());
+            if (profil.get(0).getAvatar() != null) {
+                avatar_file = new File(profil.get(0).getAvatar());
+                if (avatar_file != null) {
+                    if (!avatar_file.exists()) {
+                        Log.e("Avatar Path ->", profil.get(0).getAvatar());
+                        pI.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add));
+                    } else {
+                        Log.e("Avatar Path ->", profil.get(0).getAvatar());
+                        pI.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
                     }
-                });
-
+                }
             }
-        });
+            nbAnalyses.setText(nbAna);
+            nbDetect.setText(nbDete);
+            modifyProf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                    //Building dialog
+                    builder = new AlertDialog.Builder(new ContextThemeWrapper(ProfileActivity.this, R.style.DialogTheme));
+                    LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+                    View layout = inflater.inflate(R.layout.ediit_profil, null, true);
+                    //layout_root should be the name of the "top-level" layout node in the dialog_layout.xml file.
+                    nameBox = layout.findViewById(R.id.userNewNom);
+                    countri = layout.findViewById(R.id.userNewPays);
+                    surnameBox = layout.findViewById(R.id.userNewPrenoms);
+                    pseudoBox = layout.findViewById(R.id.userNewPseudo);
+                    emailBox = layout.findViewById(R.id.userNewEmail);
+                    imageBox = layout.findViewById(R.id.userNewImage);
+                    passBox = layout.findViewById(R.id.userPass);
+                    builder.setView(layout);
+
+                    nameBox.setText(user.get(0).getNom());
+                    surnameBox.setText(user.get(0).getPrenom());
+                    pseudoBox.setText(pseudo);
+                    id = user.get(0).getId();
+                    emailBox.setText(userEmail);
+                    passBox.setText(user.get(0).getPassword());
+                    imageBox.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
+
+                    imageBox.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Pix.start(ProfileActivity.this, Options.init()
+                                    .setRequestCode(RequestCode)                                                 //Request code for activity results
+                                    .setCount(1));
+                        }
+                    });
+
+                    getCountryFromDBandFillSpinner();
+
+                    builder.setPositiveButton("Confirmer", new DialogInterface.OnClickListener() {
+                        @SuppressLint("CheckResult")
+                        @Override
+                        public void onClick(DialogInterface d, int which) {
+                            Completable.fromAction(() -> {
+                                user.get(0).setNom(nameBox.getText().toString());
+                                user.get(0).setPrenom(surnameBox.getText().toString());
+                                user.get(0).setEmail(email.getText().toString());
+                                user.get(0).setPassword(passBox.getText().toString());
+                                user.get(0).setUsername(pseudoBox.getText().toString());
+                                if (path != null) {
+                                    if (path.equals("")) {
+                                        path = "rien";
+                                    }
+                                    profil.get(0).setAvatar(path);
+                                }
+                                profil.get(0).setCountry_id(c.getId());
+                                user.get(0).setProfile(profil.get(0));
+                                DB.userDao().update(user.get(0));
+                                DB.profileDao().update(profil.get(0));
+                                RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user.get(0), profil.get(0));
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(() -> {
+                                                Log.d("Rx Send Update->", "Finished");
+                                            },
+                                            throwable -> {
+                                                throwable.printStackTrace();
+                                            });
+
+                        }
+                    });
+
+                    builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface d, int which) {
+                            d.dismiss();
+                        }
+                    });
+                    dialog = builder.create();
+                    dialog.show();
+                }
+            });
+        })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(() -> {
+
+                }, throwable -> {
+                });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -252,7 +237,14 @@ public class ProfileActivity extends BaseActivity {
 
             }
         });
-
+        analyseView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), ProcessActivity.class);
+                intent.putExtra("page", 1);
+                startActivity(intent);
+            }
+        });
 
     }
 
