@@ -47,18 +47,20 @@
                 android:gravity="center"
                 android:layout_gravity="center"
                 >
+
                 <TextView
                     android:id="@+id/part_name"
-                    android:padding="5dp"
-                    android:typeface="monospace"
-                    android:textSize="15sp"
-                    android:gravity="center"
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textStyle="bold"
                     android:layout_height="wrap_content"
-                    android:text="PART_NAME" />
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/neo_latina"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="PART_NAME"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:typeface="monospace" />
             </LinearLayout>
         </ScrollView>
 

@@ -33,15 +33,16 @@
 
         <TextView
             android:id="@+id/time"
-            android:padding="10dp"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="@color/colorPrimaryDark"
-            android:drawableLeft="@drawable/ic_access_time_black_24dp"
-            android:drawableTint="@color/colorPrimaryDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="elapsed time" />
+            android:layout_gravity="center"
+            android:drawableLeft="@drawable/ic_access_time_black_24dp"
+            android:drawableTint="@color/colorPrimaryDark"
+            android:fontFamily="@font/changa"
+            android:gravity="center"
+            android:hint="elapsed time"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimaryDark" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btnStruggle"

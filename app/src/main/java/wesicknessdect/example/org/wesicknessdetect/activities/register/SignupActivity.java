@@ -2,8 +2,11 @@ package wesicknessdect.example.org.wesicknessdetect.activities.register;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -60,7 +63,7 @@ public class SignupActivity extends BaseActivity implements ISignupView {
     @BindView(R.id.signinsubmit)
     Button signupBtn;
     @BindView(R.id.gotolog)
-    Button loginBtn;
+    TextView loginBtn;
 
     Button signinBtn;
 
@@ -76,7 +79,7 @@ public class SignupActivity extends BaseActivity implements ISignupView {
     APIService service;
     SignupPresenter signupPresenter;
 
-    Button gotolog;
+    TextView gotolog;
     TextView textView;
 
     @Override
@@ -106,7 +109,11 @@ public class SignupActivity extends BaseActivity implements ISignupView {
         getCountryFromDBandFillSpinner();
         titre = AnimationUtils.loadAnimation(this, R.anim.clignotement);
         t.startAnimation(titre);
+        SpannableString text = new SpannableString("Êtes-vous déjà inscrit? Connectez-vous.");
+        text.setSpan(new UnderlineSpan(), 24, 38, 0);
+        loginBtn.setText(text);
 
+        //loginBtn.setPaintFlags(loginBtn.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
         civ.startAnimation(smalltobig);
         textView=(TextView) findViewById(R.id.textView);
         textView.startAnimation(btta);
@@ -123,7 +130,7 @@ public class SignupActivity extends BaseActivity implements ISignupView {
                 SignupTask();
             }
         });
-        gotolog=(Button) findViewById(R.id.gotolog);
+        gotolog=(TextView) findViewById(R.id.gotolog);
         gotolog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

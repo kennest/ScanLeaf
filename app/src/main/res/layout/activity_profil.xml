@@ -3,7 +3,7 @@
             android:layout_height="match_parent"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            tools:context="wesicknessdect.example.org.wesicknessdetect.activities.ProfileActivity">
+            tools:context=".activities.ProfileActivity">
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -21,208 +21,208 @@
                 android:orientation="vertical">
 
             <TextView
+                    android:id="@+id/userNom"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/nom"
-                    android:id="@+id/userNom"
                     android:layout_gravity="center_horizontal"
+                    android:fontFamily="@font/changa"
+                    android:text="@string/nom"
                     android:textColor="@color/white"
                     android:textSize="25sp"
                     android:textStyle="bold"/>
 
-            <RelativeLayout
+            <com.mikhaellopez.circularimageview.CircularImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_gravity="center"
+                    android:elevation="0.5dp"
+                    android:id="@+id/userImage"
+                    android:src="@drawable/ic_add_a_photo_black_24dp"/>
+
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
-
-                <com.mikhaellopez.circularimageview.CircularImageView
-                        android:layout_width="150dp"
-                        android:layout_height="150dp"
-                        android:layout_centerHorizontal="true"
-                        android:elevation="0.5dp"
-                        android:id="@+id/userImage"
-                        android:src="@drawable/ic_add_a_photo_black_24dp"/>
+                    android:layout_marginBottom="30dp"
+                    android:orientation="vertical">
 
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="140dp"
-                        android:layout_marginBottom="30dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:elevation="5dp"
+                        android:padding="15dp">
 
+
+                    <TextView
+                            android:id="@+id/userFonction"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="15dp"
+                            android:drawableLeft="@drawable/ic_person"
+                            android:drawableTint="@color/colorPrimary"
+                            android:fontFamily="@font/changa"
+                            android:text="@string/pseudo"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+
+                    <TextView
+                            android:id="@+id/userEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="15dp"
+                            android:drawableLeft="@drawable/ic_mail"
+                            android:drawableTint="@color/colorPrimary"
+                            android:fontFamily="@font/changa"
+                            android:text="@string/email"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                    <TextView
+                            android:id="@+id/userPays"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="15dp"
+                            android:layout_marginBottom="20dp"
+                            android:drawableLeft="@drawable/ic_maps"
+                            android:drawableTint="@color/colorPrimary"
+                            android:fontFamily="@font/changa"
+                            android:text="@string/pays"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:weightSum="2"
+                        android:orientation="horizontal">
                     <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:elevation="5dp"
-                            android:padding="15dp">
-
+                            android:layout_weight="1">
 
                         <TextView
-                                android:layout_width="match_parent"
+                                android:id="@+id/nbAnalyses"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="15dp"
-                                android:id="@+id/userFonction"
-                                android:drawableLeft="@drawable/ic_person"
-                                android:drawableTint="@color/colorPrimary"
-                                android:text="@string/pseudo"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
-                                android:textStyle="bold"/>
-
-
-                        <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="15dp"
-                                android:text="@string/email"
-                                android:drawableLeft="@drawable/ic_mail"
-                                android:drawableTint="@color/colorPrimary"
-                                android:id="@+id/userEmail"
-                                android:textAlignment="center"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
+                                android:fontFamily="@font/finger_paint"
+                                android:text="25"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
                                 android:textStyle="bold"/>
 
                         <TextView
-                                android:layout_width="match_parent"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="15dp"
-                                android:layout_marginBottom="20dp"
-                                android:textAlignment="center"
-                                android:id="@+id/userPays"
-                                android:drawableLeft="@drawable/ic_maps"
-                                android:drawableTint="@color/colorPrimary"
-                                android:text="@string/pays"
-                                android:textColor="@color/colorPrimary"
-                                android:textSize="18sp"
-                                android:textStyle="bold"/>
-
+                                android:fontFamily="@font/neo_latina"
+                                android:text="analyses efectuées"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"/>
                     </LinearLayout>
 
                     <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:weightSum="2">
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:id="@+id/nbAnalyses"
-                                    android:text="25"
-                                    android:textColor="@color/black"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold"/>
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:text="analyses efectuées"
-
-                                    android:textColor="@color/black"
-                                    android:textSize="18sp"/>
-                        </LinearLayout>
-
-                        <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:text="16"
-                                    android:id="@+id/nbDetect"
-                                    android:textColor="@color/black"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold"/>
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:text="maladies détectées"
-                                    android:textColor="@color/black"
-                                    android:textSize="18sp"/>
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="30dp"
-                            android:orientation="horizontal"
-                            android:weightSum="2">
-
-                        <Button
-                                android:layout_width="match_parent"
-                                android:layout_height="70dp"
-                                android:layout_margin="8dp"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:id="@+id/voirAnalyses"
-                                android:backgroundTint="@color/colorPrimary"
-                                android:drawableEnd="@drawable/ic_visibility_black_24dp"
-                                android:drawableTint="@color/white"
-                                android:text="Mes analyses"
-                                android:textColor="@color/white"
-                                tools:ignore="ButtonStyle"/>
-
-                        <Button
-                                android:layout_width="match_parent"
-                                android:layout_height="70dp"
-                                android:layout_weight="1"
-                                android:layout_margin="8dp"
-                                android:layout_gravity="center"
-                                android:id="@+id/modifyProfil"
-                                android:backgroundTint="@color/colorAccent"
-                                android:drawableEnd="@drawable/ic_edit_black_24dp"
-                                android:drawableTint="@color/white"
-                                android:text="Modifier"
-                                android:textColor="@color/colorPrimaryDark"
-                                tools:ignore="ButtonStyle"/>
-
-
-                    </LinearLayout>
-
-                    <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="10dp"
                             android:layout_weight="1"
-                            android:layout_marginTop="20dp"
-                            android:id="@+id/logout"
-                            android:backgroundTint="#B71C1C"
-                            android:drawableEnd="@drawable/ic_edit_black_24dp"
-                            android:drawableTint="@color/white"
-                            android:text="Déconnecter"
-                            android:textStyle="bold"
-                            android:layout_gravity="center"
-                            android:textColor="@color/white"
-                            tools:ignore="ButtonStyle"/>
+                            android:orientation="vertical">
 
+                        <TextView
+                                android:id="@+id/nbDetect"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/finger_paint"
+                                android:text="25"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold"/>
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:fontFamily="@font/neo_latina"
+                                android:text="maladies détectées"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"/>
+                    </LinearLayout>
                 </LinearLayout>
 
-            </RelativeLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                <Button
+                        android:id="@+id/voirAnalyses"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/colorPrimary"
+                        android:drawableEnd="@drawable/ic_visibility_black_24dp"
+                        android:drawableTint="@color/white"
+                        android:fontFamily="@font/changa"
+                        android:text="Mes analyses"
+                        android:textColor="@color/white"
+                        tools:ignore="ButtonStyle"/>
+
+                <Button
+                        android:id="@+id/modifyProfil"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp"
+                        android:layout_weight="1"
+                        android:backgroundTint="@color/colorAccent"
+                        android:drawableEnd="@drawable/ic_edit_black_24dp"
+                        android:drawableTint="@color/white"
+                        android:fontFamily="@font/changa"
+                        android:text="Modifier"
+                        android:textColor="@color/colorPrimaryDark"
+                        tools:ignore="ButtonStyle"/>
+
+
+            </LinearLayout>
+
+            <Button
+                    android:id="@+id/logout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:backgroundTint="#B71C1C"
+                    android:drawableEnd="@drawable/ic_edit_black_24dp"
+                    android:drawableTint="@color/white"
+                    android:fontFamily="@font/changa"
+                    android:text="Déconnecter"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    tools:ignore="ButtonStyle"/>
+
         </LinearLayout>
+
     </RelativeLayout>
 </ScrollView>

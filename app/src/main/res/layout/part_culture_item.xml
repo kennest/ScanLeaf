@@ -89,6 +89,7 @@
             android:layout_marginBottom="142dp"
             android:alpha="0.8"
             android:background="@color/white"
+            android:fontFamily="@font/neo_latina"
             android:gravity="center"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"

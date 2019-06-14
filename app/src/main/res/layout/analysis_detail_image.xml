@@ -41,6 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="start"
+                android:fontFamily="@font/finger_paint"
                 android:text="Partie de la culture"
                 android:textSize="14sp"
                 android:textStyle="bold|italic" />

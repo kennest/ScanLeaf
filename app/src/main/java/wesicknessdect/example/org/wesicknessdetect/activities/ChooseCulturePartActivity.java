@@ -70,6 +70,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
+import wesicknessdect.example.org.wesicknessdetect.utils.CompressImage;
 
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> cultureParts = new ArrayList<>();
@@ -89,6 +90,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
 
     CulturePartAdapter culturePartAdapter;
     LayoutAnimationController controller;
+
+    File compressedImg = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -177,6 +180,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -185,14 +189,24 @@ public class ChooseCulturePartActivity extends BaseActivity {
             if (resultCode == Activity.RESULT_OK && requestCode == c.getId()) {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                images_by_part.put((int) c.getId(), returnValue.get(0));
-                //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
-                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                parts_lv.setLayoutAnimation(controller);
-                parts_lv.setAdapter(culturePartAdapter);
-                culturePartAdapter.notifyDataSetChanged();
-                parts_lv.scheduleLayoutAnimation();
+                compressedImg = new File(returnValue.get(0));
+                Completable.fromAction(() -> {
+                    compressedImg = new CompressImage(ChooseCulturePartActivity.this).CompressImgFile(compressedImg);
+                })
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(() -> {
+                            images_by_part.put((int) c.getId(), compressedImg.getAbsolutePath());
+                            //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
+                            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                            parts_lv.setLayoutAnimation(controller);
+                            parts_lv.setAdapter(culturePartAdapter);
+                            culturePartAdapter.notifyDataSetChanged();
+                            parts_lv.scheduleLayoutAnimation();
+                        }, throwable -> {
+                        });
+
             }
         }
         if (images_by_part.size() == 0) {

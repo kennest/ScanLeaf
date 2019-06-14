@@ -391,6 +391,7 @@ public class RemoteTasks {
                             s.top = Float.parseFloat(r.getAsJsonObject().get("y_max").getAsString());
                             s.right = Float.parseFloat(r.getAsJsonObject().get("x_max").getAsString());
                             s.setSended(1);
+                            s.setUuid(r.getAsJsonObject().get("uuid").getAsString());
                             s.setPicture_id((int) p.getX());
                             s.setPicture_uuid(p.getUuid());
                             rectList.add(s);
@@ -522,17 +523,7 @@ public class RemoteTasks {
     //Send Diagnostic to Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
     public void sendDiagnostic(Diagnostic d, @Nullable boolean sync) {
-//        EventBus.getDefault().post(new ShowLoadingEvent("Please wait", "processing...", false));
-        Completable.fromAction(() -> {
-            d.setSended(0);
-            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
-        })
-                .subscribeOn(Schedulers.newThread())
-                .subscribe(() -> {
-                            Log.d("Rx Save Diag", "Completed ->" + d.getUuid());
-                            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
-                        },
-                        throwable -> Log.e("Rx Save Diag Error ->", throwable.getMessage()));
+//
     }
 
 

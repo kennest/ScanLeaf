@@ -1,5 +1,8 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.login;
 
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +21,7 @@ import wesicknessdect.example.org.wesicknessdetect.R;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,19 +49,23 @@ public class LoginActivity extends BaseActivity {
 
     CircularImageView civ;
     TextView textView, subtitle_header;
-    Button passwordNew;
+    TextView passwordNew;
     TextView tv;
 
     Animation smalltobig, btta, btta2;
     Button loginBtn;
-    Button signupPageBtn;
+    TextView signupPageBtn;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login2);
         ButterKnife.bind(this);
+        Typeface tf=Typeface.createFromAsset(getAssets(),"finger_paint.ttf");
+        Typeface tf1=Typeface.createFromAsset(getAssets(),"changa.ttf");
+        Typeface tf2=Typeface.createFromAsset(getAssets(),"neo_latina.ttf");
 
         textView=(TextView) findViewById(R.id.textView);
+        textView.setTypeface(tf);
         //subtitle_header=(TextView) findViewById(R.id.subtitle_header);
         smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
         btta = AnimationUtils.loadAnimation(this, R.anim.btta);
@@ -68,9 +76,11 @@ public class LoginActivity extends BaseActivity {
         //getWindow().getDecorView().getRootView().findViewById(R.id.layoutInput).startAnimation(slide_up);
 
         civ=(CircularImageView) findViewById(R.id.imageView);
-        signupPageBtn =(Button) findViewById(R.id.gotosign);
-        passwordNew =(Button) findViewById(R.id.newPassword);
+        signupPageBtn =(TextView) findViewById(R.id.gotosign);
+        passwordNew =(TextView) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
+
+        tv.setTypeface(tf);
         tv.startAnimation(clignoter);
 
         civ.startAnimation(smalltobig);
@@ -82,6 +92,10 @@ public class LoginActivity extends BaseActivity {
         password.startAnimation(btta2);
 
         passwordNew.startAnimation(btta2);
+        SpannableString text = new SpannableString("Vous n'avez pas de compte? Inscrivez-vous.");
+        text.setSpan(new UnderlineSpan(), 27, 41, 0);
+        passwordNew.setPaintFlags(passwordNew.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        signupPageBtn.setText(text);
         signupPageBtn.startAnimation(btta2);
 
         loginBtn=(Button) findViewById(R.id.loginsubmit);

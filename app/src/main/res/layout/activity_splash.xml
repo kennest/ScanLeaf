@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity"
+    tools:context="wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity"
     android:background="#ffffff">
 
     <!--WebView
@@ -76,6 +76,7 @@
         android:textSize="20sp"
         android:layout_marginBottom="228dp"
         android:visibility="gone"
+        android:fontFamily="@font/finger_paint"
         android:gravity="center_horizontal"
         android:hint="USERNAME" />
 

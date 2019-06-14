@@ -1,6 +1,7 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
@@ -15,6 +16,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
+import wesicknessdect.example.org.wesicknessdetect.utils.CompressImage;
 import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
 
 import android.app.Activity;
@@ -70,6 +72,7 @@ public class ProfileActivity extends BaseActivity {
     View layout;
     AlertDialog dialog = null;
     AlertDialog.Builder builder = null;
+    File compressedImg;
 
     @SuppressLint("CheckResult")
     @Override
@@ -167,7 +170,7 @@ public class ProfileActivity extends BaseActivity {
                                     if (path.equals("")) {
                                         path = "rien";
                                     }
-                                    profil.get(0).setAvatar(path);
+                                    profil.get(0).setAvatar(compressedImg.getAbsolutePath());
                                 }
                                 profil.get(0).setCountry_id(c.getId());
                                 user.get(0).setProfile(profil.get(0));
@@ -233,6 +236,11 @@ public class ProfileActivity extends BaseActivity {
 
                 // Create the AlertDialog
                 AlertDialog dialog = builder.create();
+//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.WHITE);
+//                dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(getResources().getColor(R.color.gray));
+//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.WHITE);
+//                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+
                 dialog.show();
 
             }
@@ -248,14 +256,24 @@ public class ProfileActivity extends BaseActivity {
 
     }
 
+    @SuppressLint("CheckResult")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == RequestCode) {
             ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
             path = returnValue.get(0);
-            imageBox.setImageBitmap(BitmapFactory.decodeFile(path));
-            pI.setImageBitmap(BitmapFactory.decodeFile(path));
+            compressedImg=new File(path);
+            Completable.fromAction(()->{
+                compressedImg=new CompressImage(ProfileActivity.this).CompressImgFile(compressedImg);
+            })
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(()->{
+                        imageBox.setImageBitmap(BitmapFactory.decodeFile(compressedImg.getAbsolutePath()));
+                        pI.setImageBitmap(BitmapFactory.decodeFile(compressedImg.getAbsolutePath()));
+                    },throwable -> {});
+
         }
     }
 

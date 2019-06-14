@@ -30,6 +30,7 @@
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
 
                 android:id="@+id/my_status"
@@ -41,6 +42,7 @@
                 android:layout_marginStart="40dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="20dp"
+                android:fontFamily="@font/changa"
                 android:text="Simple Title Text "
                 android:textColor="@color/title_text_color"
                 android:textStyle="bold" />
@@ -55,6 +57,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginBottom="15dp"
+                android:fontFamily="@font/changa"
                 android:lineSpacingExtra="8dp"
                 android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
                 android:textColor="@color/content_text_color" />
@@ -68,10 +71,10 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
+                android:fontFamily="@font/neo_latina"
                 android:text="TextView"
-                android:textColor="@color/content_text_color"
 
-                />
+                android:textColor="@color/content_text_color" />
         </RelativeLayout>
 
 

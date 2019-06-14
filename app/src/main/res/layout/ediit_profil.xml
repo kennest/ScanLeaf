@@ -25,14 +25,15 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/monProfil"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/neo_latina"
                 android:text="Modification du profil"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="20sp"
-                android:textStyle="bold"
-                android:id="@+id/monProfil" />
+                android:textStyle="bold" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -67,6 +68,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="60dp"
+                        android:fontFamily="@font/changa"
                         android:text="Nom"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -79,10 +81,11 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/bg_input"
+                        android:background="@color/white"
+                        android:fontFamily="@font/changa"
                         android:hint="nouveau_nom"
                         android:paddingLeft="16dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -91,6 +94,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/changa"
                         android:text="Prénoms"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -103,10 +107,11 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/bg_input"
+                        android:background="@color/white"
+                        android:fontFamily="@font/changa"
                         android:hint="nouveaux_prénoms"
                         android:paddingLeft="16dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -115,6 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/changa"
                         android:text="Pseudonyme"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -127,10 +133,12 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/bg_input"
+                        android:background="@color/white"
+                        android:backgroundTint="@color/white"
+                        android:fontFamily="@font/changa"
                         android:hint="nouveau_pseudo"
                         android:paddingLeft="16dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -140,6 +148,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/changa"
                         android:text="Email"
                         android:textAlignment="center"
                         android:textColor="@color/white"
@@ -153,10 +162,11 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/bg_input"
+                        android:background="@color/white"
+                        android:fontFamily="@font/changa"
                         android:hint="nouvel_email"
                         android:paddingLeft="16dp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -165,6 +175,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/changa"
                         android:text="Mot de passe"
                         android:textColor="@color/white"
                         android:textSize="16sp"
@@ -177,11 +188,12 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:background="@drawable/bg_input"
+                        android:background="@color/white"
+                        android:fontFamily="@font/changa"
                         android:hint="mot de pass"
-                        android:paddingLeft="16dp"
                         android:inputType="textPassword"
-                        android:textColor="@color/white"
+                        android:paddingLeft="16dp"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -190,6 +202,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
                         android:layout_marginTop="10dp"
+                        android:fontFamily="@font/changa"
                         android:text="Pays"
                         android:textAlignment="center"
                         android:textColor="@color/white"
@@ -204,8 +217,8 @@
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
                         android:paddingLeft="16dp"
-                        android:background="@drawable/bg_input"
-                        android:textColor="@color/white"
+                        android:background="@color/white"
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 

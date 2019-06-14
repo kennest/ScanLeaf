@@ -19,13 +19,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:fontFamily="@font/roboto"
                 android:background="@color/colorPrimary"
-                android:textColor="@color/white"
-                android:text="Conversation avec VieuxKoukou"
-                android:textStyle="bold"
+                android:fontFamily="@font/changa"
                 android:gravity="center_vertical|center_horizontal"
-                android:textSize="18dp" />
+                android:text="Conversation avec VieuxKoukou"
+                android:textColor="@color/white"
+                android:textSize="18dp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_marginTop="10dp"
@@ -41,21 +41,22 @@
 
                 <TextView
                     android:id="@+id/msgReceiver"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_width="260dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/radius"
                     android:backgroundTint="#dddddd"
-                    android:fontFamily="@font/roboto"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickRec"
-                    android:text="11:00"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:fontFamily="@font/changa"
+                    android:text="11:00"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -68,26 +69,27 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickSend"
-                    android:text="11:05"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="45dp" />
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="45dp"
+                    android:fontFamily="@font/changa"
+                    android:text="11:05"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/msgSender"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:textColor="@color/white"
-                    android:layout_marginRight="0dp"
-                    android:fontFamily="@font/roboto"
-                    android:layout_gravity="right"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="0dp"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/white" />
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/sender"
@@ -112,21 +114,22 @@
 
                 <TextView
                     android:id="@+id/msgReceiver1"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:backgroundTint="#dddddd"
                     android:layout_width="260dp"
-                    android:fontFamily="@font/roboto"
                     android:layout_height="wrap_content"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="#dddddd"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickRec1"
-                    android:text="11:00"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:fontFamily="@font/changa"
+                    android:text="11:00"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -139,26 +142,27 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickSend1"
-                    android:text="11:05"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="45dp" />
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="45dp"
+                    android:fontFamily="@font/changa"
+                    android:text="11:05"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/msgSender1"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/roboto"
-                    android:layout_marginRight="0dp"
-                    android:layout_gravity="right"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="0dp"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/white" />
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/sender1"
@@ -183,21 +187,22 @@
 
                 <TextView
                     android:id="@+id/msgReceiver2"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:backgroundTint="#dddddd"
                     android:layout_width="260dp"
-                    android:fontFamily="@font/roboto"
                     android:layout_height="wrap_content"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="#dddddd"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickRec2"
-                    android:text="11:00"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:fontFamily="@font/changa"
+                    android:text="11:00"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -210,26 +215,27 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickSend2"
-                    android:text="11:05"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="45dp" />
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="45dp"
+                    android:fontFamily="@font/changa"
+                    android:text="11:05"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/msgSender2"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:textColor="@color/white"
-                    android:layout_marginRight="0dp"
-                    android:fontFamily="@font/roboto"
-                    android:layout_gravity="right"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="0dp"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/white" />
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/sender2"
@@ -254,21 +260,22 @@
 
                 <TextView
                     android:id="@+id/msgReceiver3"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:backgroundTint="#dddddd"
                     android:layout_width="260dp"
-                    android:fontFamily="@font/roboto"
                     android:layout_height="wrap_content"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="#dddddd"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/colorPrimaryDark" />
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickRec3"
-                    android:text="11:00"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
+                    android:layout_gravity="bottom"
+                    android:fontFamily="@font/changa"
+                    android:text="11:00"
+                    android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -281,26 +288,27 @@
                 android:layout_marginTop="10dp">
 
                 <TextView
-                    android:layout_gravity="bottom"
                     android:id="@+id/tickSend3"
-                    android:text="11:05"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/colorPrimaryDark"
                     android:layout_height="18dp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="45dp" />
+                    android:layout_gravity="bottom"
+                    android:layout_marginStart="45dp"
+                    android:fontFamily="@font/changa"
+                    android:text="11:05"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/msgSender3"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:textColor="@color/white"
-                    android:layout_marginRight="0dp"
-                    android:fontFamily="@font/roboto"
-                    android:layout_gravity="right"
                     android:layout_width="250dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginRight="0dp"
                     android:background="@drawable/radius"
-                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes" />
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:fontFamily="@font/changa"
+                    android:text="lorem ipsum dolor vieux kouakou va au chap et prend des informations dans l'optique de vous enseigner le bien etre de vos plantes"
+                    android:textColor="@color/white" />
 
                 <com.mikhaellopez.circularimageview.CircularImageView
                     android:id="@+id/sender3"
