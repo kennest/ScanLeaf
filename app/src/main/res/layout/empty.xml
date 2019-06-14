@@ -22,6 +22,7 @@
         android:gravity="center"
         android:padding="5dp"
         android:text="Rafraichir"
+        android:fontFamily="@font/changa"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold"

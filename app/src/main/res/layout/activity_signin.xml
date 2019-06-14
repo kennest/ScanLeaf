@@ -54,6 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="nom"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -61,15 +62,16 @@
                     android:id="@+id/first_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_person"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="Adopo" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="prénom"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -79,12 +81,14 @@
                     android:layout_height="wrap_content"
                     android:drawableRight="@drawable/ic_person"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="Landry Jordan" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="username"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -92,15 +96,16 @@
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_secret"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="username" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="telephone"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -108,15 +113,16 @@
                     android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_phone"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="07080603" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="email"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -125,14 +131,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableRight="@drawable/ic_mail"
-                    android:fontFamily="@font/roboto"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="vkouakou@weflyagri.com" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="password"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -140,9 +147,9 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_secret"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="************"
                     android:inputType="textWebPassword" />
 
@@ -150,6 +157,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="fonction"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -157,15 +165,16 @@
                     android:id="@+id/fonction"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto"
                     android:drawableRight="@drawable/ic_profil"
                     android:drawablePadding="20dp"
+                    android:fontFamily="@font/changa"
                     android:hint="fonction" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="pays"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -181,6 +190,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
+                    android:fontFamily="@font/changa"
                     android:text="sexe"
                     android:textColor="@color/colorPrimaryDark" />
 
@@ -203,6 +213,7 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/radius"
             android:backgroundTint="@color/colorPrimaryDark"
+            android:fontFamily="@font/changa"
             android:text="Inscription"
             android:textAllCaps="false"
             android:textColor="#FFF" />
@@ -214,6 +225,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/radius"
             android:backgroundTint="@color/colorliht"
+            android:fontFamily="@font/changa"
             android:text="Déjà inscrit?"
             android:textAllCaps="false"
             android:textColor="@color/white" />
@@ -236,7 +248,7 @@
         android:layout_below="@id/imageVIew"
         android:layout_centerHorizontal="true"
         android:text="S'inscrire"
-        android:fontFamily="@font/roboto"
+        android:fontFamily="@font/changa"
         android:textColor="#FFF"
         android:textSize="20sp"
         android:textStyle="bold" />

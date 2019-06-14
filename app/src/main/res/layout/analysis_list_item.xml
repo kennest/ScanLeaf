@@ -46,9 +46,10 @@
                     android:id="@+id/user_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/changa"
+                    android:gravity="bottom"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:gravity="bottom"
                     android:text="Simple Title Text "
                     android:textColor="@color/white"
                     android:textStyle="bold" />
@@ -59,9 +60,10 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/user_name"
                     android:layout_marginTop="4dp"
+                    android:fontFamily="@font/changa"
+                    android:lineSpacingExtra="8dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:lineSpacingExtra="8dp"
                     android:text="Lorem ipsum"
                     android:textColor="#fafafa" />
 
@@ -70,21 +72,22 @@
 
 
         <TextView
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_alignParentEnd="true"
-            android:layout_gravity="center"
-            android:backgroundTint="@color/white"
-            android:background="@drawable/counter"
             android:id="@+id/counter"
-            android:text="10"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal|center_vertical"
-            android:textColor="@color/colorPrimaryDark"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:elevation="30dp" />
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/counter"
+            android:backgroundTint="@color/white"
+            android:elevation="30dp"
+            android:fontFamily="@font/finger_paint"
+            android:gravity="center_horizontal|center_vertical"
+            android:text="10"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="12sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 </RelativeLayout>
 

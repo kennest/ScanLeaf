@@ -18,8 +18,9 @@
 
         <TextView
             android:id="@+id/label"
-            android:text="LABEL"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:fontFamily="@font/neo_latina"
+            android:text="LABEL" />
     </LinearLayout>
 </LinearLayout>

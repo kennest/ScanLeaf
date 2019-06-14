@@ -39,72 +39,77 @@
 
 
         <TextView
-            android:layout_marginTop="5dp"
-            android:text="username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/changa"
+            android:text="username"
             android:textColor="@color/colorPrimaryDark" />
 
         <EditText
-            android:drawablePadding="20dp"
-            android:drawableRight="@drawable/ic_mail"
-            android:hint="vkouakou2019"
-            android:text="lightbot78"
-            android:fontFamily="@font/roboto"
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/email" />
+            android:drawableRight="@drawable/ic_mail"
+            android:drawablePadding="20dp"
+            android:fontFamily="@font/changa"
+            android:hint="vkouakou2019"
+            android:text="lightbot78" />
 
         <TextView
-            android:layout_marginTop="5dp"
-            android:text="password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/changa"
+            android:text="password"
             android:textColor="@color/colorPrimaryDark" />
 
         <EditText
-            android:drawablePadding="20dp"
-            android:drawableRight="@drawable/ic_secret"
-            android:hint="******"
-            android:text="748b0026-bbd"
-            android:fontFamily="@font/roboto"
+            android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:drawableRight="@drawable/ic_secret"
+            android:drawablePadding="20dp"
+            android:fontFamily="@font/changa"
+            android:hint="******"
             android:inputType="textWebPassword"
-            android:id="@+id/password" />
+            android:text="748b0026-bbd" />
 
         <Button
-            android:textColor="#FFF"
+            android:id="@+id/loginsubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@drawable/radius"
             android:backgroundTint="@color/colorPrimaryDark"
-            android:layout_marginTop="20dp"
-            android:textAllCaps="false"
+            android:fontFamily="@font/changa"
             android:text="Connexion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/loginsubmit" />
+            android:textAllCaps="false"
+            android:textColor="#FFF" />
 
         <Button
+            android:id="@+id/gotosign"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:textColor="@color/white"
             android:background="@drawable/radius"
             android:backgroundTint="@color/colorliht"
-            android:textAllCaps="false"
+            android:fontFamily="@font/changa"
             android:text="Pas encore inscrit?"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/gotosign" />
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
 
         <Button
-            android:layout_marginTop="10dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:background="@drawable/radius"
-            android:backgroundTint="#00000005"
-            android:textAllCaps="false"
-            android:text="Mot de passe oublié?"
+            android:id="@+id/newPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/newPassword" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/radius"
+            android:backgroundTint="#00000005"
+            android:fontFamily="@font/changa"
+            android:text="Mot de passe oublié?"
+            android:textAllCaps="false"
+            android:textColor="@color/colorPrimaryDark" />
     </LinearLayout>
 
     <com.mikhaellopez.circularimageview.CircularImageView
@@ -119,14 +124,14 @@
 
     <TextView
         android:id="@+id/tex"
-        android:textSize="20sp"
-        android:textColor="#FFF"
-        android:fontFamily="@font/roboto"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/imageVIew"
-        android:text="Se connecter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/imageVIew"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="@font/changa"
+        android:text="Se connecter"
+        android:textColor="#FFF"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
 

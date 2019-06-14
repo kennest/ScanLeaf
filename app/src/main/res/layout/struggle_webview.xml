@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@color/colorPrimaryDark"
+        android:fontFamily="@font/changa"
         android:textColor="@color/white" />
 
     <WebView

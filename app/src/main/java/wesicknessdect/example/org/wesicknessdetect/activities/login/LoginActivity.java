@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.activities.login;
 
+import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -59,8 +60,12 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login2);
         ButterKnife.bind(this);
+        Typeface tf=Typeface.createFromAsset(getAssets(),"finger_paint.ttf");
+        Typeface tf1=Typeface.createFromAsset(getAssets(),"changa.ttf");
+        Typeface tf2=Typeface.createFromAsset(getAssets(),"neo_latina.ttf");
 
         textView=(TextView) findViewById(R.id.textView);
+        textView.setTypeface(tf);
         //subtitle_header=(TextView) findViewById(R.id.subtitle_header);
         smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
         btta = AnimationUtils.loadAnimation(this, R.anim.btta);
@@ -74,6 +79,8 @@ public class LoginActivity extends BaseActivity {
         signupPageBtn =(TextView) findViewById(R.id.gotosign);
         passwordNew =(TextView) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
+
+        tv.setTypeface(tf);
         tv.startAnimation(clignoter);
 
         civ.startAnimation(smalltobig);

@@ -66,16 +66,16 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="5dp"
+                    android:background="@color/white"
+                    android:fontFamily="@font/neo_latina"
                     android:gravity="center"
-                    android:typeface="monospace"
-                    android:fontFamily="@font/roboto"
                     android:text="ANALYSE"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="19dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:typeface="monospace" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -115,24 +115,26 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/white"
                         android:background="@drawable/radius"
-                        android:gravity="center"
-                        android:typeface="monospace"
-                        android:text="Résultat global"
+                        android:backgroundTint="@color/white"
                         android:elevation="20dp"
+                        android:fontFamily="@font/neo_latina"
+                        android:gravity="center"
+                        android:text="Résultat global"
                         android:textColor="@color/colorPrimaryDark"
-                        android:textSize="19dp" />
+                        android:textSize="19dp"
+                        android:typeface="monospace" />
 
                     <TextView
                         android:id="@+id/disease_txt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorPrimaryDark"
+                        android:fontFamily="@font/neo_latina"
                         android:gravity="center"
                         android:padding="10dp"
                         android:text="RECOGNITION"
                         android:textColor="@color/white"
-                        android:background="@color/colorPrimaryDark"
                         android:textSize="19sp"
                         android:textStyle="bold"
                         android:typeface="monospace" />
