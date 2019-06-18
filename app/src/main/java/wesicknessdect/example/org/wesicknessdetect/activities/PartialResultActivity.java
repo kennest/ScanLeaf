@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -63,6 +65,12 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
+    private FloatingActionButton fab_main;
+    private Animation fab_open, fab_close, fab_clock, fab_anticlock;
+    TextView textview_mail, textview_share;
+
+    Boolean isOpen = false;
+
     @BindView(R.id.btn_save_diagnostic)
     FloatingActionButton save_diagnostic;
 
@@ -73,6 +81,8 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     @BindView(R.id.disease_txt)
     TextView disease;
     String TAG = "PartialResultActivity";
+
+
 
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     Map<Integer, String> images_by_parts = new HashMap<>();
@@ -97,9 +107,45 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         ButterKnife.bind(this);
         InitCardSwipe();
 
+        fab_main = findViewById(R.id.fab);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_close);
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_clock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_clock);
+        fab_anticlock = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_rotate_anticlock);
+
+        textview_mail = (TextView) findViewById(R.id.textview_mail);
+        textview_share = (TextView) findViewById(R.id.textview_share);
         //Get Location
         SystemTasks.getInstance(PartialResultActivity.this).ensureLocationSettings();
 
+
+        fab_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isOpen) {
+
+                    textview_mail.setVisibility(View.INVISIBLE);
+                    textview_share.setVisibility(View.INVISIBLE);
+                    save_diagnostic.startAnimation(fab_close);
+                    go_to_quiz_diagnostic.startAnimation(fab_close);
+                    fab_main.startAnimation(fab_anticlock);
+                    save_diagnostic.setClickable(false);
+                    go_to_quiz_diagnostic.setClickable(false);
+                    isOpen = false;
+                } else {
+                    textview_mail.setVisibility(View.VISIBLE);
+                    textview_share.setVisibility(View.VISIBLE);
+                    save_diagnostic.startAnimation(fab_open);
+                    go_to_quiz_diagnostic.startAnimation(fab_open);
+                    fab_main.startAnimation(fab_clock);
+                    save_diagnostic.setClickable(true);
+                    go_to_quiz_diagnostic.setClickable(true);
+                    isOpen = true;
+                }
+
+            }
+        });
         //Init Diagnostic infos
         InitDiagnosticData();
 

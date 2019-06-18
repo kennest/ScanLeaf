@@ -1113,6 +1113,7 @@ public class RemoteTasks {
                     .subscribeWith(new DisposableSingleObserver<List<JsonElement>>() {
                         @Override
                         public void onSuccess(List<JsonElement> jsonElements) {
+                            Log.d("post_reponse :", jsonElements.toString());
                             if (jsonElements.size() != 0) {
                                 AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                                 Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);

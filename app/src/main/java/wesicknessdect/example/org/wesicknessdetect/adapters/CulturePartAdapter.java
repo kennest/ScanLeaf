@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.budiyev.android.circularprogressbar.CircularProgressBar;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -37,6 +38,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
     private Activity context;
     private List<CulturePart> cultureParts;
     private Map<Integer, String> culturePart_image;
+    private BottomSheetDialog dialog;
 
     public CulturePartAdapter(Activity context, List<CulturePart> cultureParts, Map<Integer, String> culturePart_image) {
         this.context = context;
@@ -103,7 +105,34 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
                     holder.imageButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            EventBus.getDefault().post(new ShowPixScreenEvent((int) cultureParts.get(position).getId()));
+                            View view = context.getLayoutInflater().inflate(R.layout.part_sheet, null);
+                            dialog = new BottomSheetDialog(context);
+                            dialog.setContentView(view);
+                            TextView title_bsd = (TextView) view.findViewById(R.id.title_bsd);
+                            title_bsd.setText(cultureParts.get(position).getNom());
+                            ImageView partie_bsd =(ImageView) view.findViewById(R.id.partie_bsd);
+                            if (cultureParts.get(position).getNom().contains("TIGE")){
+                                partie_bsd.setImageResource(R.drawable.trong);
+                            }else if (cultureParts.get(position).getNom().contains("FEUILLE")){
+                                partie_bsd.setImageResource(R.drawable.feuille);
+                            }else if (cultureParts.get(position).getNom().contains("FRUIT")){
+                                partie_bsd.setImageResource(R.drawable.cabosse);
+                            }else if (cultureParts.get(position).getNom().contains("COLLET")){
+                                partie_bsd.setImageResource(R.drawable.racine);
+                            }else if (cultureParts.get(position).getNom().contains("REJET")){
+                                partie_bsd.setImageResource(R.drawable.rejet);
+                            }
+                            TextView close_bsd = (TextView) view.findViewById(R.id.close_bsd);
+                            close_bsd.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    EventBus.getDefault().post(new ShowPixScreenEvent((int) cultureParts.get(position).getId()));
+                                    dialog.dismiss();
+                                }
+                            });
+                            dialog.show();
+
+
                         }
                     });
                 } else {

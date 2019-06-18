@@ -1,50 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:gravity="center"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
     android:background="@drawable/card_bg"
     android:elevation="20dp">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_save_diagnostic"
-        app:layout_anchorGravity="right|bottom"
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:backgroundTint="@color/colorPrimaryPix"
-        android:tint="@color/white"
-        android:src="@drawable/ic_check_circle_white_48dp"
-        app:layout_anchor="@+id/scrollView2"
-        android:tooltipText="ou Arrêter l'analyse" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_next_diagnostic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:tint="@color/colorPrimaryPix"
-        android:backgroundTint="@color/standard_white"
-        android:src="@drawable/ic_navigate_next_black_24dp"
-        android:tooltipText="Continuer vers le questionnaire"
-        app:layout_anchor="@+id/scrollView2"
-        app:layout_anchorGravity="right|bottom" />
+
 
     <ScrollView
         android:id="@+id/scrollView2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
@@ -55,6 +29,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:orientation="vertical">
 
             <LinearLayout
@@ -144,6 +120,92 @@
         </LinearLayout>
 
     </ScrollView>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/textview_mail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="116dp"
+            android:layout_marginEnd="88dp"
+            android:background="#ffffff"
+            android:padding="8dp"
+            android:text="Questionnaire"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="invisible" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_next_diagnostic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="106dp"
+            android:layout_marginEnd="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:elevation="16dp"
+            android:focusable="true"
+            android:visibility="invisible"
+            app:backgroundTint="#ffffff"
+            app:pressedTranslationZ="12dp"
+            app:srcCompat="@drawable/ic_arrow_right" />
+        <TextView
+            android:id="@+id/textview_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="186dp"
+            android:layout_marginEnd="88dp"
+            android:background="#ffffff"
+            android:padding="8dp"
+            android:text="Valider"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="invisible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_save_diagnostic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="176dp"
+            android:layout_marginEnd="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:elevation="16dp"
+            android:focusable="true"
+            android:visibility="invisible"
+            app:backgroundTint="@color/white"
+            app:pressedTranslationZ="12dp"
+            app:srcCompat="@drawable/ic_check_circle_white_18dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:elevation="16dp"
+            android:focusable="true"
+            android:visibility="visible"
+            app:backgroundTint="#ffffff"
+            app:pressedTranslationZ="12dp"
+            app:srcCompat="@drawable/ic_add" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

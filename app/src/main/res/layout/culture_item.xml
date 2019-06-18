@@ -5,10 +5,11 @@
     android:gravity="center"
     android:layout_gravity="center"
     android:layout_height="wrap_content"
-    android:background="@drawable/circle"
-    android:backgroundTint="@color/colorPrimary">
+    android:background="?android:attr/selectableItemBackground"
+    android:backgroundTint="#fafafa">
 
     <ImageButton
+        android:contentDescription="culture"
         android:id="@+id/image"
         android:layout_width="150dp"
         android:layout_height="150dp"

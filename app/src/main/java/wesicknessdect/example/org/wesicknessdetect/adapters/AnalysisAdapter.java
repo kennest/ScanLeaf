@@ -8,13 +8,16 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.icu.util.DateInterval;
 import android.media.Image;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.Magnifier;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,6 +57,7 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
     Context context;
     List<Diagnostic> diagnostics;
 
+    Magnifier magnifier = null;
     public AnalysisAdapter(Context context, List<Diagnostic> diagnostics) {
         this.context = context;
         this.diagnostics = diagnostics;
@@ -87,6 +91,36 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
                         public void run() {
                             try{
                                 holder.image.setBackground(BitmapDrawable.createFromPath(String.valueOf(new File(diagnostics.get(position).getPictures().get(0).getImage()))));
+                                holder.image.setOnTouchListener(new View.OnTouchListener() {
+                                    @Override
+                                    public boolean onTouch(View v, MotionEvent event) {
+                                        switch (event.getActionMasked()) {
+                                            case MotionEvent.ACTION_DOWN:
+                                                // Fall through.
+                                            case MotionEvent.ACTION_MOVE: {
+                                                final int[] viewPosition = new int[2];
+                                                v.getLocationOnScreen(viewPosition);
+
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                                    magnifier = new Magnifier(holder.image);
+                                                    magnifier.show(holder.image.getWidth() / 2, holder.image.getHeight() / 2);
+                                                    magnifier.show(event.getRawX() - viewPosition[0],
+                                                            event.getRawY() - viewPosition[1]);
+                                                }
+
+                                                break;
+                                            }
+                                            case MotionEvent.ACTION_CANCEL:
+                                                // Fall through.
+                                            case MotionEvent.ACTION_UP: {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                                    magnifier.dismiss();
+                                                }
+                                            }
+                                        }
+                                        return true;
+                                    }
+                                });
                             }catch (IndexOutOfBoundsException e){
                                 Log.e("Error->",e.getMessage());
                                 //Log.e("Image Error->",diagnostics.get(0).getPictures().get(0).getImage());
@@ -218,6 +252,9 @@ public class AnalysisAdapter extends RecyclerView.Adapter<AnalysisAdapter.Status
 
             card= itemView.findViewById(R.id.card);
             ButterKnife.bind(this, itemView);
+
+
+
             card.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
