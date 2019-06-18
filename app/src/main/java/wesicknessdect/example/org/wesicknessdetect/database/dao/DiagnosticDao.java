@@ -25,7 +25,7 @@ public abstract class DiagnosticDao {
 
 
     //RX JAVA
-    @Query("SELECT * FROM Diagnostic")
+    @Query("SELECT * FROM Diagnostic ORDER BY creation_date DESC")
     public abstract Single<List<Diagnostic>> rxGetAll();
 
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
@@ -80,7 +80,4 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract List<Diagnostic> getNotSendedSync();
 
-    @Transaction
-    @Query("SELECT * FROM Diagnostic WHERE x=:id")
-    public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }

@@ -133,6 +133,7 @@ public class BaseActivity extends AppCompatActivity {
                         .asGif()
                         .load(Uri.parse("file:///android_asset/syncing.gif"))
                         .into(alert_image);
+                alert_btn.setVisibility(View.GONE);
                 break;
         }
         alert_btn.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +182,7 @@ public class BaseActivity extends AppCompatActivity {
         Log.e("User authenticated", event.token);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
         finish();
     }
@@ -208,6 +210,7 @@ public class BaseActivity extends AppCompatActivity {
         Log.e("Process started", event.message);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
         finish();
     }

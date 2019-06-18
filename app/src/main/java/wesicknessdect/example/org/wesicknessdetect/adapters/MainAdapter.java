@@ -386,7 +386,7 @@ public class MainAdapter extends PagerAdapter {
                     @SuppressLint("CheckResult")
                     @Override
                     public void onSuccess(List<Diagnostic> diagnosticList) {
-                        Collections.reverse(diagnosticList);
+                        //Collections.reverse(diagnosticList);
                         List<Diagnostic> diagnostics = new ArrayList<>(diagnosticList);
                         for (Diagnostic n : diagnostics) {
                             Completable.fromAction(() -> {
