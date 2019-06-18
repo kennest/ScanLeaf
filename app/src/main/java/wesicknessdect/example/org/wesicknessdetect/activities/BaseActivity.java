@@ -180,6 +180,7 @@ public class BaseActivity extends AppCompatActivity {
     public void onUserAuthenticated(UserAuthenticatedEvent event) {
         Log.e("User authenticated", event.token);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivity(i);
         finish();
     }
@@ -206,6 +207,7 @@ public class BaseActivity extends AppCompatActivity {
     public void showProcessScreen(ShowProcessScreenEvent event) {
         Log.e("Process started", event.message);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         startActivity(i);
         finish();
     }

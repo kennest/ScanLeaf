@@ -242,7 +242,7 @@ public class QuizActivity extends BaseActivity {
     }
 
 
-    //Save Diagnostic and  UserChoices to DB for sended all later
+    //Save Diagnostic and  UserChoices to DB for send all later
     @SuppressLint("CheckResult")
     private void sendDiagnosticAndChoices(Diagnostic d, List<UserChoice> choices) {
         Completable.fromAction(() -> {
