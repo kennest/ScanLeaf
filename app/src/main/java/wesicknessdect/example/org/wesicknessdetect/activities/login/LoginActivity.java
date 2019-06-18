@@ -65,6 +65,7 @@ public class LoginActivity extends BaseActivity {
         Typeface tf2=Typeface.createFromAsset(getAssets(),"neo_latina.ttf");
 
         textView=(TextView) findViewById(R.id.textView);
+        textView.setText("Bienvenue");
         textView.setTypeface(tf);
         //subtitle_header=(TextView) findViewById(R.id.subtitle_header);
         smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
@@ -79,7 +80,7 @@ public class LoginActivity extends BaseActivity {
         signupPageBtn =(TextView) findViewById(R.id.gotosign);
         passwordNew =(TextView) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
-
+        tv.setText("Connexion");
         tv.setTypeface(tf);
         tv.startAnimation(clignoter);
 

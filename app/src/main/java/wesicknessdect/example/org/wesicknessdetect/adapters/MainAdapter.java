@@ -2,6 +2,9 @@ package wesicknessdect.example.org.wesicknessdetect.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -38,6 +41,7 @@ import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+import wesicknessdect.example.org.wesicknessdetect.AlarmReceiver;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.AnalysisDetailsActivity;
 import wesicknessdect.example.org.wesicknessdetect.activities.BaseActivity;
@@ -69,7 +73,9 @@ public class MainAdapter extends PagerAdapter {
     private static AppDatabase DB;
     private EndlessRecyclerViewScrollListener scrollListener;
     AnalysisAdapter analysisAdapter;
+    ChatAdapter chatAdapter;
     Runnable InitData = null;
+    Runnable InitAlerteData = null;
 
     public MainAdapter(Activity mContext, List<PageObject> pageObjects) {
         this.mContext = mContext;
@@ -450,24 +456,109 @@ public class MainAdapter extends PagerAdapter {
 
 
     private View InitAlerteView(View v) {
+
         RecyclerView recyclerView = v.findViewById(R.id.chat_rv);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
+
+        View empty = v.findViewById(R.id.empty_data);
+        Animation anim = new AlphaAnimation(0.0f, 1.0f);
+        anim.setDuration(1000); //You can manage the time
+        anim.setStartOffset(20);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setRepeatCount(Animation.INFINITE);
+        empty.setAnimation(anim);
+        View loading = v.findViewById(R.id.loading_data);
+        LinearLayoutManager llm=new LinearLayoutManager(mContext);
+        recyclerView.setLayoutManager(llm);
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_fall_down);
-        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+
+
+        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if (Constants.isOnline(mContext)) {
+                    Snackbar snackbar = Snackbar.make(mContext.getWindow().getDecorView(), "Voulez-vous en détecter plus?", Snackbar.LENGTH_LONG);
+                    snackbar.setAction("Oui", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    posts = DB.postDao().getAllPost();
+                                    mContext.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            recyclerView.setAdapter(new ChatAdapter(mContext, posts));
+                                            recyclerView.setLayoutAnimation(controller);
+                                            recyclerView.scheduleLayoutAnimation();
+                                        }
+                                    });
+                                }
+                            });
+
+                        }
+                    });
+                    snackbar.show();
+                }
+            }
+        };
+        Handler handler = new Handler();
+
+        InitAlerteData = new Runnable() {
             @Override
             public void run() {
                 posts = DB.postDao().getAllPost();
-                mContext.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        recyclerView.setAdapter(new ChatAdapter(mContext, posts));
-                        recyclerView.setLayoutAnimation(controller);
-                        recyclerView.scheduleLayoutAnimation();
-                    }
-                });
+                if (posts.size() > 0) {
+                    Log.d("Alertes RV", "Is Empty");
+                    //Toast.makeText(mContext, "Empty List ->" + tmp.size(), Toast.LENGTH_SHORT).show();
+                    //empty.setVisibility(View.VISIBLE);
+                    ImageButton reset1 = empty.findViewById(R.id.reload);
+                    empty.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    reset1.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new BaseActivity().StartSyncingData(mContext, 0);
+                            anim.cancel();
+                            empty.setVisibility(View.GONE);
+                            loading.setVisibility(View.VISIBLE);
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //recyclerView.addOnScrollListener(scrollListener);
+                                    chatAdapter = new ChatAdapter(mContext, posts);
+                                    recyclerView.setAdapter(chatAdapter);
+                                    chatAdapter.notifyDataSetChanged();
+                                }
+                            });
+                            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                            Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                            PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            Calendar cal = Calendar.getInstance();
+                            cal.add(Calendar.SECOND, 5);
+                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                        }
+                    });
+                    handler.postDelayed(InitAlerteData, 1500);
+                }
+                //handler.postDelayed(InitData,1000);
+            }
+        };
+        handler.post(InitData);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                handler.postDelayed(InitAlerteData, 500);
+                refreshLayout.setRefreshing(false);
             }
         });
+
+
+
+
+        //////////////////////////////////////////////////////////////
+
         return v;
     }
 }

@@ -87,9 +87,9 @@ public class QuizAdapter extends BaseAdapter {
                     @Override
                     public boolean onLongClick(View v) {
                         WebView webView = new WebView(activity);
-                        webView.loadUrl(s.getLink());
-                        webView.loadData("<p style=\"background-color:#00574B; color:white \" align=\"center\">Voici comment se présente <br/><b>" + s.getName() + "</b><br/><br/>(A remplacer ce text par la page web correspondante...) !</p>", "text/html", "utf-8");
 
+                        //webView.loadData("<p style=\"background-color:#00574B; color:white \" align=\"center\">Voici comment se présente <br/><b>" + s.getName() + "</b><br/><br/>(A remplacer ce text par la page web correspondante...) !</p>", "text/html", "utf-8");
+                        webView.loadUrl(s.getLink());
                         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                         builder.setTitle("Infos sur " + s.getName())
                                 .setView(webView)

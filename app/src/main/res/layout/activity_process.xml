@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context="wesicknessdect.example.org.wesicknessdetect.wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity">
+    tools:context="wesicknessdect.example.org.wesicknessdetect.activities.ProcessActivity">
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/mainViewPager"

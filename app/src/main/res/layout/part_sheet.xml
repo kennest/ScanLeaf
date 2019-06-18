@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_bsd"
+        android:textSize="14sp"
+        android:text="Partie à capturer"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimaryDark"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+<ImageView
+    android:id="@+id/partie_bsd"
+    android:layout_width="match_parent"
+    android:layout_height="412dp"
+    android:src="@drawable/rejet"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Veuillez vous rapprocher de cette partie de la plante pour prendre une photo de bonne qualité!"
+        android:textColor="@color/colorPrimaryDark"
+        android:fontFamily="@font/changa"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/close_bsd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/radius"
+        android:text="PRENDRE LA PHOTO"
+        android:layout_margin="5dp"
+        android:padding="5dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_gravity="center"
+        android:gravity="center"/>
+</LinearLayout>
