@@ -1,5 +1,6 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -27,10 +29,14 @@ import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.QuizAdapter;
 import wesicknessdect.example.org.wesicknessdetect.events.QuizCheckedEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.Disease;
@@ -237,26 +243,29 @@ public class QuizActivity extends BaseActivity {
 
 
     //Save Diagnostic and  UserChoices to DB for sended all later
+    @SuppressLint("CheckResult")
     private void sendDiagnosticAndChoices(Diagnostic d, List<UserChoice> choices) {
-        d.setPictures(AppController.getInstance().getPictures());
-        RemoteTasks.getInstance(this).sendDiagnostic(d, false);
-        finish();
-        //Thread.sleep(1000);
-
-        AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
-            @Override
-            public void run() {
-                for (UserChoice uc : choices) {
-                    uc.setSended(0);
-                    DB.userChoiceDao().create(uc);
-                }
+        Completable.fromAction(() -> {
+            d.setPictures(AppController.getInstance().getPictures());
+            RemoteTasks.getInstance(this).sendDiagnostic(d, false);
+            AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+            d.setSended(0);
+            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
+            for (UserChoice uc : choices) {
+                uc.setSended(0);
+                DB.userChoiceDao().create(uc);
             }
-        });
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                            Log.d("Rx Save Diag", "Completed ->" + d.getUuid());
+                            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+                            finish();
+                            AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+                        },
+                        throwable -> Log.e("Rx Save Diag Error ->", throwable.getMessage()));
 
-//            for(Map.Entry<Integer,List<Classifier.Recognition>> entry:recognitions_by_part.entrySet()){
-//                entry.setValue(entry.getValue().subList(0,4));
-//            }
-        AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
     }
 
 

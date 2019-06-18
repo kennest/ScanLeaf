@@ -47,20 +47,20 @@ public abstract class DiagnosticDao {
 
     @Transaction
     public void insertDiagnosticWithPictureAndRect(Diagnostic d, List<Picture> pictures) {
-        Log.e("DAO picture size:",pictures.size()+"");
+        Log.d("DAO picture size:",pictures.size()+"");
         final long id = createDiagnostic(d);
-        Log.e("DAO diag id ->",id+"");
+        Log.d("DAO diag id ->",id+"");
         for (Picture p : pictures) {
             p.setDiagnostic_id(id);
             p.setDiagnostic_uuid(d.getUuid());
             final long pic_ic=insertPicture(p);
-            Log.e("DAO Rect size:",p.getSymptomRects().size()+"");
-            Log.e("DAO picture id ->",pic_ic+"");
+            Log.d("DAO Rect size:",p.getSymptomRects().size()+"");
+            Log.d("DAO picture id ->",pic_ic+"");
             for(SymptomRect sr:p.getSymptomRects()){
                 sr.setPicture_id((int) pic_ic);
                 sr.setPicture_uuid(p.getUuid());
                final long rect_id= createSymptomRect(sr);
-                Log.e("DAO rect id ->",rect_id+"");
+                Log.d("DAO rect id ->",rect_id+"");
             }
         }
     }

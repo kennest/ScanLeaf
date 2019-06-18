@@ -35,10 +35,17 @@ import java.util.UUID;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.PartialResultImageAdapter;
@@ -281,25 +288,37 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
     }
 
+    @SuppressLint("CheckResult")
     @OnClick(R.id.btn_save_diagnostic)
-    public void SendDiagnostic() {
+    public void SaveDiagnostic() {
+        Completable.fromAction(() -> {
             diagnostic.setPictures(AppController.getInstance().getPictures());
             RemoteTasks.getInstance(this).sendDiagnostic(diagnostic, false);
-        AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+            AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
+            diagnostic.setSended(0);
+            DB.diagnosticDao().insertDiagnosticWithPictureAndRect(diagnostic, diagnostic.getPictures());
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+                            Log.d("Rx Save Diag", "Completed ->" + diagnostic.getUuid());
+                            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+                        },
+                        throwable -> Log.e("Rx Save Diag Error ->", throwable.getMessage()));
     }
 
     @OnClick(R.id.btn_next_diagnostic)
-    public void goToQuiz(){
-        Intent quiz=new Intent(this,QuizActivity.class);
+    public void goToQuiz() {
+        Intent quiz = new Intent(this, QuizActivity.class);
 
-        Gson gson_score=new Gson();
-        String disease_score_gson=gson_score.toJson(disease_score);
-        String diagnostic_gson=gson_score.toJson(diagnostic);
-        String recognition_by_part_gson=gson_score.toJson(recognitions_by_part);
+        Gson gson_score = new Gson();
+        String disease_score_gson = gson_score.toJson(disease_score);
+        String diagnostic_gson = gson_score.toJson(diagnostic);
+        String recognition_by_part_gson = gson_score.toJson(recognitions_by_part);
 
-        quiz.putExtra("disease_score_gson",disease_score_gson);
-        quiz.putExtra("diagnostic_gson",diagnostic_gson);
-        quiz.putExtra("recognition_by_part_gson",recognition_by_part_gson);
+        quiz.putExtra("disease_score_gson", disease_score_gson);
+        quiz.putExtra("diagnostic_gson", diagnostic_gson);
+        quiz.putExtra("recognition_by_part_gson", recognition_by_part_gson);
         startActivity(quiz);
     }
 
