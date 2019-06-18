@@ -12,10 +12,6 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
-
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
 import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
@@ -84,6 +80,7 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract List<Diagnostic> getNotSendedSync();
 
+    @Transaction
     @Query("SELECT * FROM Diagnostic WHERE x=:id")
     public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }
