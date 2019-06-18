@@ -1,25 +1,25 @@
 package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.content.Context;
 import java.io.File;
 import java.io.IOException;
 import id.zelory.compressor.Compressor;
 
 
 public class CompressImage {
-    Activity activity;
+    Context context;
     File actualFile = null;
 
-    public CompressImage(Activity activity) {
-        this.activity = activity;
+    public CompressImage(Context ctx) {
+        this.context = ctx;
     }
 
     @SuppressLint("CheckResult")
     public File CompressImgFile(File imgfile) {
         actualFile = imgfile;
         try {
-            actualFile = new Compressor(activity).compressToFile(imgfile);
+            actualFile = new Compressor(context).compressToFile(imgfile);
         } catch (IOException e) {
             e.printStackTrace();
         }

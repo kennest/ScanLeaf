@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -17,23 +16,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toolbar;
-
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.fxn.pix.Pix;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Notification;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.subscribers.DisposableSubscriber;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.reactivestreams.Subscription;
-
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -41,27 +31,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Completable;
-import io.reactivex.MaybeObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CulturePartAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.DeletePartPictureEvent;
@@ -70,7 +55,6 @@ import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
-import wesicknessdect.example.org.wesicknessdetect.utils.CompressImage;
 
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> cultureParts = new ArrayList<>();
@@ -189,23 +173,15 @@ public class ChooseCulturePartActivity extends BaseActivity {
             if (resultCode == Activity.RESULT_OK && requestCode == c.getId()) {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                compressedImg = new File(returnValue.get(0));
-                Completable.fromAction(() -> {
-                    compressedImg = new CompressImage(ChooseCulturePartActivity.this).CompressImgFile(compressedImg);
-                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> {
-                            images_by_part.put((int) c.getId(), compressedImg.getAbsolutePath());
-                            //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
-                            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                            parts_lv.setLayoutAnimation(controller);
-                            parts_lv.setAdapter(culturePartAdapter);
-                            culturePartAdapter.notifyDataSetChanged();
-                            parts_lv.scheduleLayoutAnimation();
-                        }, throwable -> {
-                        });
+                images_by_part.put((int) c.getId(), returnValue.get(0));
+                Log.d("Picture choose->",returnValue.get(0));
+                //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
+                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                parts_lv.setLayoutAnimation(controller);
+                parts_lv.setAdapter(culturePartAdapter);
+                culturePartAdapter.notifyDataSetChanged();
+                parts_lv.scheduleLayoutAnimation();
 
             }
         }
