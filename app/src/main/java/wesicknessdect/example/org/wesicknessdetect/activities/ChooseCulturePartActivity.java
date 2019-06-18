@@ -96,7 +96,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         }
 
         DB.culturePartsDao().rxGetAll()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<CulturePart>>() {
                     @Override
@@ -237,7 +237,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 }
             }
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                             if (BAD_IMAGES.size() > 0) {
@@ -273,14 +273,27 @@ public class ChooseCulturePartActivity extends BaseActivity {
                                             dialog.dismiss();
                                             //doRecognizingImage(model.getPb(),model.getLabel(),entry.getKey(),bitmap_cropped);
                                             for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
-                                                DB.modelDao().getByPart((long) entry.getKey()).observe(ChooseCulturePartActivity.this, new Observer<Model>() {
-                                                    @Override
-                                                    public void onChanged(Model model) {
-                                                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
-                                                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                                                        doRecognizingImage(model.getPb(), model.getLabel(), entry.getKey(), bitmap_cropped);
-                                                    }
-                                                });
+                                                DB.modelDao().rxGetByPart((long) entry.getKey())
+                                                        .subscribeOn(Schedulers.trampoline())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribe(new SingleObserver<Model>() {
+                                                            @Override
+                                                            public void onSubscribe(Disposable d) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onSuccess(Model model) {
+                                                                Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+                                                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                                                                doRecognizingImage(model.getPb(), model.getLabel(), entry.getKey(), bitmap_cropped);
+                                                            }
+
+                                                            @Override
+                                                            public void onError(Throwable e) {
+
+                                                            }
+                                                        });
                                             }
                                         }
                                     });
@@ -293,9 +306,14 @@ public class ChooseCulturePartActivity extends BaseActivity {
                                 Log.d("Rx PIX SIZE ->", images_by_part.size() + "");
                                 for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
                                     DB.modelDao().rxGetByPart((long) entry.getKey())
-                                            .subscribeOn(Schedulers.newThread())
+                                            .subscribeOn(Schedulers.trampoline())
                                             .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new DisposableSingleObserver<Model>() {
+                                            .subscribe(new SingleObserver<Model>() {
+
+                                                @Override
+                                                public void onSubscribe(Disposable d) {
+
+                                                }
 
                                                 @Override
                                                 public void onSuccess(Model model) {
@@ -326,30 +344,36 @@ public class ChooseCulturePartActivity extends BaseActivity {
             for (CulturePart c : cultureParts) {
                 if ((c.getId() == part_id)) {
                     c.setRecognizing(true);
-                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                    parts_lv.setAdapter(culturePartAdapter);
-                    culturePartAdapter.notifyDataSetChanged();
-                    Log.d("Rx Recognizing ->", part_id + "");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                            parts_lv.setAdapter(culturePartAdapter);
+                            culturePartAdapter.notifyDataSetChanged();
+                            Log.d("Rx Recognizing ->", part_id + "");
+                        }
+                    });
                 }
             }
             SystemTasks.getInstance(ChooseCulturePartActivity.this)
                     .recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
                     .subscribeOn(Schedulers.trampoline())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableSubscriber<ImageRecognitionProcessEvent>() {
+                    //.observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SingleObserver<ImageRecognitionProcessEvent>() {
+
                         @Override
-                        public void onNext(ImageRecognitionProcessEvent event) {
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onSuccess(ImageRecognitionProcessEvent event) {
                             getBitmapRecognizeState(event);
                         }
 
                         @Override
                         public void onError(Throwable t) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
 
                         }
                     });

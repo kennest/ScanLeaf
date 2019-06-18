@@ -135,6 +135,11 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             //Dispatch show loading event
             EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true, 2));
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxDoSignup(u)
                     .subscribeOn(Schedulers.io())
@@ -154,7 +159,7 @@ public class RemoteTasks {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .unsubscribeOn(Schedulers.io())
                                     .subscribe(() -> {
-                                                EventBus.getDefault().post(new HideLoadingEvent("Finished"));
+                                                EventBus.getDefault().post(new HideLoadingEvent());
                                                 Log.d("Rx Signup", "Succeed");
                                             },
                                             throwable -> Log.e("Rx Signup Error ->", throwable.getMessage()));
@@ -162,7 +167,7 @@ public class RemoteTasks {
 
                         @Override
                         public void onError(Throwable e) {
-                            EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides", "Inscription échouée", true));
+                            EventBus.getDefault().post(new ShowLoadingEvent("Vos entrées sont invalides", "Inscription échouée", true,0));
                         }
                     });
 
@@ -178,7 +183,12 @@ public class RemoteTasks {
     @SuppressLint("CheckResult")
     public void doLogin(Credential c) {
         if (Constants.isOnline(mContext)) {
-            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true, 2));
+            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Connexion en cours...", false, 2));
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxDoLogin(c)
                     .subscribeOn(Schedulers.io())
@@ -225,6 +235,7 @@ public class RemoteTasks {
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .unsubscribeOn(Schedulers.io())
                                     .subscribe(() -> {
+                                                EventBus.getDefault().post(new HideLoadingEvent());
                                                 Log.d("Rx Login", "Succeed");
                                             },
                                             throwable -> Log.e("Rx Login Error ->", throwable.getMessage()));
@@ -232,7 +243,7 @@ public class RemoteTasks {
 
                         @Override
                         public void onError(Throwable e) {
-                            EventBus.getDefault().post(new FailedSignUpEvent("Pas de données correspondantes", "Erreur de réponse", true));
+                            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Verifier les infos de connexion...", true,0));
                             Log.e("Error:", e.getMessage());
                         }
                     });
