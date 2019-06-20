@@ -25,6 +25,7 @@ import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -260,12 +261,12 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                             }
                         }
 
-
                         //Get the max value of the score map
                         //Log.e("Score", disease_score.size() + "");
+                        int max = Collections.max(disease_score.values());
                         for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
                             //Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
-                            if (maxEntry == null || score_entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                            if (score_entry.getValue().equals(max)) {
                                 maxEntry = score_entry;
                                 DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
                                     @Override

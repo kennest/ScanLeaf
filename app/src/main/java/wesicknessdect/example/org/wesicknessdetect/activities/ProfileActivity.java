@@ -100,7 +100,6 @@ public class ProfileActivity extends BaseActivity {
         logout = findViewById(R.id.logout);
         btnResetPass = findViewById(R.id.btnPassReset);
 
-
         Completable.fromAction(() -> {
             nbAna = DB.diagnosticDao().getAllSync().size() + "";
             nbDete = DB.postDao().getAllPost().size() + "";

@@ -135,6 +135,8 @@ public class SystemTasks {
                 });
             }
 
+
+
             @Override
             public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
         }).check();
