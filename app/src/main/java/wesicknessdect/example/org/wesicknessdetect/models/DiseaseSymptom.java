@@ -5,16 +5,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(foreignKeys = {
-        @ForeignKey(
-                entity = Disease.class,
-                parentColumns = "id",
-                childColumns = "disease_id"),
-        @ForeignKey(
-                entity = Symptom.class,
-                parentColumns = "id",
-                childColumns = "symptom_id")
-},indices = {@Index("disease_id"),@Index("symptom_id")})
+@Entity(indices = {@Index("disease_id"),@Index("symptom_id")})
 public class DiseaseSymptom {
     @PrimaryKey(autoGenerate = true)
     private int id;

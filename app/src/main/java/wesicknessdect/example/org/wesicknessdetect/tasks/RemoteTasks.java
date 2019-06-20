@@ -948,7 +948,13 @@ public class RemoteTasks {
                             for (Disease d : diseases) {
                                 Completable.fromAction(() -> {
                                     d.setLink(Constants.base_url + d.getLink());
-                                    DB.diseaseDao().createDisease(d);
+                                   int disease_id= (int) DB.diseaseDao().createDisease(d);
+                                   for(Integer i:d.getSymptoms()) {
+                                       DiseaseSymptom ds = new DiseaseSymptom();
+                                       ds.setDisease_id(disease_id);
+                                       ds.setSymptom_id(i);
+                                       DB.diseaseSymptomsDao().createDiseaseSymptom(ds);
+                                   }
                                 })
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
