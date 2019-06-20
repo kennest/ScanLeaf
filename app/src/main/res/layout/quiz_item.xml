@@ -27,7 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_weight="0.3"
-            android:fontFamily="@font/finger_paint"
+            android:fontFamily="@font/changa"
 
             android:gravity="center"
             android:padding="8dp"

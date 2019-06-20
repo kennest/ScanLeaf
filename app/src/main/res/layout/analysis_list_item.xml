@@ -82,7 +82,7 @@
             android:background="@drawable/counter"
             android:backgroundTint="@color/white"
             android:elevation="30dp"
-            android:fontFamily="@font/finger_paint"
+            android:fontFamily="@font/changa"
             android:gravity="center_horizontal|center_vertical"
             android:text="10"
             android:textColor="@color/colorPrimaryDark"

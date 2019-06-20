@@ -34,6 +34,7 @@
         android:background="@drawable/radius"
         android:text="PRENDRE LA PHOTO"
         android:layout_margin="5dp"
+        android:fontFamily="@font/neo_latina"
         android:padding="5dp"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
