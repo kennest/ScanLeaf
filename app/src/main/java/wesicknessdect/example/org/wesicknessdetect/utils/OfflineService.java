@@ -2,12 +2,24 @@ package wesicknessdect.example.org.wesicknessdetect.utils;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
 import com.appizona.yehiahd.fastsave.FastSave;
+
 import java.util.List;
+
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -22,7 +34,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
-public class OfflineService extends Service {
+import static android.content.Context.JOB_SCHEDULER_SERVICE;
+
+public class OfflineService extends JobService {
     public static String str_receiver = "scanleaf.offline.service";
     List<SymptomRect> symptomRects;
     List<UserChoice> userChoices;
@@ -32,80 +46,81 @@ public class OfflineService extends Service {
     User user = new User();
     Profile profile = new Profile();
     AppDatabase DB;
-    RemoteTasks remoteTasks=null;
+    RemoteTasks remoteTasks = null;
 
-    public OfflineService() {
 
-    }
-
-    @Nullable
+    @SuppressLint("CheckResult")
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+    public boolean onStartJob(JobParameters params) {
+        Log.d("Offline Job", "Started");
 
-    @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    @Override
-    public void onCreate() {
-        super.onCreate();
+        JobSchedulerUtil.scheduleJob(getApplicationContext());
+
         DB = AppDatabase.getInstance(getApplicationContext());
-        remoteTasks=RemoteTasks.getInstance(getApplicationContext());
+        remoteTasks = RemoteTasks.getInstance(getApplicationContext());
+        diagnostics = DB.diagnosticDao().getNotSendedSync();
+        pictures = DB.pictureDao().getAllSync();
+        symptomRects = DB.symptomRectDao().getAllSync();
+        userChoices = DB.userChoiceDao().getNotSended(0);
+        profile = DB.profileDao().getNotUpdated();
+        posti = DB.postDao().getAllPost();
 
-        Completable.fromAction(()->{
-            String location = FastSave.getInstance().getString("location", "0.0:0.0");
-            String[] split = location.split(":");
+        try {
+            user = DB.userDao().getAll().get(0);
+        } catch (IndexOutOfBoundsException e) {
+            Log.e("Error", e.getMessage());
+        }
 
-            Double lat = Double.valueOf(split[0]);
-            Double longi = Double.valueOf(split[1]);
+        String location = FastSave.getInstance().getString("location", "0.0:0.0");
+        String[] split = location.split(":");
 
-            Location l = new Location();
-            l.setLat(lat.toString());
-            l.setLongi(longi.toString());
+        Double lat = Double.valueOf(split[0]);
+        Double longi = Double.valueOf(split[1]);
 
-            diagnostics = DB.diagnosticDao().getNotSendedSync();
-            pictures = DB.pictureDao().getAllSync();
-            symptomRects = DB.symptomRectDao().getAllSync();
-            userChoices = DB.userChoiceDao().getNotSended(0);
-            profile = DB.profileDao().getNotUpdated();
-            posti = DB.postDao().getAllPost();
+        Location l = new Location();
+        l.setLat(lat.toString());
+        l.setLongi(longi.toString());
 
-            try{
-                user= DB.userDao().getAll().get(0);
-            }catch (IndexOutOfBoundsException e){
-                Log.e("Error",e.getMessage());
-            }
+        String idServeur = "" + 0;
 
-            String idServeur = "" + 0;
-
-            Log.e("tous_posts", posti.toString());
-            if (posti.size() == 0) {
-                idServeur = "" + 0;
-                l.setIdServeur(idServeur);
-                Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
-                remoteTasks.sendLocation(l);
-            } else {
-                Post p = posti.get(posti.size() - 1);
-                Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
-                idServeur = p.getIdServeur();
-                l.setIdServeur(idServeur);
-                remoteTasks.sendLocation(l);
-            }
-            SendDataOffline();
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(()->{
-                    Log.d("Rx Offline->","Succeeded");
-                },throwable -> {
-                    Log.e("Rx Offline Error->",throwable.getMessage());
-                });
-
+        Log.e("tous_posts", posti.toString());
+        if (posti.size() == 0) {
+            idServeur = "" + 0;
+            l.setIdServeur(idServeur);
+            Log.d("envoye", "Lat:" + l.getLat() + ", Long:" + l.getLongi() + ", idServeur:" + l.getIdServeur());
+            remoteTasks.sendLocation(l);
+        } else {
+            Post p = posti.get(posti.size() - 1);
+            Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
+            idServeur = p.getIdServeur();
+            l.setIdServeur(idServeur);
+            remoteTasks.sendLocation(l);
+        }
+        SendDataOffline();
+        return true;
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-        return START_STICKY;
+    public boolean onStopJob(JobParameters params) {
+        Log.d("Offline Job", "Stopped");
+        return true;
+    }
+
+
+
+    public static void scheduleJob(Context context) {
+
+        ComponentName serviceComponent = new ComponentName(context, OfflineService.class);
+
+        JobInfo jobInbo = new JobInfo.Builder(0, serviceComponent)
+                .setMinimumLatency(6 * 1000)      // Temps d'attente minimal avant déclenchement
+                .setOverrideDeadline(12 * 1000)// Temps d'attente maximal avant déclenchement
+                .build();
+
+        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(JOB_SCHEDULER_SERVICE);
+
+        jobScheduler.schedule(jobInbo);
+        Log.d("JobScheduler Started->", jobScheduler.getAllPendingJobs().size() + "");
     }
 
     //Send Offline Data
@@ -140,8 +155,8 @@ public class OfflineService extends Service {
             }
         }
 
-        if(profile!=null && user!=null){
-            remoteTasks.SendUpdatedUser(user,profile);
+        if (profile != null && user != null) {
+            remoteTasks.SendUpdatedUser(user, profile);
         }
     }
 

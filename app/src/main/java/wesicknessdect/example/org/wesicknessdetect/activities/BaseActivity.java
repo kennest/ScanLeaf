@@ -58,12 +58,9 @@ import wesicknessdect.example.org.wesicknessdetect.tasks.timers.SyncTimerTask;
 
 
 public class BaseActivity extends AppCompatActivity {
-    IOSDialog dialog;
     AlertDialog myDialog;
-    boolean dialogIsCancelable;
     public static AppDatabase DB;
     public static APIService service;
-    private static final String DATABASE_NAME = "scanleaf.db";
 
 
     @Override
@@ -88,7 +85,6 @@ public class BaseActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-
     //Show Quiz Layout
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onQuizPageEvent(ShowQuizPageEvent event) {
@@ -96,7 +92,6 @@ public class BaseActivity extends AppCompatActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
-
 
     //Show the loading Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,18 +147,6 @@ public class BaseActivity extends AppCompatActivity {
                 .create();
     }
 
-    //Show the failed SignUp Dialog
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFailEvent(FailedSignUpEvent event) {
-        Log.e("Signup Event dismissed", event.msg + ": " + dialogIsCancelable);
-        if (dialog.isShowing() && dialogIsCancelable) {
-            dialog.dismiss();
-        }
-        dialogIsCancelable = event.cancelable;
-        dialog = LoaderProgress(event.title, event.msg, event.cancelable);
-        dialog.show();
-    }
-
     //Hide the loading dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHideLoadingEvent(HideLoadingEvent event) {
@@ -216,32 +199,9 @@ public class BaseActivity extends AppCompatActivity {
     }
 
 
-    //Base loading dialog function
-    private IOSDialog LoaderProgress(String title, String content, boolean cancelable) {
-        IOSDialog d = new IOSDialog.Builder(BaseActivity.this)
-                .setTitle(title)
-                .setMessageContent(content)
-                .setSpinnerColorRes(R.color.colorPrimary)
-                .setCancelable(cancelable)
-                .setTitleColorRes(R.color.white)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        return d;
-    }
-
-
     //Reload the current Activity
     protected void Reload() {
-        if (Build.VERSION.SDK_INT >= 11) {
-            recreate();
-        } else {
-            Intent intent = getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
-            overridePendingTransition(0, 0);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-        }
+        recreate();
     }
 
     public void StartSyncingData(Context ctx, int delay) {

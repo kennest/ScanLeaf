@@ -157,8 +157,6 @@ public class QuizActivity extends BaseActivity {
                                                 detected.add(d.getName());
                                                 if(final_detected==""){
                                                     final_detected=d.getName();
-                                                }else {
-                                                    final_detected = final_detected + " et " + d.getName();
                                                 }
                                                 //disease.setText(d.getName().toUpperCase())
                                             }
@@ -167,7 +165,7 @@ public class QuizActivity extends BaseActivity {
                                 }
                                 diagnostic.setAdvancedAnalysis(final_detected);
                                 TextView result = global_result.findViewById(R.id.result);
-                                result.setText(final_detected);
+                                result.setText(String.format("%s et %s", diagnostic.getDisease(), final_detected));
                                 global_result.setPadding(100, 450, 100, 20);
                                 global_result.setVisibility(View.VISIBLE);
                                 quiz_lv.setVisibility(View.GONE);

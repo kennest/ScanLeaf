@@ -562,7 +562,6 @@ public class RemoteTasks {
                                     .unsubscribeOn(Schedulers.io())
                                     .subscribe(() -> {
                                                 Log.d("Rx Send Diag Offline", "Completed ->" + d.getUuid());
-                                                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
                                             },
                                             throwable -> Log.e("Send Diag Error ->", throwable.getMessage()));
                         }

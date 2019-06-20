@@ -22,6 +22,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import io.reactivex.Flowable;
+
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
@@ -45,12 +46,12 @@ import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.ImageCl
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.TensorFlowObjectDetectionAPIModel;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.env.Logger;
 import wesicknessdect.example.org.wesicknessdetect.events.ImageRecognitionProcessEvent;
+import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
 
 public class SystemTasks {
     private static SystemTasks systemTasks;
     private static Activity mContext;
-    private Location loc;
     private ImageClassifier checker;
 
     private SystemTasks(Activity context) {
@@ -102,7 +103,7 @@ public class SystemTasks {
             }
         };
 
-// Register the listener with the Location Manager to receive location updates
+        // Register the listener with the Location Manager to receive location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
     }
 
@@ -120,7 +121,7 @@ public class SystemTasks {
             public void onPermissionsChecked(MultiplePermissionsReport report) {
                 Log.e("PERMISSIONS", "ALL CHECKED");
                 LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
-                        .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY))
+                        .addLocationRequest(LocationRequest.create().setPriority(LocationRequest.PRIORITY_LOW_POWER))
                         .build();
                 RxLocationSettings.with((FragmentActivity) mContext).ensure(locationSettingsRequest).subscribe(new Action1<Boolean>() {
                     @Override
@@ -128,7 +129,7 @@ public class SystemTasks {
                         // Toast.makeText(BootActivity.this, enabled ? "Enabled" : "Failed",
                         // Toast.LENGTH_LONG).show();
                         if (enabled) {
-                            getLocation();
+                            Constants.getLocation(mContext);
                         }
                     }
                 });
@@ -153,39 +154,33 @@ public class SystemTasks {
     }
 
     //Recognized Symptoms on given bitmap
-    public Single<ImageRecognitionProcessEvent> recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
-               //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
+    public ImageRecognitionProcessEvent recognizedSymptoms(Bitmap bitmap, String model, String label, long part_id) {
+        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, false, new ArrayList<>()));
+        List<Recognition> recognitions = new ArrayList<>();
+        ImageRecognitionProcessEvent event = new ImageRecognitionProcessEvent(part_id, false, recognitions);
+        if (MODE == DetectorMode.TF_OD_API) {
+            try {
+                detector = TensorFlowObjectDetectionAPIModel.create(
+                        model,
+                        label,
+                        TF_OD_API_INPUT_SIZE);
+                cropSize = TF_OD_API_INPUT_SIZE;
 
-        return Single.fromCallable(new Callable<ImageRecognitionProcessEvent>() {
-            @Override
-            public ImageRecognitionProcessEvent call(){
-                List<Recognition> recognitions = new ArrayList<>();
-                ImageRecognitionProcessEvent event=new ImageRecognitionProcessEvent(part_id,false,recognitions);
-                if (MODE == DetectorMode.TF_OD_API) {
-                    try {
-                        detector = TensorFlowObjectDetectionAPIModel.create(
-                                model,
-                                label,
-                                TF_OD_API_INPUT_SIZE);
-                        cropSize = TF_OD_API_INPUT_SIZE;
-
-                        LOGGER.e("Rx Model loaded infos", model + "//" + label + "//" + detector.getStatString());
-                        recognitions = detector.recognizeImage(bitmap);
-                        event=new ImageRecognitionProcessEvent(part_id,true,recognitions);
-                        Log.e("Rx Recognitions ->", recognitions.toString());
-                        detector.close();
-                      return event;
-
-                        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
-                    } catch (final IOException e) {
-                        LOGGER.e("Rx Exception initializing classifier!", e.getMessage());
-                        detector.close();
-                       return event;
-                        //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
-                    }
-                }
+                LOGGER.e("Rx Model loaded infos", model + "//" + label + "//" + detector.getStatString());
+                recognitions = detector.recognizeImage(bitmap);
+                event = new ImageRecognitionProcessEvent(part_id, true, recognitions);
+                Log.e("Rx Recognitions ->", recognitions.toString());
+                detector.close();
                 return event;
+
+                //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0, 4)));
+            } catch (final IOException e) {
+                LOGGER.e("Rx Exception initializing classifier!", e.getMessage());
+                detector.close();
+                return event;
+                //EventBus.getDefault().post(new ImageRecognitionProcessEvent(part_id, true, recognitions));
             }
-        });
+        }
+        return event;
     }
 }

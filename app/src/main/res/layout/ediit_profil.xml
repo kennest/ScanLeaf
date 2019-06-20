@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editprof"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/editprof">
+    android:background="@drawable/background_gradient">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,8 +14,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="230dp"
-            android:background="@drawable/bg_header"
-             />
+            android:background="@drawable/bg_header" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,15 +40,22 @@
                 android:layout_marginTop="10dp">
 
                 <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/userNewImage"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_centerHorizontal="true"
-                    app:civ_border_color="@color/colorPrimaryDark"
-                    app:civ_border_width="2dp"
                     android:elevation="0.5dp"
+                    android:src="@drawable/ic_person"
                     android:tint="@color/white"
-                    android:id="@+id/userNewImage"
-                    android:src="@drawable/ic_person" />
+                    app:civ_border_color="@color/colorPrimaryDark"
+                    app:civ_border_width="2dp" />
+
+                <ImageButton
+                    android:id="@+id/btnPassReset"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:src="@drawable/key_variant" />
 
 
                 <LinearLayout
@@ -170,32 +176,6 @@
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:layout_marginTop="10dp"
-                        android:fontFamily="@font/changa"
-                        android:text="Mot de passe"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/userPass"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="10dp"
-                        android:layout_marginTop="5dp"
-                        android:background="@color/white"
-                        android:fontFamily="@font/changa"
-                        android:hint="mot de pass"
-                        android:inputType="textPassword"
-                        android:paddingLeft="16dp"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -216,8 +196,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginHorizontal="10dp"
                         android:layout_marginTop="5dp"
-                        android:paddingLeft="16dp"
                         android:background="@color/white"
+                        android:paddingLeft="16dp"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="16sp"
                         android:textStyle="bold" />

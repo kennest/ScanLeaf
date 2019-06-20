@@ -6,11 +6,14 @@ import android.graphics.Point;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
 import android.view.WindowManager;
+
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.HideLoadingEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
@@ -42,8 +45,13 @@ import androidx.lifecycle.Observer;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +61,7 @@ public class ProfileActivity extends BaseActivity {
     public List<Profile> profil = null;
     String username, pseudo, userEmail, Pays;
     TextView nom, pseudon, email, pays, nbAnalyses, nbDetect;
-    Button analyseView, modifyProf, logout;
+    Button analyseView, modifyProf, logout, btnResetPass;
     ImageView pI;
     Country country;
     String nbAna, nbDete;
@@ -62,7 +70,7 @@ public class ProfileActivity extends BaseActivity {
     private int RequestCode = 100;
     String path;
     ImageView imageBox;
-    EditText nameBox, passBox;
+    EditText nameBox;
     EditText surnameBox;
     EditText pseudoBox;
     EditText emailBox;
@@ -90,6 +98,7 @@ public class ProfileActivity extends BaseActivity {
         analyseView = (Button) findViewById(R.id.voirAnalyses);
         modifyProf = (Button) findViewById(R.id.modifyProfil);
         logout = findViewById(R.id.logout);
+        btnResetPass = findViewById(R.id.btnPassReset);
 
 
         Completable.fromAction(() -> {
@@ -134,7 +143,6 @@ public class ProfileActivity extends BaseActivity {
                     pseudoBox = layout.findViewById(R.id.userNewPseudo);
                     emailBox = layout.findViewById(R.id.userNewEmail);
                     imageBox = layout.findViewById(R.id.userNewImage);
-                    passBox = layout.findViewById(R.id.userPass);
                     builder.setView(layout);
 
                     nameBox.setText(user.get(0).getNom());
@@ -142,7 +150,6 @@ public class ProfileActivity extends BaseActivity {
                     pseudoBox.setText(pseudo);
                     id = user.get(0).getId();
                     emailBox.setText(userEmail);
-                    passBox.setText(user.get(0).getPassword());
                     imageBox.setImageBitmap(BitmapFactory.decodeFile(profil.get(0).getAvatar()));
 
                     imageBox.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +171,6 @@ public class ProfileActivity extends BaseActivity {
                                 user.get(0).setNom(nameBox.getText().toString());
                                 user.get(0).setPrenom(surnameBox.getText().toString());
                                 user.get(0).setEmail(email.getText().toString());
-                                user.get(0).setPassword(passBox.getText().toString());
                                 user.get(0).setUsername(pseudoBox.getText().toString());
                                 if (path != null) {
                                     if (path.equals("")) {
@@ -245,6 +251,14 @@ public class ProfileActivity extends BaseActivity {
 
             }
         });
+
+        btnResetPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ResetPasswordDialog(user.get(0));
+            }
+        });
+
         analyseView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -263,16 +277,17 @@ public class ProfileActivity extends BaseActivity {
         if (resultCode == Activity.RESULT_OK && requestCode == RequestCode) {
             ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
             path = returnValue.get(0);
-            compressedImg=new File(path);
-            Completable.fromAction(()->{
-                compressedImg=new CompressImage(ProfileActivity.this).CompressImgFile(compressedImg);
+            compressedImg = new File(path);
+            Completable.fromAction(() -> {
+                compressedImg = new CompressImage(ProfileActivity.this).CompressImgFile(compressedImg);
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(()->{
+                    .subscribe(() -> {
                         imageBox.setImageBitmap(BitmapFactory.decodeFile(compressedImg.getAbsolutePath()));
                         pI.setImageBitmap(BitmapFactory.decodeFile(compressedImg.getAbsolutePath()));
-                    },throwable -> {});
+                    }, throwable -> {
+                    });
 
         }
     }
@@ -304,6 +319,52 @@ public class ProfileActivity extends BaseActivity {
                 });
             }
         });
+    }
+
+    //Show reset password dialog
+    private void ResetPasswordDialog(User user) {
+        View v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.reset_password, null);
+        EditText old = new EditText(this);
+        EditText newpass = new EditText(this);
+        builder = new AlertDialog.Builder(this);
+        builder.setTitle("Modifier Mot de passe");
+        builder.setView(v);
+        builder.setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                MessageDigest digest = null;
+                try {
+                    digest = MessageDigest.getInstance("SHA-256");
+                    byte[] oldhash = digest.digest(old.getText().toString().getBytes(StandardCharsets.UTF_8));
+                    if (oldhash.toString().equals(user.getPassword())) {
+                        EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", false, 2));
+                        try {
+                            Thread.sleep(1500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        user.setPassword(newpass.getText().toString());
+                        RemoteTasks.getInstance(ProfileActivity.this).SendUpdatedUser(user, profil.get(0));
+                        EventBus.getDefault().post(new HideLoadingEvent());
+                    }else{
+                        Log.d("Reset Pass->",old.getText().toString()+"//"+user.getPassword());
+                        EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "L'ancien mot de pass est incorrect", true, 0));
+                    }
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+        builder.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog = builder.create();
+        dialog.show();
     }
 
 }

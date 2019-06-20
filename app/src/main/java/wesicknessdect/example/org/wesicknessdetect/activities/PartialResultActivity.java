@@ -293,7 +293,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     public void SaveDiagnostic() {
         Completable.fromAction(() -> {
             diagnostic.setPictures(AppController.getInstance().getPictures());
-            RemoteTasks.getInstance(this).sendDiagnostic(diagnostic, false);
             AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
             diagnostic.setSended(0);
             DB.diagnosticDao().insertDiagnosticWithPictureAndRect(diagnostic, diagnostic.getPictures());
@@ -302,7 +301,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                             Log.d("Rx Save Diag", "Completed ->" + diagnostic.getUuid());
-                            EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
+                            finish();
                         },
                         throwable -> Log.e("Rx Save Diag Error ->", throwable.getMessage()));
     }

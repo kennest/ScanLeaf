@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,14 +17,18 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toolbar;
+
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.fxn.pix.Pix;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import io.reactivex.subscribers.DisposableSubscriber;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,11 +36,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -174,7 +181,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
                 images_by_part.put((int) c.getId(), returnValue.get(0));
-                Log.d("Picture choose->",returnValue.get(0));
+                Log.d("Picture choose->", returnValue.get(0));
                 //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
                 culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
                 parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
@@ -182,7 +189,6 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
                 parts_lv.scheduleLayoutAnimation();
-
             }
         }
         if (images_by_part.size() == 0) {
@@ -341,42 +347,20 @@ public class ChooseCulturePartActivity extends BaseActivity {
         File labelfilepath = new File(labelpath);
 
         if (modelfilepath.exists() && labelfilepath.exists()) {
-            for (CulturePart c : cultureParts) {
-                if ((c.getId() == part_id)) {
-                    c.setRecognizing(true);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                            parts_lv.setAdapter(culturePartAdapter);
-                            culturePartAdapter.notifyDataSetChanged();
-                            Log.d("Rx Recognizing ->", part_id + "");
-                        }
-                    });
+            List<Classifier.Recognition> recognitions = new ArrayList<>();
+            ImageRecognitionProcessEvent event = new ImageRecognitionProcessEvent(part_id, false, recognitions);
+            getBitmapRecognizeState(event);
+
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    ImageRecognitionProcessEvent last_event = SystemTasks.getInstance(ChooseCulturePartActivity.this)
+                            .recognizedSymptoms(bitmap, modelpath, labelpath, part_id);
+                    getBitmapRecognizeState(last_event);
                 }
-            }
-            SystemTasks.getInstance(ChooseCulturePartActivity.this)
-                    .recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
-                    .subscribeOn(Schedulers.trampoline())
-                    //.observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new SingleObserver<ImageRecognitionProcessEvent>() {
+            });
 
-                        @Override
-                        public void onSubscribe(Disposable d) {
 
-                        }
-
-                        @Override
-                        public void onSuccess(ImageRecognitionProcessEvent event) {
-                            getBitmapRecognizeState(event);
-                        }
-
-                        @Override
-                        public void onError(Throwable t) {
-
-                        }
-                    });
         } else {
             Log.e("Recognizing Error", "Cannot find models and labels");
         }
@@ -403,35 +387,41 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
             }
+
         }
         //finish();
     }
 
     public void getBitmapRecognizeState(ImageRecognitionProcessEvent event) {
         Log.d("Rx Recognition state ->", event.recognitions.toString());
-        for (CulturePart c : cultureParts) {
-            if ((c.getId() == event.part_id)) {
-                if (!event.finished) {
-                    c.setRecognizing(true);
-                } else {
-                    c.setRecognizing(false);
-                    c.setChecked(true);
-                    recognitions_by_part.put((int) event.part_id, event.recognitions);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (CulturePart c : cultureParts) {
+                    if ((c.getId() == event.part_id)) {
+                        if (!event.finished) {
+                            c.setRecognizing(true);
+                        } else {
+                            c.setRecognizing(false);
+                            c.setChecked(true);
+                            recognitions_by_part.put((int) event.part_id, event.recognitions);
+                        }
+                    }
+                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                    parts_lv.setAdapter(culturePartAdapter);
+                    culturePartAdapter.notifyDataSetChanged();
+                }
+                if (recognitions_by_part.size() == images_by_part.size()) {
+                    //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
+                    goToPartialResult();
+                    analysisBtn.setEnabled(true);
+                    analysisBtn.setClickable(true);
+                    analysisBtn.setText("ANALYSER");
+                    analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                 }
             }
-            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-            parts_lv.setAdapter(culturePartAdapter);
-            culturePartAdapter.notifyDataSetChanged();
-        }
-        if (recognitions_by_part.size() == images_by_part.size()) {
-            //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
-            goToPartialResult();
-            analysisBtn.setEnabled(true);
-            analysisBtn.setClickable(true);
-            analysisBtn.setText("ANALYSER");
-            analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+        });
     }
 
     //Listen for deletion on picture part
@@ -461,12 +451,11 @@ public class ChooseCulturePartActivity extends BaseActivity {
         Gson gson = new Gson();
         String recognitions = gson.toJson(recognitions_by_part);
         String images = gson.toJson(images_by_part);
-
         //Log.e(getLocalClassName()+" GoToresult:",images);
         partial.putExtra("recognitions_by_part", recognitions);
         partial.putExtra("images_by_part", images);
-
         startActivity(partial);
+        finish();
     }
 
 
