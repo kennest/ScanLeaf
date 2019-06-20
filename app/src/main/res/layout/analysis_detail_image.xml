@@ -41,10 +41,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="start"
-                android:fontFamily="@font/finger_paint"
+                android:fontFamily="@font/neo_latina"
                 android:text="Partie de la culture"
                 android:textSize="14sp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
