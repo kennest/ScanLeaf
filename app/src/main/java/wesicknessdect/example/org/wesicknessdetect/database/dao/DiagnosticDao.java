@@ -84,6 +84,6 @@ public abstract class DiagnosticDao {
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
     public abstract List<Diagnostic> getNotSendedSync();
 
-    @Query("SELECT * FROM Diagnostic WHERE x=:id")
-    public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
+//    @Query("SELECT * FROM Diagnostic WHERE x=:id")
+//    public abstract DiagnosticPictures getDiagnosticWithPicturesSync(int id);
 }

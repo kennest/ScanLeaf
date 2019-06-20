@@ -1135,9 +1135,10 @@ public class RemoteTasks {
                                         long millis = new Date().getTime();
                                         String t = dateFormat.format(millis);
                                         p.setDiseaseName(json.getAsJsonObject().get("maladie").getAsString());
-                                        p.setDistance(json.getAsJsonObject().get("distance").getAsString());
-                                        p.setLatitude(json.getAsJsonObject().get("latitude").getAsDouble());
-                                        p.setLongitude(json.getAsJsonObject().get("longitude").getAsDouble());
+                                        p.setFrequence(json.getAsJsonObject().get("frequence").getAsString());
+                                        p.setCity(json.getAsJsonObject().get("city").getAsString());
+                                        p.setCountry(json.getAsJsonObject().get("country").getAsString());
+                                        p.setState(json.getAsJsonObject().get("state").getAsString());
                                         p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                                         p.setTime(t);
                                         DB.postDao().createPost(p);

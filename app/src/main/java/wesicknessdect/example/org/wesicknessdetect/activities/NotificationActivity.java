@@ -41,7 +41,7 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
         mapFragment.getMapAsync(this);
 
         toolbar.setTitle(post.getDiseaseName());
-        toolbar.setSubtitle("detectée à "+post.getDistance()+"km de vous:");
+        toolbar.setSubtitle("Détecté dans la zone de "+ post.getCity() + ".");
     }
 
     @Override
@@ -54,7 +54,7 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
         // Get my current location from prefs
         String[] me_str= FastSave.getInstance().getString("location","0,0:0,0").split(":");
 
-        LatLng post_loc = new LatLng(post.getLatitude(), post.getLongitude());
+        LatLng post_loc = new LatLng(-33.6, 150.00);
         LatLng me = new LatLng(Double.parseDouble(me_str[0]), Double.parseDouble(me_str[1]));
         LatLng SYDNEY = new LatLng(-33.88,151.21);
 

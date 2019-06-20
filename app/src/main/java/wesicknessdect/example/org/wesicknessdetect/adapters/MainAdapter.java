@@ -459,97 +459,79 @@ public class MainAdapter extends PagerAdapter {
 
         RecyclerView recyclerView = v.findViewById(R.id.chat_rv);
         SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
-
-        View empty = v.findViewById(R.id.empty_data);
+        View view= v.findViewById(R.id.empty_data);
+        View noAlerte= view.findViewById(R.id.empty_alert);
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
         anim.setDuration(1000); //You can manage the time
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
-        empty.setAnimation(anim);
-        View loading = v.findViewById(R.id.loading_data);
-        LinearLayoutManager llm=new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(llm);
+        noAlerte.setAnimation(anim);
+        //view.setAnimation(anim);
+
+
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_fall_down);
-
-
-        scrollListener = new EndlessRecyclerViewScrollListener(llm) {
+        noAlerte.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (Constants.isOnline(mContext)) {
-                    Snackbar snackbar = Snackbar.make(mContext.getWindow().getDecorView(), "Voulez-vous en détecter plus?", Snackbar.LENGTH_LONG);
-                    snackbar.setAction("Oui", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            mContext.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    posts = DB.postDao().getAllPost();
-                                    mContext.runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            recyclerView.setAdapter(new ChatAdapter(mContext, posts));
-                                            recyclerView.setLayoutAnimation(controller);
-                                            recyclerView.scheduleLayoutAnimation();
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-                    });
-                    snackbar.show();
-                }
-            }
-        };
-        Handler handler = new Handler();
-
-        InitAlerteData = new Runnable() {
-            @Override
-            public void run() {
-                posts = DB.postDao().getAllPost();
-                if (posts.size() > 0) {
-                    Log.d("Alertes RV", "Is Empty");
-                    //Toast.makeText(mContext, "Empty List ->" + tmp.size(), Toast.LENGTH_SHORT).show();
-                    //empty.setVisibility(View.VISIBLE);
-                    ImageButton reset1 = empty.findViewById(R.id.reload);
-                    empty.setVisibility(View.GONE);
+            public void onClick(View v) {
+                List<Post> posts=DB.postDao().getAllPost();
+                if (posts.size()>0){
+                    anim.cancel();
+                    view.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    reset1.setOnClickListener(new View.OnClickListener() {
+                    AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
                         @Override
-                        public void onClick(View v) {
-                            new BaseActivity().StartSyncingData(mContext, 0);
-                            anim.cancel();
-                            empty.setVisibility(View.GONE);
-                            loading.setVisibility(View.VISIBLE);
+                        public void run() {
+
                             mContext.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    //recyclerView.addOnScrollListener(scrollListener);
-                                    chatAdapter = new ChatAdapter(mContext, posts);
-                                    recyclerView.setAdapter(chatAdapter);
-                                    chatAdapter.notifyDataSetChanged();
+                                    recyclerView.setHasFixedSize(true);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                                    recyclerView.setAdapter(new ChatAdapter(mContext, posts));
+                                    recyclerView.setLayoutAnimation(controller);
+                                    recyclerView.scheduleLayoutAnimation();
                                 }
                             });
-                            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                            Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                            PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            Calendar cal = Calendar.getInstance();
-                            cal.add(Calendar.SECOND, 5);
-                            alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
                         }
                     });
-                    handler.postDelayed(InitAlerteData, 1500);
                 }
-                //handler.postDelayed(InitData,1000);
+
+
             }
-        };
-        handler.post(InitData);
+        });
+
+
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                handler.postDelayed(InitAlerteData, 500);
+                //handler.postDelayed(InitAlerteData, 500);
+                List<Post> posts=DB.postDao().getAllPost();
+                if (posts.size()>0){
+                    anim.cancel();
+                    view.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            mContext.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    recyclerView.setHasFixedSize(true);
+                                    recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                                    recyclerView.setAdapter(new ChatAdapter(mContext, posts));
+                                    recyclerView.setLayoutAnimation(controller);
+                                    recyclerView.scheduleLayoutAnimation();
+                                }
+                            });
+                        }
+                    });
+                }
+                else {
+                    Toast.makeText(mContext, "Aucune alerte n'a été détectée dans votre zone...", Toast.LENGTH_SHORT).show();
+                }
                 refreshLayout.setRefreshing(false);
             }
         });
