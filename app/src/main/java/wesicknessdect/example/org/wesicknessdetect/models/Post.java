@@ -14,17 +14,27 @@ public class Post {
     @SerializedName(value = "diseaseName")
     private String diseaseName;
 
-    @SerializedName(value = "distance")
-    private String distance;
 
     @SerializedName(value = "idServeur")
     private String idServeur;
 
-    @SerializedName(value = "latitude")
-    private Double latitude;
+//    @SerializedName(value = "latitude")
+//    private Double latitude;
+//
+//    @SerializedName(value = "longitude")
+//    private Double longitude;
 
-    @SerializedName(value = "longitude")
-    private Double longitude;
+    @SerializedName(value = "frequence")
+    private String frequence;
+
+    @SerializedName(value = "city")
+    private String city;
+
+    @SerializedName(value = "state")
+    private String state;
+
+    @SerializedName(value = "country")
+    private String country;
 
     @SerializedName(value = "time")
     private String time;
@@ -54,12 +64,36 @@ public class Post {
     }
 
 
-    public String getDistance() {
-        return distance;
+    public String getFrequence() {
+        return frequence;
     }
 
-    public void setDistance(String distance) {
-        this.distance = distance;
+    public void setFrequence(String frequence) {
+        this.frequence = frequence;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
     }
 
     public String getIdServeur() {
@@ -71,19 +105,19 @@ public class Post {
     }
 
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
+//    public Double getLatitude() {
+//        return latitude;
+//    }
+//
+//    public void setLatitude(Double latitude) {
+//        this.latitude = latitude;
+//    }
+//
+//    public Double getLongitude() {
+//        return longitude;
+//    }
+//
+//    public void setLongitude(Double longitude) {
+//        this.longitude = longitude;
+//    }
 }

@@ -64,15 +64,15 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (posts.size() > 0) {
                 for (Post post : posts) {
 
-                    String distance = post.getDistance();
-                    Character z = '0';
-                    if (distance.charAt(0) == z) {
-                        distance = post.getDiseaseName() + " détectée près";
-                    } else {
-                        distance = post.getDiseaseName() + " détectée à " + post.getDistance() + " km";
-                    }
+//                    String distance = post.getDistance();
+//                    Character z = '0';
+//                    if (distance.charAt(0) == z) {
+//                        distance = post.getDiseaseName() + " détectée près";
+//                    } else {
+//                        distance = post.getDiseaseName() + " détectée à " + post.getDistance() + " km";
+//                    }
 
-                    String d = distance + " de vous";
+                    String d ="Détecté dans la zone de "+ post.getCity() + ".";
 
                     Bundle bundle = new Bundle();
                     Gson gson = new Gson();

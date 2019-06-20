@@ -101,14 +101,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatHolder> {
 
             latestTime.setText(post.getTime());
 
-            String distance = post.getDistance();
-            Character z = '0';
-            if (distance.charAt(0) == z) {
-                distance = "Détecté près";
-            } else {
-                distance = "Détecté à " + post.getDistance() + " km";
-            }
-            String d = distance + " de vous";
+//            String distance = post.getDistance();
+//            Character z = '0';
+//            if (distance.charAt(0) == z) {
+//                distance = "Détecté près";
+//            } else {
+//                distance = "Détecté à " + post.getDistance() + " km";
+//            }
+            String d ="Détecté dans la zone de "+ post.getCity() + ".";
             latestMessage.setText(d);
         }
 

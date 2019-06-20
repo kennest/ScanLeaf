@@ -24,8 +24,8 @@ public interface PostDao {
     @Query("SELECT * FROM Post ORDER BY id DESC LIMIT 1")
     Post getLastPost();
 
-    @Query("UPDATE Post SET diseaseName = :maladie, distance = :distance WHERE idServeur =:idServeur")
-    void updatePost(String maladie, String distance, String idServeur);
+    @Query("UPDATE Post SET diseaseName = :maladie, city = :city WHERE idServeur =:idServeur")
+    void updatePost(String maladie, String city, String idServeur);
 
 
 
