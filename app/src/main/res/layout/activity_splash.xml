@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="wesicknessdect.example.org.wesicknessdetect.activities.SplashActivity"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:layout_gravity="center"
+    android:gravity="center">
 
     <!--WebView
         android:id="@+id/pulse"
@@ -66,16 +68,15 @@
 
     <TextView
         android:id="@+id/welcome_txt"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/plantation"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_centerHorizontal="true"
         android:textSize="20sp"
+        android:drawableLeft="@drawable/ic_person"
+        android:drawableTint="@color/dark_gray"
+        android:visibility="invisible"
         android:layout_marginBottom="228dp"
-        android:visibility="gone"
         android:fontFamily="@font/finger_paint"
         android:gravity="center_horizontal"
         android:hint="USERNAME" />

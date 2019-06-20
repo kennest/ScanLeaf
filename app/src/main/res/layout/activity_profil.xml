@@ -207,29 +207,35 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center"
-                android:layout_weight="1">
+                android:layout_weight="2">
 
                 <Button
                     android:id="@+id/btnPassReset"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#F4511E"
+                    android:backgroundTint="@color/gray"
+                    android:layout_margin="8dp"
+                    android:gravity="center"
                     android:drawableLeft="@drawable/key_variant"
                     android:fontFamily="@font/changa"
+                    android:layout_weight="1"
                     android:text="Changer Mot de passe"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
                 <Button
                     android:id="@+id/logout"
+                    android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#B71C1C"
+                    android:backgroundTint="@color/dark_gray"
+                    android:layout_margin="8dp"
                     android:drawableLeft="@drawable/ic_edit_black_24dp"
                     android:drawableTint="@color/white"
                     android:fontFamily="@font/changa"
+                    android:gravity="center"
                     android:text="Déconnecter"
                     android:textColor="@color/white"
                     android:textStyle="bold" />

@@ -104,7 +104,8 @@ public class SplashActivity extends BaseActivity {
                     if (u.getToken() != null) {
                         isAuthenticated = true;
                         token = u.getToken();
-                        welcome.setText("Bienvenue, " + u.getUsername());
+                        welcome.setVisibility(View.VISIBLE);
+                        welcome.setText("" + u.getUsername());
                     }
                 }
                 try {
@@ -139,7 +140,7 @@ public class SplashActivity extends BaseActivity {
         iv3.startAnimation(dubas);
 
         if (isAuthenticated) {
-            welcome.setVisibility(View.VISIBLE);
+            //welcome.setVisibility(View.VISIBLE);
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {

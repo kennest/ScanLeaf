@@ -91,7 +91,7 @@ public class OfflineService extends JobService {
             remoteTasks.sendLocation(l);
         } else {
             Post p = posti.get(posti.size() - 1);
-            Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getDistance() + " | " + p.getIdServeur() + " | " + p.getTime());
+            Log.d("dernier_post_data", " | " + p.getId() + " | " + p.getDiseaseName() + " | " + p.getCity() + " | " + p.getIdServeur() + " | " + p.getTime());
             idServeur = p.getIdServeur();
             l.setIdServeur(idServeur);
             remoteTasks.sendLocation(l);

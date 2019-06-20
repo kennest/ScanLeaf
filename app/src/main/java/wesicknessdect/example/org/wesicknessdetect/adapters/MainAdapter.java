@@ -468,7 +468,6 @@ public class MainAdapter extends PagerAdapter {
 
 
     private View InitAlerteView(View v) {
-
         RecyclerView recyclerView = v.findViewById(R.id.chat_rv);
         SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
         View view= v.findViewById(R.id.empty_data);
@@ -480,13 +479,35 @@ public class MainAdapter extends PagerAdapter {
         anim.setRepeatCount(Animation.INFINITE);
         noAlerte.setAnimation(anim);
         //view.setAnimation(anim);
-
-
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_fall_down);
+        posts=DB.postDao().getAllPost();
+        if (posts.size()>0){
+            anim.cancel();
+            view.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    mContext.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+                            recyclerView.setAdapter(new ChatAdapter(mContext, posts));
+                            recyclerView.setLayoutAnimation(controller);
+                            recyclerView.scheduleLayoutAnimation();
+                        }
+                    });
+                }
+            });
+        }
+
+
         noAlerte.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Post> posts=DB.postDao().getAllPost();
+                posts=DB.postDao().getAllPost();
                 if (posts.size()>0){
                     anim.cancel();
                     view.setVisibility(View.GONE);
