@@ -51,7 +51,7 @@ public class DownloadService extends IntentService {
         try {
             startDownload(getApplicationContext(), downloadPath, part_id);
         }catch (ErrnoException e){
-                EventBus.getDefault().post(new ShowLoadingEvent("No Space Left", "Please Free Memory", true));
+                EventBus.getDefault().post(new ShowLoadingEvent("No Space Left", "Please Free Memory", true,0));
         }
     }
 
@@ -113,7 +113,7 @@ public class DownloadService extends IntentService {
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true,0));
         }
     }
 }

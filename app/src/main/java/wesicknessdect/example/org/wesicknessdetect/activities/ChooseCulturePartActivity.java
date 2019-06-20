@@ -6,8 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -23,16 +23,11 @@ import com.fxn.pix.Pix;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import io.reactivex.FlowableSubscriber;
-import io.reactivex.Notification;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
 import io.reactivex.subscribers.DisposableSubscriber;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.reactivestreams.Subscription;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -52,16 +47,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Completable;
-import io.reactivex.MaybeObserver;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.activities.tensorflow.Classifier;
-import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.adapters.CulturePartAdapter;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.DeletePartPictureEvent;
@@ -70,7 +62,6 @@ import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.tasks.SystemTasks;
 import wesicknessdect.example.org.wesicknessdetect.models.CulturePart;
 import wesicknessdect.example.org.wesicknessdetect.models.Model;
-import wesicknessdect.example.org.wesicknessdetect.utils.CompressImage;
 
 public class ChooseCulturePartActivity extends BaseActivity {
     List<CulturePart> cultureParts = new ArrayList<>();
@@ -112,7 +103,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
         }
 
         DB.culturePartsDao().rxGetAll()
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new SingleObserver<List<CulturePart>>() {
                     @Override
@@ -189,24 +180,15 @@ public class ChooseCulturePartActivity extends BaseActivity {
             if (resultCode == Activity.RESULT_OK && requestCode == c.getId()) {
                 assert data != null;
                 ArrayList<String> returnValue = data.getStringArrayListExtra(Pix.IMAGE_RESULTS);
-                compressedImg = new File(returnValue.get(0));
-                Completable.fromAction(() -> {
-                    compressedImg = new CompressImage(ChooseCulturePartActivity.this).CompressImgFile(compressedImg);
-                })
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(() -> {
-                            images_by_part.put((int) c.getId(), compressedImg.getAbsolutePath());
-                            //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
-                            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                            parts_lv.setLayoutAnimation(controller);
-                            parts_lv.setAdapter(culturePartAdapter);
-                            culturePartAdapter.notifyDataSetChanged();
-                            parts_lv.scheduleLayoutAnimation();
-                        }, throwable -> {
-                        });
-
+                images_by_part.put((int) c.getId(), returnValue.get(0));
+                Log.d("Picture choose->", returnValue.get(0));
+                //Log.e(getLocalClassName()+" images:", images_by_part.size()+ "");
+                culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                parts_lv.setLayoutAnimation(controller);
+                parts_lv.setAdapter(culturePartAdapter);
+                culturePartAdapter.notifyDataSetChanged();
+                parts_lv.scheduleLayoutAnimation();
             }
         }
         if (images_by_part.size() == 0) {
@@ -261,7 +243,7 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 }
             }
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.trampoline())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                             if (BAD_IMAGES.size() > 0) {
@@ -297,14 +279,27 @@ public class ChooseCulturePartActivity extends BaseActivity {
                                             dialog.dismiss();
                                             //doRecognizingImage(model.getPb(),model.getLabel(),entry.getKey(),bitmap_cropped);
                                             for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
-                                                DB.modelDao().getByPart((long) entry.getKey()).observe(ChooseCulturePartActivity.this, new Observer<Model>() {
-                                                    @Override
-                                                    public void onChanged(Model model) {
-                                                        Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
-                                                        Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                                                        doRecognizingImage(model.getPb(), model.getLabel(), entry.getKey(), bitmap_cropped);
-                                                    }
-                                                });
+                                                DB.modelDao().rxGetByPart((long) entry.getKey())
+                                                        .subscribeOn(Schedulers.trampoline())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribe(new SingleObserver<Model>() {
+                                                            @Override
+                                                            public void onSubscribe(Disposable d) {
+
+                                                            }
+
+                                                            @Override
+                                                            public void onSuccess(Model model) {
+                                                                Bitmap bitmap = BitmapFactory.decodeFile(entry.getValue());
+                                                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                                                                doRecognizingImage(model.getPb(), model.getLabel(), entry.getKey(), bitmap_cropped);
+                                                            }
+
+                                                            @Override
+                                                            public void onError(Throwable e) {
+
+                                                            }
+                                                        });
                                             }
                                         }
                                     });
@@ -317,9 +312,14 @@ public class ChooseCulturePartActivity extends BaseActivity {
                                 Log.d("Rx PIX SIZE ->", images_by_part.size() + "");
                                 for (Map.Entry<Integer, String> entry : images_by_part.entrySet()) {
                                     DB.modelDao().rxGetByPart((long) entry.getKey())
-                                            .subscribeOn(Schedulers.newThread())
+                                            .subscribeOn(Schedulers.trampoline())
                                             .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new DisposableSingleObserver<Model>() {
+                                            .subscribe(new SingleObserver<Model>() {
+
+                                                @Override
+                                                public void onSubscribe(Disposable d) {
+
+                                                }
 
                                                 @Override
                                                 public void onSuccess(Model model) {
@@ -347,36 +347,20 @@ public class ChooseCulturePartActivity extends BaseActivity {
         File labelfilepath = new File(labelpath);
 
         if (modelfilepath.exists() && labelfilepath.exists()) {
-            for (CulturePart c : cultureParts) {
-                if ((c.getId() == part_id)) {
-                    c.setRecognizing(true);
-                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-                    parts_lv.setAdapter(culturePartAdapter);
-                    culturePartAdapter.notifyDataSetChanged();
-                    Log.d("Rx Recognizing ->", part_id + "");
+            List<Classifier.Recognition> recognitions = new ArrayList<>();
+            ImageRecognitionProcessEvent event = new ImageRecognitionProcessEvent(part_id, false, recognitions);
+            getBitmapRecognizeState(event);
+
+            AsyncTask.SERIAL_EXECUTOR.execute(new Runnable() {
+                @Override
+                public void run() {
+                    ImageRecognitionProcessEvent last_event = SystemTasks.getInstance(ChooseCulturePartActivity.this)
+                            .recognizedSymptoms(bitmap, modelpath, labelpath, part_id);
+                    getBitmapRecognizeState(last_event);
                 }
-            }
-            SystemTasks.getInstance(ChooseCulturePartActivity.this)
-                    .recognizedSymptoms(bitmap, modelpath, labelpath, part_id)
-                    .subscribeOn(Schedulers.trampoline())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new DisposableSubscriber<ImageRecognitionProcessEvent>() {
-                        @Override
-                        public void onNext(ImageRecognitionProcessEvent event) {
-                            getBitmapRecognizeState(event);
-                        }
+            });
 
-                        @Override
-                        public void onError(Throwable t) {
 
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
         } else {
             Log.e("Recognizing Error", "Cannot find models and labels");
         }
@@ -403,35 +387,41 @@ public class ChooseCulturePartActivity extends BaseActivity {
                 parts_lv.setAdapter(culturePartAdapter);
                 culturePartAdapter.notifyDataSetChanged();
             }
+
         }
         //finish();
     }
 
     public void getBitmapRecognizeState(ImageRecognitionProcessEvent event) {
         Log.d("Rx Recognition state ->", event.recognitions.toString());
-        for (CulturePart c : cultureParts) {
-            if ((c.getId() == event.part_id)) {
-                if (!event.finished) {
-                    c.setRecognizing(true);
-                } else {
-                    c.setRecognizing(false);
-                    c.setChecked(true);
-                    recognitions_by_part.put((int) event.part_id, event.recognitions);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                for (CulturePart c : cultureParts) {
+                    if ((c.getId() == event.part_id)) {
+                        if (!event.finished) {
+                            c.setRecognizing(true);
+                        } else {
+                            c.setRecognizing(false);
+                            c.setChecked(true);
+                            recognitions_by_part.put((int) event.part_id, event.recognitions);
+                        }
+                    }
+                    culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
+                    parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
+                    parts_lv.setAdapter(culturePartAdapter);
+                    culturePartAdapter.notifyDataSetChanged();
+                }
+                if (recognitions_by_part.size() == images_by_part.size()) {
+                    //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
+                    goToPartialResult();
+                    analysisBtn.setEnabled(true);
+                    analysisBtn.setClickable(true);
+                    analysisBtn.setText("ANALYSER");
+                    analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
                 }
             }
-            culturePartAdapter = new CulturePartAdapter(ChooseCulturePartActivity.this, cultureParts, images_by_part);
-            parts_lv.setLayoutManager(new GridLayoutManager(ChooseCulturePartActivity.this, 2));
-            parts_lv.setAdapter(culturePartAdapter);
-            culturePartAdapter.notifyDataSetChanged();
-        }
-        if (recognitions_by_part.size() == images_by_part.size()) {
-            //Log.e(getLocalClassName()+" GoToresult",recognitions_by_part.size()+"//"+images_by_part.size());
-            goToPartialResult();
-            analysisBtn.setEnabled(true);
-            analysisBtn.setClickable(true);
-            analysisBtn.setText("ANALYSER");
-            analysisBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
-        }
+        });
     }
 
     //Listen for deletion on picture part
@@ -461,12 +451,11 @@ public class ChooseCulturePartActivity extends BaseActivity {
         Gson gson = new Gson();
         String recognitions = gson.toJson(recognitions_by_part);
         String images = gson.toJson(images_by_part);
-
         //Log.e(getLocalClassName()+" GoToresult:",images);
         partial.putExtra("recognitions_by_part", recognitions);
         partial.putExtra("images_by_part", images);
-
         startActivity(partial);
+        finish();
     }
 
 

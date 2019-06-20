@@ -10,6 +10,8 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
 @Dao
@@ -40,7 +42,7 @@ public abstract class SymptomRectDao {
     public abstract LiveData<List<SymptomRect>> getByPictureId(long id);
 
     @Query("SELECT * FROM SymptomRect WHERE picture_id=:id")
-    public abstract List<SymptomRect> getByPictureIdSync(long id);
+    public abstract Single<List<SymptomRect>> rxGetByPictureId(long id);
 
     @Query("SELECT * FROM SymptomRect WHERE symptom_id=:id")
     public abstract LiveData<List<SymptomRect>> getBySymptomId(long id);

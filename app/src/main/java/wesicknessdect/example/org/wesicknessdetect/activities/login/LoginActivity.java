@@ -133,11 +133,7 @@ public class LoginActivity extends BaseActivity {
         Credential c = new Credential();
         c.setEmail(username.getText().toString());
         c.setPassword(password.getText().toString());
-        try {
-            RemoteTasks.getInstance(LoginActivity.this).doLogin(c);
-        } catch (InterruptedException|ExecutionException e) {
-            e.printStackTrace();
-        }
+        RemoteTasks.getInstance(LoginActivity.this).doLogin(c);
     }
 
     //To get a new Password

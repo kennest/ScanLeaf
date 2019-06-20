@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:paddingBottom="45dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
     <TextView
@@ -11,132 +10,146 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        android:fontFamily="@font/changa"
         android:gravity="center"
         android:paddingStart="12dp"
         android:paddingTop="2dp"
         android:paddingEnd="12dp"
         android:paddingBottom="2dp"
-        android:fontFamily="@font/changa"
         android:text="Dernières analyses"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeToRefresh"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/recent_updates"
+        android:layout_alignTop="@+id/empty_data"
+        android:layout_alignEnd="@+id/empty_data"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="0dp"
-        android:layout_below="@id/recent_updates"
+        android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp">
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        <LinearLayout
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeToRefresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp">
 
-            <RelativeLayout
-                android:paddingBottom="1dp"
-                android:id="@+id/container"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:paddingStart="7dp"
-                android:paddingEnd="7dp"
-                >
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/card"
-                    android:foreground="#4B0000"
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    app:cardCornerRadius="20dp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:elevation="10dp">
-                    <ImageView
-                        android:contentDescription="Image analysée"
-                        android:id="@+id/image"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                     <RelativeLayout
+                        android:id="@+id/container"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingStart="10dp"
-                        android:gravity="center"
-                        android:background="#36000000"
-                        android:paddingEnd="10dp"
-                        android:layout_gravity="center">
-                        <TextView
-                            android:id="@+id/titlelast"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:paddingStart="7dp"
+                        android:paddingEnd="7dp"
+                        android:paddingBottom="1dp"
+                        android:visibility="gone">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/card"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:gravity="center"
-                            android:textSize="24sp"
-                            android:elevation="20dp"
-                            android:fontFamily="@font/destroyearthbb"
-                            android:text="Dernière analyse"
-                            android:textColor="@color/white"
-                            android:textStyle="bold|italic" />
-                        <TextView
-                            android:id="@+id/user_name"
-                            android:layout_below="@+id/titlelast"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:layout_marginTop="6dp"
-                            android:gravity="center"
-                            android:fontFamily="@font/changa"
-                            android:textSize="18sp"
-                            android:elevation="20dp"
-                            android:text="Simple Title Text "
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/counter"
-                            android:layout_marginTop="10dp"
-                            android:layout_below="@+id/user_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="10dp"
-                            android:gravity="center"
-                            android:fontFamily="@font/finger_paint"
-                            android:textSize="18sp"
-                            android:elevation="20dp"
-                            android:text="Simple Title Text "
-                            android:textColor="@color/white"
-                            android:textStyle="bold" />
+                            android:layout_height="300dp"
+                            android:background="?android:attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:elevation="10dp"
+                            android:focusable="true"
+                            android:foreground="#4B0000"
+                            app:cardCornerRadius="20dp">
+
+                            <ImageView
+                                android:id="@+id/image"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:contentDescription="Image analysée" />
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:background="#36000000"
+                                android:gravity="center"
+                                android:paddingStart="10dp"
+                                android:paddingEnd="10dp">
+
+                                <TextView
+                                    android:id="@+id/titlelast"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:elevation="20dp"
+                                    android:fontFamily="@font/destroyearthbb"
+                                    android:gravity="center"
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+                                    android:text="Dernière analyse"
+                                    android:textColor="@color/white"
+                                    android:textSize="24sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/user_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/titlelast"
+                                    android:layout_marginTop="6dp"
+                                    android:elevation="20dp"
+                                    android:fontFamily="@font/changa"
+                                    android:gravity="center"
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+                                    android:text="Simple Title Text "
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/counter"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/user_name"
+                                    android:layout_marginTop="10dp"
+                                    android:elevation="20dp"
+                                    android:fontFamily="@font/finger_paint"
+                                    android:gravity="center"
+                                    android:paddingLeft="10dp"
+                                    android:paddingRight="10dp"
+                                    android:text="Simple Title Text "
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                            </RelativeLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
 
                     </RelativeLayout>
-                </com.google.android.material.card.MaterialCardView>
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/status_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:background="#fff"
 
+                        android:visibility="visible">
 
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/status_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:background="#fff"
-
-                android:visibility="visible">
-
-            </androidx.recyclerview.widget.RecyclerView>
-        </LinearLayout>
-        </ScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    </androidx.recyclerview.widget.RecyclerView>
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </FrameLayout>
 
 
     <FrameLayout
@@ -166,11 +179,14 @@
         android:layout_marginEnd="0dp"
         android:visibility="gone">
 
-        <ProgressBar
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal|center"
-            android:indeterminate="true" />
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/loader"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:contentDescription="LOAD"
+            android:src="@drawable/boonnnn" />
+
     </FrameLayout>
 
 

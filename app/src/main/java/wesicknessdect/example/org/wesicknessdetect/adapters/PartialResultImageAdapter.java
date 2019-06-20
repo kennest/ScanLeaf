@@ -44,6 +44,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Question;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
+import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 
 public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResultImageAdapter.ImageHolder> {
 
@@ -52,7 +53,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
     private Map<Integer, Map<Integer, String>> images_by_part;
     private CulturePart culturePart = new CulturePart();
     private List<Symptom> symptomsList = new ArrayList<>();
-    private Question question =new Question();
+    private Question question = new Question();
 
     List<Picture> pictures = new ArrayList<>();
 
@@ -81,7 +82,7 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
                     new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... voids) {
-                            question= AppDatabase.getInstance(context).questionDao().getByPartSync(n.getKey());
+                            question = AppDatabase.getInstance(context).questionDao().getByPartSync(n.getKey());
                             symptomsList = AppDatabase.getInstance(context).symptomDao().getByQuestion(question.getId());
                             return null;
                         }
@@ -106,92 +107,84 @@ public class PartialResultImageAdapter extends RecyclerView.Adapter<PartialResul
 
                     if (entry.getKey().equals(position)) {
                         com.google.android.material.chip.ChipGroup chipGroup = new com.google.android.material.chip.ChipGroup(context);
-                    for (Map.Entry<Integer, String> n : entry.getValue().entrySet()) {
-                        p.setCulture_part_id(n.getKey());
-                        p.setImage(n.getValue());
-                        p.setSended(0);
-                        String uuid= UUID.randomUUID().toString();
-                        p.setUuid(uuid);
-                        //Retrieve the culture part image from DB
-                        // Log.e("part_id", n.getKey() + " ** " + position);
+                        for (Map.Entry<Integer, String> n : entry.getValue().entrySet()) {
+                            p.setCulture_part_id(n.getKey());
+                            p.setImage(n.getValue());
+                            p.setSended(0);
+                            String uuid = UUID.randomUUID().toString();
+                            p.setUuid(uuid);
+                            //Retrieve the culture part image from DB
+                            // Log.e("part_id", n.getKey() + " ** " + position);
 
-                        AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey()).observeForever(new Observer<CulturePart>() {
-                            @Override
-                            public void onChanged(CulturePart c) {
-                                culturePart = c;
+                            AppDatabase.getInstance(context).culturePartsDao().getById(n.getKey()).observeForever(new Observer<CulturePart>() {
+                                @Override
+                                public void onChanged(CulturePart c) {
+                                    culturePart = c;
+                                    holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
+                                    holder.part_name.setText(culturePart.getNom());
+                                }
+                            });
+
+                            if (culturePart != null) {
                                 holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
                                 holder.part_name.setText(culturePart.getNom());
                             }
-                        });
 
-                        if (culturePart != null) {
-                            holder.part_image.setImageBitmap(BitmapFactory.decodeFile(culturePart.getImage()));
-                            holder.part_name.setText(culturePart.getNom());
-                        }
+                            for (Map.Entry<Integer, List<Classifier.Recognition>> recognitionEntry : recognitions_by_part.entrySet()) {
+                                if (n.getKey().equals(recognitionEntry.getKey())) {
+                                    Bitmap bitmap = BitmapFactory.decodeFile(n.getValue());
+                                    Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
+                                    //List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
+                                    Canvas canvas = new Canvas(bitmap_cropped);
 
-                        for (Map.Entry<Integer, List<Classifier.Recognition>> recognitionEntry : recognitions_by_part.entrySet()) {
-                            if (n.getKey().equals(recognitionEntry.getKey())) {
-                                Bitmap bitmap = BitmapFactory.decodeFile(n.getValue());
-                                Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 500, 500, false);
-                                //List<Classifier.Recognition> recognitions = recognitionEntry.getValue();
-                                Canvas canvas = new Canvas(bitmap_cropped);
+                                    //recognitions = recognitions.subList(0, 4);
+                                    for (Classifier.Recognition r : recognitionEntry.getValue().subList(0, 3)) {
+                                        symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
 
-                                //recognitions = recognitions.subList(0, 4);
-                                for (Classifier.Recognition r : recognitionEntry.getValue().subList(0, 3)) {
-                                    symptoms.add(r.getTitle() + "---" + (Math.round(r.getConfidence() * 100)) + "%");
+                                        for (Symptom s : symptomsList) {
+                                            if (s.getName().equals(r.getTitle())) {
+                                                SymptomRect sr = new SymptomRect();
+                                                sr.set(r.getLocation());
+                                                sr.setSymptom_id(s.getId());
+                                                sr.setLabel(r.getTitle());
+                                                sr.setSended(0);
+                                                String ruuid = UUID.randomUUID().toString();
+                                                sr.setUuid(ruuid);
+                                                symptomsRects.add(sr);
+                                            }
+                                        }
 
-                                    for (Symptom s : symptomsList) {
-                                        if (s.getName().equals(r.getTitle())) {
-                                            SymptomRect sr = new SymptomRect();
-                                            sr.set(r.getLocation());
-                                            sr.setSymptom_id(s.getId());
-                                            sr.setLabel(r.getTitle());
-                                            sr.setSended(0);
-                                            String ruuid= UUID.randomUUID().toString();
-                                            sr.setUuid(ruuid);
-                                            symptomsRects.add(sr);
+                                        Paint paint = new Paint();
+                                        try{
+                                            paint.setStyle(Paint.Style.STROKE);
+                                            paint.setStrokeWidth(4f);
+                                            //Random rnd = new Random();
+                                            //int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+                                            int color = Constants.RECTCOLORS.get(recognitionEntry.getValue().indexOf(r));
+                                            com.google.android.material.chip.Chip cv = new com.google.android.material.chip.Chip(context);
+                                            cv.setText(String.format("%s : %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
+                                            cv.setTextColor(Color.WHITE);
+                                            cv.setChipIcon(context.getDrawable(R.drawable.barley_off));
+                                            cv.setChipBackgroundColor(ColorStateList.valueOf(color));
+                                            chipGroup.addView(cv);
+                                            recognition_legend.put(color, r.getTitle());
+                                            paint.setColor(color);
+                                            paint.setAntiAlias(true);
+                                            canvas.drawRect(r.getLocation(), paint);
+                                        }catch (IndexOutOfBoundsException e){
+                                            Log.e("Colors size->",e.getMessage());
                                         }
                                     }
 
-                                    Paint paint = new Paint();
-                                    paint.setStyle(Paint.Style.STROKE);
-                                    paint.setStrokeWidth(4f);
-                                    Random rnd = new Random();
-                                    int color = Color.argb(255, rnd.nextInt(255), rnd.nextInt(255), rnd.nextInt(255));
+                                    holder.symptoms_txt.addView(chipGroup);
+                                    p.setSymptomRects(symptomsRects);
+                                    Log.e("Rect Partial 0 ->", symptomsRects.size() + "");
+                                    //AppController.getInstance().setSymptomsRects(symptomsRects);
+                                    holder.image.setImageBitmap(bitmap_cropped);
 
-                                    //For each recognitions add a layout with the corresponding color of the canvas
-//                                    LinearLayout line = new LinearLayout(context);
-//                                    line.setOrientation(LinearLayout.HORIZONTAL);
-                                    com.google.android.material.chip.Chip cv=new com.google.android.material.chip.Chip(context);
-                                    cv.setText(String.format("%s : %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
-                                    cv.setTextColor(Color.WHITE);
-                                    cv.setChipIcon(context.getDrawable(R.drawable.barley_off));
-//                            Log.e("color",str2[1].substring(1));
-                                    cv.setChipBackgroundColor(ColorStateList.valueOf(color));
-                                    chipGroup.addView(cv);
-//                                    TextView txt = new TextView(context);
-//                                    txt.setPadding(5, 5, 5, 0);
-//                                    txt.setText(String.format("%s  ->  %d%%", r.getTitle(), Math.round(r.getConfidence() * 100)));
-//                                    txt.setTextColor(color);
-//                                    txt.setTypeface(txt.getTypeface(), Typeface.NORMAL);
-//                                    txt.setTextSize(15);
-//                                    line.addView();
-
-                                    recognition_legend.put(color, r.getTitle());
-                                    paint.setColor(color);
-                                    paint.setAntiAlias(true);
-                                    canvas.drawRect(r.getLocation(), paint);
                                 }
-
-                                holder.symptoms_txt.addView(chipGroup);
-                                p.setSymptomRects(symptomsRects);
-                                Log.e("Rect Partial 0 ->", symptomsRects.size() + "");
-                                //AppController.getInstance().setSymptomsRects(symptomsRects);
-                                holder.image.setImageBitmap(bitmap_cropped);
-
                             }
                         }
-                    }
 
                     }
                 }

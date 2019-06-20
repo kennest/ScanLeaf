@@ -1,11 +1,21 @@
 package wesicknessdect.example.org.wesicknessdetect.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.util.Log;
 
+import com.appizona.yehiahd.fastsave.FastSave;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public class Constants {
@@ -29,6 +39,45 @@ public class Constants {
         Log.e("NETWORK INFO", String.valueOf(Objects.requireNonNull(cm).getActiveNetworkInfo() != null));
 
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    public static List<Integer> RECTCOLORS = new ArrayList<Integer>() {
+        {
+            add(Color.argb(255, 25, 25, 255));
+            add(Color.argb(255, 179, 9, 54));
+            add(Color.argb(255, 191, 84, 2));
+            add(Color.argb(255, 255, 191, 0));
+            add(Color.argb(255, 105, 210, 0));
+        }
+    };
+
+    @SuppressLint("MissingPermission")
+    public static void getLocation(Context context){
+        LocationManager lm= (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                if(location!=null) {
+                    Log.d("Location", location.toString());
+                    FastSave.getInstance().saveString("location", location.getLatitude() + ":" + location.getLongitude());
+                }
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        });
     }
 
 

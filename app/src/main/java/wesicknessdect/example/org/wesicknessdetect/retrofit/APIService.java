@@ -111,6 +111,14 @@ public interface APIService {
 
     /***RX JAVA**/
 
+    @Headers({"Content-Type: application/json","Accept:application/json"})
+    @POST("login/")
+    Single<User> rxDoLogin(@Body Credential credential);
+
+    @Headers({"Content-Type:application/json","Accept:application/json"})
+    @POST("api/users/")
+    Single<User> rxDoSignup(@Body User user);
+
     @POST("api/diagnostic/")
     Single<JsonElement> rxSendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
 

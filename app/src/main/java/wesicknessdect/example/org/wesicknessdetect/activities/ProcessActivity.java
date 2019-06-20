@@ -37,6 +37,7 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
+import wesicknessdect.example.org.wesicknessdetect.utils.JobSchedulerUtil;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
 /**
@@ -73,9 +74,8 @@ public class ProcessActivity extends BaseActivity {
 
         page=getIntent().getIntExtra("page",0);
 
-        Intent offline = new Intent(this, OfflineService.class);
-        stopService(offline);
-        startService(offline);
+        //Start Offline Service immediatly
+        JobSchedulerUtil.scheduleJob(getApplicationContext());
 
         //Try to sync the data
         sync= EasySettings.retrieveSettingsSharedPrefs(getApplicationContext()).getBoolean("sync_after",false);
@@ -287,13 +287,5 @@ public class ProcessActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-       // Log.e("Req code", requestCode + "");
-    }
-
-
 
 }

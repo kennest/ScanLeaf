@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.PagerAdapter;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
 import io.reactivex.Completable;
@@ -150,6 +152,7 @@ public class MainAdapter extends PagerAdapter {
         CardView card = v.findViewById(R.id.card);
         RelativeLayout container = v.findViewById(R.id.container);
         ImageView image = v.findViewById(R.id.image);
+
         TextView counter = v.findViewById(R.id.counter);
         //TextView analyseTime=v.findViewById(R.id.analyse_time);
         TextView userName = v.findViewById(R.id.user_name);
@@ -158,13 +161,22 @@ public class MainAdapter extends PagerAdapter {
         SwipeRefreshLayout refreshLayout = v.findViewById(R.id.swipeToRefresh);
 
         View empty = v.findViewById(R.id.empty_data);
+
+
         Animation anim = new AlphaAnimation(0.0f, 1.0f);
         anim.setDuration(1000); //You can manage the time
         anim.setStartOffset(20);
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
         empty.setAnimation(anim);
+
         View loading = v.findViewById(R.id.loading_data);
+        ImageView loader = loading.findViewById(R.id.loader);
+
+        Glide.with(mContext)
+                .asGif()
+                .load(Uri.parse("file:///android_asset/syncing.gif"))
+                .into(loader);
         GridLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 2);
 
         recyclerView.setHasFixedSize(true);
@@ -386,7 +398,7 @@ public class MainAdapter extends PagerAdapter {
                     @SuppressLint("CheckResult")
                     @Override
                     public void onSuccess(List<Diagnostic> diagnosticList) {
-                        Collections.reverse(diagnosticList);
+                        //Collections.reverse(diagnosticList);
                         List<Diagnostic> diagnostics = new ArrayList<>(diagnosticList);
                         for (Diagnostic n : diagnostics) {
                             Completable.fromAction(() -> {

@@ -41,6 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import id.zelory.compressor.Compressor;
 import io.reactivex.Completable;
 import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
@@ -82,6 +83,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
 import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
+import wesicknessdect.example.org.wesicknessdetect.utils.CompressImage;
 import wesicknessdect.example.org.wesicknessdetect.utils.Constants;
 import wesicknessdect.example.org.wesicknessdetect.utils.DownloadService;
 import wesicknessdect.example.org.wesicknessdetect.utils.EncodeBase64;
@@ -127,100 +129,75 @@ public class RemoteTasks {
     }
 
 
-    //Get the Countries from Server
-    @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public void getCountries() {
-        if (Constants.isOnline(mContext)) {
-            APIService service = APIClient.getClient().create(APIService.class);
-            service.rxGetCountry().subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<Country>>() {
-                @Override
-                public void onSuccess(List<Country> countryList) {
-                    countries = countryList;
-                    for (Country c : countries) {
-                        Completable.fromAction(() -> DB.countryDao().createCountry(c))
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(() -> Log.d("Rx Country", "Completed ->" + c.getId()),// completed with success,
-                                        throwable -> throwable.printStackTrace()// there was an error
-                                );
-                    }
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Log.e("Error Body", e.getMessage());
-                }
-            });
-
-        }
-    }
-
     //Send Signup data
-    public User doSignUp(User u) throws InterruptedException, ExecutionException {
+    @SuppressLint("CheckResult")
+    public void doSignUp(User u) {
         if (Constants.isOnline(mContext)) {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true));
-
-            Thread.sleep(1000);
-            FutureTask<User> future = new FutureTask<>(new Callable<User>() {
-                @SuppressLint("StaticFieldLeak")
-                @Override
-                public User call() throws Exception {
-                    APIService service = APIClient.getClient().create(APIService.class);
-                    Call<User> SignupCall = service.doSignup(u);
-                    Response<User> response = SignupCall.execute();
-                    if (response.isSuccessful()) {
-                        if (response.body() != null) {
-                            user = response.body();
-                            result = response.body().toString();
-                            User user = response.body();
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    int profile_id = (int) DB.profileDao().createProfile(user.getProfile());
-                                    user.setProfile_id(profile_id);
-                                    DB.userDao().createUser(user);
-                                    FastSave.getInstance().saveString("token", response.body().getToken());
-                                    EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
-                                    return null;
-                                }
-                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true, 2));
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            APIService service = APIClient.getClient().create(APIService.class);
+            service.rxDoSignup(u)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<User>() {
+                        @Override
+                        public void onSuccess(User u) {
+                            Completable.fromAction(() -> {
+                                int profile_id = (int) DB.profileDao().createProfile(u.getProfile());
+                                u.setProfile_id(profile_id);
+                                DB.userDao().createUser(u);
+                                FastSave.getInstance().saveString("token", u.getToken());
+                                EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .unsubscribeOn(Schedulers.io())
+                                    .subscribe(() -> {
+                                                EventBus.getDefault().post(new HideLoadingEvent());
+                                                Log.d("Rx Signup", "Succeed");
+                                            },
+                                            throwable -> Log.e("Rx Signup Error ->", throwable.getMessage()));
                         }
-                    } else {
-                        EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides", "Inscription échouée", true));
-                        //UserResponseErrorProcess(response);
-                    }
-                    return user;
-                }
-            });
-            executor.execute(future);
-            return future.get();
+
+                        @Override
+                        public void onError(Throwable e) {
+                            EventBus.getDefault().post(new ShowLoadingEvent("Vos entrées sont invalides", "Inscription échouée", true,0));
+                        }
+                    });
+
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté a internet", true));
-            return new User();
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté a internet", true, 0));
         }
 
 
     }
 
     //Send Login credentials
-    public String doLogin(Credential c) throws InterruptedException, ExecutionException {
+    @SuppressLint("CheckResult")
+    public void doLogin(Credential c) {
         if (Constants.isOnline(mContext)) {
-            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Traitement...", true));
-            FutureTask<String> future = new FutureTask<>(new Callable<String>() {
-                @SuppressLint("StaticFieldLeak")
-                @Override
-                public String call() throws Exception {
-                    APIService service = APIClient.getClient().create(APIService.class);
-                    Call<User> loginCall = service.doLogin(c);
-                    Response<User> response = loginCall.execute();
-                    if (response.isSuccessful()) {
-                        EventBus.getDefault().post(new HideLoadingEvent("Dissmissed"));
-                        if (response.body() != null) {
-                            user = response.body();
-                            Profile p = user.getProfile();
+            EventBus.getDefault().post(new ShowLoadingEvent("Veuillez patienter SVP", "Connexion en cours...", false, 2));
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            APIService service = APIClient.getClient().create(APIService.class);
+            service.rxDoLogin(c)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .unsubscribeOn(Schedulers.io())
+                    .subscribeWith(new DisposableSingleObserver<User>() {
+                        @Override
+                        public void onSuccess(User u) {
+                            Profile p = u.getProfile();
                             Uri uri = Uri.parse(p.getAvatar());
                             String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                             File f = new File(destination + uri.getLastPathSegment());
@@ -228,55 +205,53 @@ public class RemoteTasks {
                                 DownloadFile(Constants.base_url + p.getAvatar());
                             }
                             p.setAvatar(destination + uri.getLastPathSegment());
-                            new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... voids) {
-                                    //Try to init Data Again
-                                    AppController.getInstance().InitDBFromServer();
 
-                                    //Do other Stuffs
-                                    profiles = DB.profileDao().getAllSync();
-                                    if (profiles.size() > 0) {
-                                        profile_id = profiles.get(0).getId();
-                                    } else {
-                                        profile_id = (int) DB.profileDao().createProfile(p);
-                                    }
+                            Completable.fromAction(() -> {
+                                AppController.getInstance().InitDBFromServer();
 
-                                    FastSave.getInstance().saveString("token", response.body().getToken());
-                                    FastSave.getInstance().saveString("user_id", String.valueOf(response.body().getId()));
-                                    EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
-
-                                    user.setProfile_id(profile_id);
-                                    DB.userDao().createUser(user);
-
-                                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                                    Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
-                                    PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                    Calendar cal = Calendar.getInstance();
-                                    cal.add(Calendar.SECOND, 1);
-                                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
-                                    return null;
+                                //Do other Stuffs
+                                profiles = DB.profileDao().getAllSync();
+                                if (profiles.size() > 0) {
+                                    profile_id = profiles.get(0).getId();
+                                } else {
+                                    profile_id = (int) DB.profileDao().createProfile(p);
                                 }
-                            }.executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
 
+                                FastSave.getInstance().saveString("token", u.getToken());
+                                FastSave.getInstance().saveString("user_id", String.valueOf(u.getId()));
+                                EventBus.getDefault().post(new UserAuthenticatedEvent(FastSave.getInstance().getString("token", null)));
 
-                        } else {
-                            Log.e("Error:", response.errorBody().string());
-                            EventBus.getDefault().post(new FailedSignUpEvent("Pas de données correspondantes", "Erreur de réponse", true));
+                                u.setProfile_id(profile_id);
+                                DB.userDao().createUser(u);
+
+                                AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                                Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
+                                PendingIntent broadcast = PendingIntent.getBroadcast(mContext, 100, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                Calendar cal = Calendar.getInstance();
+                                cal.add(Calendar.SECOND, 1);
+                                alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .unsubscribeOn(Schedulers.io())
+                                    .subscribe(() -> {
+                                                EventBus.getDefault().post(new HideLoadingEvent());
+                                                Log.d("Rx Login", "Succeed");
+                                            },
+                                            throwable -> Log.e("Rx Login Error ->", throwable.getMessage()));
                         }
-                    } else {
-                        EventBus.getDefault().post(new FailedSignUpEvent("Vos entrées sont invalides", "Connexion échouée", true));
-                        //UserResponseErrorProcess(response);
-                    }
-                    return result;
-                }
-            });
-            executor.execute(future);
-            return future.get();
+
+                        @Override
+                        public void onError(Throwable e) {
+                            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Verifier les infos de connexion...", true,0));
+                            Log.e("Error:", e.getMessage());
+                        }
+                    });
+
+
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Pas d'internet", "Vous n'êtes pas connecté a internet", true));
-            return null;
+            EventBus.getDefault().post(new ShowLoadingEvent("Pas d'internet", "Vous n'êtes pas connecté a internet", true, 0));
         }
     }
 
@@ -369,6 +344,34 @@ public class RemoteTasks {
         }
     }
 
+    //Get the Countries from Server
+    @SuppressLint({"StaticFieldLeak", "CheckResult"})
+    public void getCountries() {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            service.rxGetCountry().subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<Country>>() {
+                @Override
+                public void onSuccess(List<Country> countryList) {
+                    countries = countryList;
+                    for (Country c : countries) {
+                        Completable.fromAction(() -> DB.countryDao().createCountry(c))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(() -> Log.d("Rx Country", "Completed ->" + c.getId()),// completed with success,
+                                        throwable -> throwable.printStackTrace()// there was an error
+                                );
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e("Error Body", e.getMessage());
+                }
+            });
+
+        }
+    }
 
     //Get SymptomRect from server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
@@ -559,7 +562,6 @@ public class RemoteTasks {
                                     .unsubscribeOn(Schedulers.io())
                                     .subscribe(() -> {
                                                 Log.d("Rx Send Diag Offline", "Completed ->" + d.getUuid());
-                                                EventBus.getDefault().post(new ShowProcessScreenEvent("From Remote"));
                                             },
                                             throwable -> Log.e("Send Diag Error ->", throwable.getMessage()));
                         }
@@ -580,48 +582,54 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             JsonObject json = new JsonObject();
             APIService service = APIClient.getClient().create(APIService.class);
-            String base_64 = new EncodeBase64().encode(p.getImage());
-
-            //Log.e("Picture ID:", p.getX() + "");
-            json.addProperty("diagnostic", p.getDiagnostic_id());
-            json.addProperty("image", base_64);
-            json.addProperty("diagnostic_uuid", p.getDiagnostic_uuid());
-            json.addProperty("uuid", p.getUuid());
-            //json.addProperty("id_mobile", p.getX());
-            json.addProperty("partCulture", p.getCulture_part_id());
-
-            String token = FastSave.getInstance().getString("token", null);
-            service.rxSendDiagnosticPictures("Token " + token, json)
+            Completable.fromAction(() -> {
+                File compressedImg = new CompressImage(mContext).CompressImgFile(new File(p.getImage()));
+                String base_64 = new EncodeBase64().encode(compressedImg.getPath());
+                //Log.e("Picture ID:", p.getX() + "");
+                json.addProperty("diagnostic", p.getDiagnostic_id());
+                json.addProperty("image", base_64);
+                json.addProperty("diagnostic_uuid", p.getDiagnostic_uuid());
+                json.addProperty("uuid", p.getUuid());
+                //json.addProperty("id_mobile", p.getX());
+                json.addProperty("partCulture", p.getCulture_part_id());
+            })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .unsubscribeOn(Schedulers.io())
-                    .subscribeWith(new DisposableSingleObserver<JsonElement>() {
-                        @Override
-                        public void onSuccess(JsonElement jsonElement) {
-                            if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
+                    .subscribe(() -> {
+                        String token = FastSave.getInstance().getString("token", null);
+                        service.rxSendDiagnosticPictures("Token " + token, json)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .unsubscribeOn(Schedulers.io())
+                                .subscribeWith(new DisposableSingleObserver<JsonElement>() {
+                                    @Override
+                                    public void onSuccess(JsonElement jsonElement) {
+                                        if (jsonElement.getAsJsonObject().get("statut").getAsInt() == 1) {
 
-                                Completable.fromAction(() -> {
-                                    if (!sync) {
-                                        p.setSended(1);
-                                        DB.pictureDao().updatePicture(p);
-                                    } else {
-                                        DB.pictureDao().deletePicture(p);
+                                            Completable.fromAction(() -> {
+                                                if (!sync) {
+                                                    p.setSended(1);
+                                                    DB.pictureDao().updatePicture(p);
+                                                } else {
+                                                    DB.pictureDao().deletePicture(p);
+                                                }
+                                            })
+                                                    .subscribeOn(Schedulers.io())
+                                                    .observeOn(AndroidSchedulers.mainThread())
+                                                    .unsubscribeOn(Schedulers.io())
+                                                    .subscribe(() -> {
+                                                                Log.d("Rx Send Picture Offline", "Completed ->" + p.getUuid());
+                                                            },
+                                                            throwable -> Log.e("Send Picture Error ->", throwable.getMessage()));
+                                        }
                                     }
-                                })
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .unsubscribeOn(Schedulers.io())
-                                        .subscribe(() -> {
-                                                    Log.d("Rx Send Picture Offline", "Completed ->" + p.getUuid());
-                                                },
-                                                throwable -> Log.e("Send Picture Error ->", throwable.getMessage()));
-                            }
-                        }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("Rx Send Picture Error:", e.getMessage());
-                        }
+                                    @Override
+                                    public void onError(Throwable e) {
+                                        Log.e("Rx Send Picture Error:", e.getMessage());
+                                    }
+                                });
+                    }, throwable -> {
                     });
         }
 
@@ -645,9 +653,9 @@ public class RemoteTasks {
                 }
             }
 
-            if(u.getPassword()!=null) {
+            if (u.getPassword() != null) {
                 json.addProperty("password", u.getPassword());
-            }else{
+            } else {
                 json.addProperty("password", "");
             }
             json.addProperty("first_name", u.getNom());
@@ -1098,7 +1106,7 @@ public class RemoteTasks {
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
         } else {
             //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true));
+            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true, 0));
         }
 
     }

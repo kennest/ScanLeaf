@@ -69,6 +69,7 @@ public class CulturePartAdapter extends RecyclerView.Adapter<CulturePartAdapter.
                 holder.progressBar.setProgress((int) cultureParts.get(position).getDownloaded());
                 holder.name.setText(cultureParts.get(position).getNom());
 
+                //Si l'image de la partie existe sur le telephone
                 if (f.exists()) {
                     Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
                     Bitmap bitmap_cropped = Bitmap.createScaledBitmap(bitmap, 200, 200, false);

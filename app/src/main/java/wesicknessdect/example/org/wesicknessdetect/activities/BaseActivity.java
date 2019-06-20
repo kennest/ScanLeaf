@@ -1,29 +1,45 @@
 package wesicknessdect.example.org.wesicknessdetect.activities;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.appizona.yehiahd.fastsave.FastSave;
+import com.bumptech.glide.Glide;
 import com.fxn.pix.Options;
 import com.fxn.pix.Pix;
 import com.gmail.samehadar.iosdialog.IOSDialog;
+
 import org.apache.commons.io.FileUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Timer;
 
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
@@ -42,11 +58,9 @@ import wesicknessdect.example.org.wesicknessdetect.tasks.timers.SyncTimerTask;
 
 
 public class BaseActivity extends AppCompatActivity {
-    IOSDialog dialog;
-    boolean dialogIsCancelable;
+    AlertDialog myDialog;
     public static AppDatabase DB;
     public static APIService service;
-    private static final String DATABASE_NAME = "scanleaf.db";
 
 
     @Override
@@ -71,7 +85,6 @@ public class BaseActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-
     //Show Quiz Layout
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onQuizPageEvent(ShowQuizPageEvent event) {
@@ -80,38 +93,68 @@ public class BaseActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-
     //Show the loading Dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onLoadingEvent(ShowLoadingEvent event) {
-        if (dialog != null) {
-            if (dialog.isShowing() && dialogIsCancelable) {
-                dialog.dismiss();
+        Log.d("Loader", "Shown...");
+        if(myDialog!=null) {
+            if (myDialog.isShowing() && event.cancelable) {
+                myDialog.dismiss();
             }
         }
-        dialogIsCancelable = event.cancelable;
-        dialog = LoaderProgress(event.title, event.content, event.cancelable);
-        dialog.show();
+        myDialog = MyDialog(BaseActivity.this, event.content, event.title, event.type, event.cancelable);
+        myDialog.show();
     }
 
-    //Show the failed SignUp Dialog
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onFailEvent(FailedSignUpEvent event) {
-        Log.e("Signup Event dismissed", event.msg + ": " + dialogIsCancelable);
-        if (dialog.isShowing() && dialogIsCancelable) {
-            dialog.dismiss();
+    public AlertDialog MyDialog(Activity context, String msg, String title, int type, boolean cancelable) {
+        View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.loader_layout, null);
+        TextView alert_title = dialogView.findViewById(R.id.title);
+        TextView alert_content = dialogView.findViewById(R.id.content);
+        ImageView alert_image = dialogView.findViewById(R.id.image);
+        Button alert_btn = dialogView.findViewById(R.id.close);
+        alert_title.setText(title);
+        alert_content.setText(msg);
+        switch (type) {
+            case 0:
+                alert_image.setColorFilter(ContextCompat.getColor(context, R.color.danger), android.graphics.PorterDuff.Mode.SRC_IN);
+                alert_image.setImageDrawable(getDrawable(R.drawable.alert));
+                break;
+            case 1:
+                alert_image.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), android.graphics.PorterDuff.Mode.SRC_IN);
+                alert_image.setImageDrawable(getDrawable(R.drawable.ic_check_circle_white_48dp));
+                break;
+            case 2:
+                Glide.with(context)
+                        .asGif()
+                        .load(Uri.parse("file:///android_asset/syncing.gif"))
+                        .into(alert_image);
+                alert_btn.setVisibility(View.GONE);
+                break;
         }
-        dialogIsCancelable = event.cancelable;
-        dialog = LoaderProgress(event.title, event.msg, event.cancelable);
-        dialog.show();
+        alert_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(myDialog!=null) {
+                    if (myDialog.isShowing()) {
+                        myDialog.dismiss();
+                    }
+                }
+            }
+        });
+        return new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(cancelable)
+                .create();
     }
 
     //Hide the loading dialog
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onHideLoadingEvent(HideLoadingEvent event) {
-        Log.e("Event dismissed", event.msg + ": " + dialogIsCancelable);
-        if (dialog.isShowing() && dialogIsCancelable != true) {
-            dialog.dismiss();
+        Log.e("Dialog dismissed", "True");
+        if(myDialog!=null) {
+            if (myDialog.isShowing()) {
+                myDialog.dismiss();
+            }
         }
     }
 
@@ -121,6 +164,8 @@ public class BaseActivity extends AppCompatActivity {
     public void onUserAuthenticated(UserAuthenticatedEvent event) {
         Log.e("User authenticated", event.token);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
         finish();
     }
@@ -147,37 +192,16 @@ public class BaseActivity extends AppCompatActivity {
     public void showProcessScreen(ShowProcessScreenEvent event) {
         Log.e("Process started", event.message);
         Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
         finish();
     }
 
 
-    //Base loading dialog function
-    private IOSDialog LoaderProgress(String title, String content, boolean cancelable) {
-        IOSDialog d = new IOSDialog.Builder(BaseActivity.this)
-                .setTitle(title)
-                .setMessageContent(content)
-                .setSpinnerColorRes(R.color.colorPrimary)
-                .setCancelable(cancelable)
-                .setTitleColorRes(R.color.white)
-                .setMessageContentGravity(Gravity.END)
-                .build();
-        return d;
-    }
-
-
     //Reload the current Activity
     protected void Reload() {
-        if (Build.VERSION.SDK_INT >= 11) {
-            recreate();
-        } else {
-            Intent intent = getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
-            overridePendingTransition(0, 0);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-        }
+        recreate();
     }
 
     public void StartSyncingData(Context ctx, int delay) {
@@ -190,11 +214,11 @@ public class BaseActivity extends AppCompatActivity {
     public void clearAppData() {
         try {
             String packageName = getPackageName();
-            String appDir=getExternalFilesDir(null).getPath() + File.separator;
-            Log.d("clearing app data ->",packageName);
-            Log.d("clearing app dir ->",appDir);
+            String appDir = getExternalFilesDir(null).getPath() + File.separator;
+            Log.d("clearing app data ->", packageName);
+            Log.d("clearing app dir ->", appDir);
             Runtime runtime = Runtime.getRuntime();
-            runtime.exec("pm clear "+packageName);
+            runtime.exec("pm clear " + packageName);
             FastSave.getInstance().deleteValue("token");
             File dir = new File(appDir);
             FileUtils.deleteDirectory(dir);

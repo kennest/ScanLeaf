@@ -8,6 +8,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Symptom;
 
 @Dao
@@ -23,6 +25,9 @@ public interface SymptomDao {
 
     @Query("SELECT * FROM Symptom WHERE question_id=:id")
     List<Symptom> getByQuestion(long id);
+
+    @Query("SELECT * FROM Symptom WHERE id=:id")
+    Single<Symptom> rxGetById(long id);
 
     @Query("SELECT * FROM Symptom WHERE id=:id")
     LiveData<Symptom> getById(long id);

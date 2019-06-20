@@ -59,4 +59,7 @@ public abstract class PictureDao {
 
     @Query("SELECT * FROM Picture WHERE diagnostic_uuid=:uuid")
     public abstract List<Picture> getByDiagnosticUUIdSync(String uuid);
+
+    @Query("SELECT * FROM Picture WHERE diagnostic_uuid=:uuid")
+    public abstract LiveData<List<Picture>> getByDiagnosticUUId(String uuid);
 }
