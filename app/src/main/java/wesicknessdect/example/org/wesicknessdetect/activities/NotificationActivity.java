@@ -54,17 +54,18 @@ public class NotificationActivity extends BaseActivity implements OnMapReadyCall
         // Get my current location from prefs
         String[] me_str= FastSave.getInstance().getString("location","0,0:0,0").split(":");
 
-        LatLng post_loc = new LatLng(-33.6, 150.00);
+
         LatLng me = new LatLng(Double.parseDouble(me_str[0]), Double.parseDouble(me_str[1]));
+        LatLng post_loc = new LatLng(Double.parseDouble(me_str[0])-1, Double.parseDouble(me_str[1])-1);
         LatLng SYDNEY = new LatLng(-33.88,151.21);
 
         Log.d("Post Data ->",me.toString()+"//"+post_loc.toString());
 
         mMap.addMarker(new MarkerOptions().position(post_loc).title(post.getDiseaseName()));
         mMap.addMarker(new MarkerOptions().position(me).title("Je suis Ici!"));
-        mMap.addMarker(new MarkerOptions().position(SYDNEY).title("SYDNEY"));
+        //mMap.addMarker(new MarkerOptions().position(SYDNEY).title("SYDNEY"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(me));
-        LatLngBounds bounds=new LatLngBounds(SYDNEY,post_loc);
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(),1));
+        LatLng bounds=new LatLng((me.latitude+post_loc.latitude)/2,(me.longitude+post_loc.longitude)/2);
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(bounds,3f));
     }
 }
