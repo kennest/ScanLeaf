@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -100,8 +101,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     int index = 0;
     Map.Entry<Long, Integer> maxEntry = null;
     String symptoms_ids = "";
-    int score = 0;
-
 
     @SuppressLint("StaticFieldLeak")
     @Override
@@ -109,6 +108,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partial_results);
         ButterKnife.bind(this);
+
         InitCardSwipe();
 
         fab_main = findViewById(R.id.fab);
@@ -128,7 +128,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             public void onClick(View view) {
 
                 if (isOpen) {
-
                     textview_mail.setVisibility(View.INVISIBLE);
                     textview_share.setVisibility(View.INVISIBLE);
                     save_diagnostic.startAnimation(fab_close);
@@ -207,17 +206,17 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         //Get All recognition in one list
         for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : recognitions_by_part.entrySet()) {
-            recognitions.addAll(recognition_entry.getValue().subList(0, 4));
+            recognitions.addAll(recognition_entry.getValue());
         }
 
         //Log.e("All img Recognitions", recognitions.size() + "");
 
         //Add distinct label in a list
         for (Classifier.Recognition r : recognitions) {
-            symptoms_set.add(r.getTitle().toUpperCase());
+            symptoms_set.add(r.getTitle());
         }
 
-        //Log.e("All Recognitions label", symptoms_set.size() + "");
+        Log.d("All Recognitions label", symptoms_set.size() + "");
 
         //Check Symptoms Table to get the id of the given label
 
@@ -228,7 +227,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
             for (String n : symptoms_set) {
                 //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
-                if (item.toUpperCase().equals(n)) {
+                if (s.getName().equals(n)) {
                     img_symptoms_id.add(s.getId());
                     if (symptoms_ids == "") {
                         symptoms_ids = +s.getId() + "";
@@ -239,27 +238,35 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             }
             diagnostic.setSymptoms(symptoms_ids);
         }
-        // Log.e("All img symptom id", img_symptoms_id.size() + "");
+        Log.d("All img symptom id", img_symptoms_id.size() + "");
 
 
         for (Disease d : diseases) {
             disease_score.put((long) d.getId(), 0);
         }
 
-        for (DiseaseSymptom ds : diseaseSymptoms) {
-            for (Integer i : img_symptoms_id) {
-                Log.d("Score index", (long) i + "//" + ds.getSymptom_id());
-                Long l = Long.valueOf(i);
-                if (l.equals(ds.getSymptom_id())) {
-                    Log.d("Score index equal", (long) i + "//" + ds.getSymptom_id() + "//" + ds.getDisease_id());
-                    score = score + 1;
-                    disease_score.put(ds.getDisease_id(), score);
-                }
-            }
-        }
 
+            try{
+                for (int i=0;i<=img_symptoms_id.size();i++) {
+                    for (DiseaseSymptom ds : diseaseSymptoms) {
+                        //Log.d("Score index", (long) i + "//" + ds.getSymptom_id());
+                        if (img_symptoms_id.get(i) == ds.getSymptom_id()) {
+                            int score = disease_score.get(ds.getDisease_id());
+                            score = score + 1;
+                            Log.d("Score equal ->", "Symptom Id->" + Long.valueOf(i) + " Disease Id-> " + ds.getDisease_id() + " Score-> " + score);
+                            disease_score.put(ds.getDisease_id(), score);
+                            img_symptoms_id.remove(i);
+                        }
+                    }
+                }
+            }catch (IndexOutOfBoundsException e){
+                Log.e("Exception","OutOfBound");
+            }
+
+
+
+        Log.d("Score computed", "OK");
         //Get the max value of the score map
-        //Log.e("Score", disease_score.size() + "");
         int max = Collections.max(disease_score.values());
 
         for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {

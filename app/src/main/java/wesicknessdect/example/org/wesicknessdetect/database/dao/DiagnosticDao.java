@@ -14,7 +14,6 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Diagnostic;
-import wesicknessdect.example.org.wesicknessdetect.models.DiagnosticPictures;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
 
@@ -25,7 +24,7 @@ public abstract class DiagnosticDao {
 
 
     //RX JAVA
-    @Query("SELECT * FROM Diagnostic ORDER BY creation_date DESC")
+    @Query("SELECT * FROM Diagnostic ORDER BY x DESC")
     public abstract Single<List<Diagnostic>> rxGetAll();
 
     @Query("SELECT * FROM Diagnostic WHERE sended=0")
