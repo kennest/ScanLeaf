@@ -96,9 +96,9 @@ public class ProcessActivity extends BaseActivity {
         appBarLayout = findViewById(R.id.app_bar);
 
         PageObject camera=new PageObject("Camera",R.layout.activity_choix_culture);
-        PageObject alertes=new PageObject("Alertes",R.layout.fragment_chat);
-        PageObject historique=new PageObject("Historique",R.layout.fragment_analysis);
-        PageObject maladies=new PageObject("Maladies",R.layout.fragment_disease);
+        PageObject alertes=new PageObject("Alert.",R.layout.fragment_chat);
+        PageObject historique=new PageObject("Hist.",R.layout.fragment_analysis);
+        PageObject maladies=new PageObject("Doc.",R.layout.fragment_disease);
 
         pageObjects.add(camera);
         pageObjects.add(historique);
@@ -156,6 +156,9 @@ public class ProcessActivity extends BaseActivity {
         layoutParams.weight = 0.4f;
         layout.setLayoutParams(layoutParams);
         tabLayout.getTabAt(0).setIcon(getResources().getDrawable(R.drawable.ic_camera));
+        tabLayout.getTabAt(1).setIcon(getResources().getDrawable(R.drawable.ic_history_black_24dp));
+        tabLayout.getTabAt(2).setIcon(getResources().getDrawable(R.drawable.ic_insert_drive_file_black_24dp));
+        tabLayout.getTabAt(3).setIcon(getResources().getDrawable(R.drawable.ic_warning_black_24dp));
     }
 
     private void translateUp() {

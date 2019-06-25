@@ -92,9 +92,9 @@ public class MainAdapter extends PagerAdapter {
         ViewGroup layout = (ViewGroup) inflater.inflate(pageObject.getmLayoutResId(), collection, false);
         if (pageObject.getmTitleResId().equals("Camera")) {
             layout = (ViewGroup) InitCameraView(layout);
-        } else if (pageObject.getmTitleResId().equals("Historique")) {
+        } else if (pageObject.getmTitleResId().equals("Hist.")) {
             layout = (ViewGroup) InitHistoryView(layout);
-        } else if (pageObject.getmTitleResId().equals("Maladies")) {
+        } else if (pageObject.getmTitleResId().equals("Doc.")) {
             layout = (ViewGroup) InitMaladieView(layout);
         } else {
             layout = (ViewGroup) InitAlerteView(layout);
@@ -107,7 +107,7 @@ public class MainAdapter extends PagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         if (pageObjects.get(position).getmTitleResId().equals("Camera")) {
-            return "";
+            return "Cam.";
         } else {
             return pageObjects.get(position).getmTitleResId();
         }
