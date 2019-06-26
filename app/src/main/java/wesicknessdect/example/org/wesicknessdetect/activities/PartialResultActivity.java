@@ -245,7 +245,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             disease_score.put((long) d.getId(), 0);
         }
 
-
             try{
                 for (int i=0;i<=img_symptoms_id.size();i++) {
                     for (DiseaseSymptom ds : diseaseSymptoms) {

@@ -87,6 +87,7 @@
         <activity android:name=".activities.PartialResultActivity" />
         <activity android:name=".activities.AnalysisDetailsActivity" />
         <activity android:name=".activities.FirstStepActivity" />
+        <activity android:name=".activities.RestoreDataActivity" />
 
         <service
             android:name=".utils.DownloadService"

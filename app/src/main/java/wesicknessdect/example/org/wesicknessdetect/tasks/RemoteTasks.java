@@ -167,7 +167,7 @@ public class RemoteTasks {
 
                         @Override
                         public void onError(Throwable e) {
-                            EventBus.getDefault().post(new ShowLoadingEvent("Vos entrées sont invalides", "Inscription échouée", true,0));
+                            EventBus.getDefault().post(new ShowLoadingEvent("Vos entrées sont invalides", "Inscription échouée", true, 0));
                         }
                     });
 
@@ -243,7 +243,7 @@ public class RemoteTasks {
 
                         @Override
                         public void onError(Throwable e) {
-                            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Verifier les infos de connexion...", true,0));
+                            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Verifier les infos de connexion...", true, 0));
                             Log.e("Error:", e.getMessage());
                         }
                     });
@@ -948,13 +948,13 @@ public class RemoteTasks {
                             for (Disease d : diseases) {
                                 Completable.fromAction(() -> {
                                     d.setLink(Constants.base_url + d.getLink());
-                                   int disease_id= (int) DB.diseaseDao().createDisease(d);
-                                   for(Integer i:d.getSymptoms()) {
-                                       DiseaseSymptom ds = new DiseaseSymptom();
-                                       ds.setDisease_id(disease_id);
-                                       ds.setSymptom_id(i);
-                                       DB.diseaseSymptomsDao().createDiseaseSymptom(ds);
-                                   }
+                                    int disease_id = (int) DB.diseaseDao().createDisease(d);
+                                    for (Integer i : d.getSymptoms()) {
+                                        DiseaseSymptom ds = new DiseaseSymptom();
+                                        ds.setDisease_id(disease_id);
+                                        ds.setSymptom_id(i);
+                                        DB.diseaseSymptomsDao().createDiseaseSymptom(ds);
+                                    }
                                 })
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())
@@ -971,6 +971,29 @@ public class RemoteTasks {
                     });
         }
         return diseases;
+    }
+
+    public void getDataSize() {
+        if (Constants.isOnline(mContext)) {
+            APIService service = APIClient.getClient().create(APIService.class);
+            String token = FastSave.getInstance().getString("token", "");
+            service.rxGetDataSize("Token " + token)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe(new DisposableSingleObserver<JsonElement>() {
+                        @Override
+                        public void onSuccess(JsonElement json) {
+                            String size = json.getAsJsonObject().get("size").getAsString();
+                            FastSave.getInstance().saveString("size", size);
+                            Log.d("Data Size",size);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Data Size Err->", e.getMessage());
+                        }
+                    });
+        }
     }
 
     //Get the Questions from Server

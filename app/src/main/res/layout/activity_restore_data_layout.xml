@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center"
+        android:background="@color/colorPrimaryDark"
+        android:textColor="@color/white"
+        android:text="Recupere vos donnees"
+        android:textStyle="bold"
+        android:hint="data size"/>
+<ImageView
+    android:id="@+id/imgPkg"
+    android:layout_marginTop="160dp"
+    android:layout_gravity="center_horizontal|center"
+    android:layout_width="250dp"
+    android:src="@drawable/feuille"
+    android:layout_height="250dp" />
+    <TextView
+        android:id="@+id/txtSize"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal|center"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="128.5Mo"
+        android:textStyle="bold"
+        android:hint="data size"/>
+
+    <Button
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:id="@+id/btnRestore"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="Restorer"/>
+    <Button
+        android:id="@+id/btnPass"
+        android:layout_gravity="center"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        android:text="Ignorer >>"/>
+</LinearLayout>
