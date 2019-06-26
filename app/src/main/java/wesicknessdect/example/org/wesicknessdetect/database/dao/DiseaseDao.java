@@ -13,7 +13,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.Disease;
 @Dao
 public abstract class DiseaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void createDisease(Disease disease);
+    public abstract long createDisease(Disease disease);
 
     @Query("SELECT * FROM Disease")
     public abstract LiveData<List<Disease>> getAll();

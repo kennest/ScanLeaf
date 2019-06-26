@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
@@ -84,12 +85,14 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     String TAG = "PartialResultActivity";
 
 
-
     Map<Integer, List<Classifier.Recognition>> recognitions_by_part = new HashMap<>();
     Map<Integer, String> images_by_parts = new HashMap<>();
     HashMap<Long, Integer> disease_score = new HashMap<>();
     List<Integer> img_symptoms_id = new ArrayList<>();
     Set<String> symptoms_set = new HashSet<>();
+    List<Disease> diseases = new ArrayList<>();
+    List<DiseaseSymptom> diseaseSymptoms = new ArrayList<>();
+    List<Symptom> symptoms = new ArrayList<>();
     List<Classifier.Recognition> recognitions = new ArrayList<>();
     private Map<Integer, Map<Integer, String>> images_by_part_adapter = new HashMap<>();
     PartialResultImageAdapter partialResultImageAdapter;
@@ -99,13 +102,13 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
     Map.Entry<Long, Integer> maxEntry = null;
     String symptoms_ids = "";
 
-
     @SuppressLint("StaticFieldLeak")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_partial_results);
         ButterKnife.bind(this);
+
         InitCardSwipe();
 
         fab_main = findViewById(R.id.fab);
@@ -125,7 +128,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             public void onClick(View view) {
 
                 if (isOpen) {
-
                     textview_mail.setVisibility(View.INVISIBLE);
                     textview_share.setVisibility(View.INVISIBLE);
                     save_diagnostic.startAnimation(fab_close);
@@ -153,6 +155,9 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                diseases = DB.diseaseDao().getAllSync();
+                diseaseSymptoms = DB.diseaseSymptomsDao().getAllSync();
+                symptoms = DB.symptomDao().getAllSync();
                 InitScoreData();
             }
         });
@@ -201,92 +206,81 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
 
         //Get All recognition in one list
         for (Map.Entry<Integer, List<Classifier.Recognition>> recognition_entry : recognitions_by_part.entrySet()) {
-            recognitions.addAll(recognition_entry.getValue().subList(0, 4));
+            recognitions.addAll(recognition_entry.getValue());
         }
 
         //Log.e("All img Recognitions", recognitions.size() + "");
 
         //Add distinct label in a list
         for (Classifier.Recognition r : recognitions) {
-            symptoms_set.add(r.getTitle().toUpperCase());
+            symptoms_set.add(r.getTitle());
         }
 
-        //Log.e("All Recognitions label", symptoms_set.size() + "");
+        Log.d("All Recognitions label", symptoms_set.size() + "");
 
         //Check Symptoms Table to get the id of the given label
-        DB.symptomDao().getAll().observe(PartialResultActivity.this, new Observer<List<Symptom>>() {
-            @Override
-            public void onChanged(List<Symptom> symptoms) {
-                for (Symptom s : symptoms) {
-                    //Remove accent from String
-                    String item = Normalizer.normalize(s.getName(), Normalizer.Form.NFD);
-                    item = item.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
 
-                    for (String n : symptoms_set) {
-                        //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
-                        if (item.toUpperCase().equals(n)) {
-                            img_symptoms_id.add(s.getId());
-                            if (symptoms_ids == "") {
-                                symptoms_ids = +s.getId() + "";
-                            } else {
-                                symptoms_ids = symptoms_ids + ":" + s.getId();
-                            }
+        for (Symptom s : symptoms) {
+            //Remove accent from String
+            String item = Normalizer.normalize(s.getName(), Normalizer.Form.NFD);
+            item = item.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+            for (String n : symptoms_set) {
+                //Log.e("All Symptoms checked:", item.toUpperCase() + "//" + n);
+                if (s.getName().equals(n)) {
+                    img_symptoms_id.add(s.getId());
+                    if (symptoms_ids == "") {
+                        symptoms_ids = +s.getId() + "";
+                    } else {
+                        symptoms_ids = symptoms_ids + ":" + s.getId();
+                    }
+                }
+            }
+            diagnostic.setSymptoms(symptoms_ids);
+        }
+        Log.d("All img symptom id", img_symptoms_id.size() + "");
+
+
+        for (Disease d : diseases) {
+            disease_score.put((long) d.getId(), 0);
+        }
+
+
+            try{
+                for (int i=0;i<=img_symptoms_id.size();i++) {
+                    for (DiseaseSymptom ds : diseaseSymptoms) {
+                        //Log.d("Score index", (long) i + "//" + ds.getSymptom_id());
+                        if (img_symptoms_id.get(i) == ds.getSymptom_id()) {
+                            int score = disease_score.get(ds.getDisease_id());
+                            score = score + 1;
+                            Log.d("Score equal ->", "Symptom Id->" + Long.valueOf(i) + " Disease Id-> " + ds.getDisease_id() + " Score-> " + score);
+                            disease_score.put(ds.getDisease_id(), score);
+                            img_symptoms_id.remove(i);
                         }
                     }
-                    diagnostic.setSymptoms(symptoms_ids);
                 }
-                // Log.e("All img symptom id", img_symptoms_id.size() + "");
+            }catch (IndexOutOfBoundsException e){
+                Log.e("Exception","OutOfBound");
             }
-        });
 
-        DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
-            @Override
-            public void onChanged(List<Disease> diseases) {
+
+
+        Log.d("Score computed", "OK");
+        //Get the max value of the score map
+        int max = Collections.max(disease_score.values());
+
+        for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
+            Log.d("Score " + score_entry.getKey(), score_entry.getValue() + "");
+            if (score_entry.getValue().equals(max)) {
+                maxEntry = score_entry;
                 for (Disease d : diseases) {
-                    disease_score.put((long) d.getId(), 0);
-                }
-                DB.diseaseSymptomsDao().getAll().observe(PartialResultActivity.this, new Observer<List<DiseaseSymptom>>() {
-                    @Override
-                    public void onChanged(List<DiseaseSymptom> diseaseSymptoms) {
-                        int score = 0;
-                        for (DiseaseSymptom ds : diseaseSymptoms) {
-                            for (Integer i : img_symptoms_id) {
-                                //Log.e("Score index", (long)i+ "//"+ds.getSymptom_id() );
-                                Long l = Long.valueOf(i);
-                                if (l.equals(ds.getSymptom_id())) {
-                                    //Log.e("Score index equal", (long) i + "//" + ds.getSymptom_id() + "//" + ds.getDisease_id());
-                                    score = score + 1;
-                                    disease_score.put(ds.getDisease_id(), score);
-                                }
-                            }
-                        }
-
-                        //Get the max value of the score map
-                        //Log.e("Score", disease_score.size() + "");
-                        int max = Collections.max(disease_score.values());
-                        for (Map.Entry<Long, Integer> score_entry : disease_score.entrySet()) {
-                            //Log.e("Score " + score_entry.getKey(), score_entry.getValue() + "");
-                            if (score_entry.getValue().equals(max)) {
-                                maxEntry = score_entry;
-                                DB.diseaseDao().getAll().observe(PartialResultActivity.this, new Observer<List<Disease>>() {
-                                    @Override
-                                    public void onChanged(List<Disease> diseases) {
-                                        for (Disease d : diseases) {
-                                            if (d.getId() == maxEntry.getKey()) {
-                                                disease.setText(d.getName().toUpperCase());
-                                                diagnostic.setDisease(d.getName());
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        }
-
+                    if (d.getId() == maxEntry.getKey()) {
+                        disease.setText(d.getName().toUpperCase());
+                        diagnostic.setDisease(d.getName());
                     }
-                });
+                }
             }
-        });
-
+        }
     }
 
     @SuppressLint("CheckResult")

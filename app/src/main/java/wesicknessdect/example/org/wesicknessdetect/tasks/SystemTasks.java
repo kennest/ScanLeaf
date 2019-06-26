@@ -170,7 +170,7 @@ public class SystemTasks {
 
                 LOGGER.e("Rx Model loaded infos", model + "//" + label + "//" + detector.getStatString());
                 recognitions = detector.recognizeImage(bitmap);
-                event = new ImageRecognitionProcessEvent(part_id, true, recognitions);
+                event = new ImageRecognitionProcessEvent(part_id, true, recognitions.subList(0,3));
                 Log.e("Rx Recognitions ->", recognitions.toString());
                 detector.close();
                 return event;
