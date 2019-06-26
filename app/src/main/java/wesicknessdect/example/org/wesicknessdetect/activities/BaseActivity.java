@@ -43,6 +43,7 @@ import java.io.InputStream;
 import java.util.Timer;
 
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.DataSizeEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowPartScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.retrofit.APIClient;
@@ -157,6 +158,8 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
 
     //To Do if User is authenticated

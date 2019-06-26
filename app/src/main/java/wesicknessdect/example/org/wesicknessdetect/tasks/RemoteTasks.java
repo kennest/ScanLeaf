@@ -57,6 +57,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
+import wesicknessdect.example.org.wesicknessdetect.events.DataSizeEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
@@ -223,6 +224,8 @@ public class RemoteTasks {
 
                                 u.setProfile_id(profile_id);
                                 DB.userDao().createUser(u);
+
+                                getDataSize();
 
                                 AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                                 Intent notificationIntent = new Intent(mContext, AlarmReceiver.class);
@@ -934,7 +937,7 @@ public class RemoteTasks {
 
     //Get the Disease from Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public List<Disease> getDiseases() {
+    public void getDiseases() {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxGetDiseases()
@@ -970,7 +973,6 @@ public class RemoteTasks {
                         }
                     });
         }
-        return diseases;
     }
 
     public void getDataSize() {
@@ -984,6 +986,7 @@ public class RemoteTasks {
                         @Override
                         public void onSuccess(JsonElement json) {
                             String size = json.getAsJsonObject().get("size").getAsString();
+                            EventBus.getDefault().post(new DataSizeEvent(size));
                             FastSave.getInstance().saveString("size", size);
                             Log.d("Data Size",size);
                         }

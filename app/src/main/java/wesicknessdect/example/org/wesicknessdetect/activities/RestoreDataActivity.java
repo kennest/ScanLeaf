@@ -12,11 +12,14 @@ import com.appizona.yehiahd.fastsave.FastSave;
 import com.bumptech.glide.Glide;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wesicknessdect.example.org.wesicknessdetect.R;
+import wesicknessdect.example.org.wesicknessdetect.events.DataSizeEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.tasks.RemoteTasks;
 
@@ -34,11 +37,6 @@ public class RestoreDataActivity extends BaseActivity {
     @BindView(R.id.imgPkg)
     ImageView pkgImg;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        RemoteTasks.getInstance(getApplicationContext()).getDataSize();
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,5 +59,11 @@ public class RestoreDataActivity extends BaseActivity {
     @OnClick(R.id.btnRestore)
     void doRestoreData(){
 
+    }
+
+    //Hide the loading dialog
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDataSizeEvent(DataSizeEvent event) {
+        sizeTxt.setText(event.size);
     }
 }
