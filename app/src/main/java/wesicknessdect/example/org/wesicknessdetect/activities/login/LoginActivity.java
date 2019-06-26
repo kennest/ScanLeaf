@@ -61,12 +61,12 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.login2);
         ButterKnife.bind(this);
         Typeface tf=Typeface.createFromAsset(getAssets(),"finger_paint.ttf");
-        Typeface tf1=Typeface.createFromAsset(getAssets(),"changa.ttf");
-        Typeface tf2=Typeface.createFromAsset(getAssets(),"neo_latina.ttf");
+        //Typeface tf1=Typeface.createFromAsset(getAssets(),"changa.ttf");
+        //Typeface tf2=Typeface.createFromAsset(getAssets(),"roboto_thin.xml");
 
         textView=(TextView) findViewById(R.id.textView);
         textView.setText("Bienvenue");
-        textView.setTypeface(tf);
+        //textView.setTypeface(tf1);
         //subtitle_header=(TextView) findViewById(R.id.subtitle_header);
         smalltobig = AnimationUtils.loadAnimation(this, R.anim.smalltobig);
         btta = AnimationUtils.loadAnimation(this, R.anim.btta);
@@ -81,7 +81,7 @@ public class LoginActivity extends BaseActivity {
         passwordNew =(TextView) findViewById(R.id.newPassword);
         tv=(TextView) findViewById(R.id.tex);
         tv.setText("Connexion");
-        tv.setTypeface(tf);
+        //tv.setTypeface(tf2);
         tv.startAnimation(clignoter);
 
         civ.startAnimation(smalltobig);

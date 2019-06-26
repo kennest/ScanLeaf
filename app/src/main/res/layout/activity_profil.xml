@@ -129,7 +129,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:fontFamily="@font/neo_latina"
-                                android:text="analyses efectuées"
+                                android:text="analyse(s) effectuée(s)"
                                 android:textColor="@color/black"
                                 android:textSize="15sp"/>
                     </LinearLayout>
@@ -156,7 +156,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:fontFamily="@font/neo_latina"
-                                android:text="maladies détectées"
+                                android:text="maladie(s) détectée(s)"
                                 android:textColor="@color/black"
                                 android:textSize="15sp"/>
                     </LinearLayout>
