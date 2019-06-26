@@ -43,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/changa"
-            android:text="username"
             android:textColor="@color/colorPrimaryDark" />
 
         <EditText

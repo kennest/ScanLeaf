@@ -35,10 +35,10 @@
         android:text="PRENDRE LA PHOTO"
         android:layout_margin="5dp"
         android:fontFamily="@font/neo_latina"
-        android:padding="5dp"
+        android:padding="10dp"
         android:textColor="@color/colorPrimaryDark"
         android:textStyle="bold"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:layout_gravity="center"
         android:gravity="center"/>
 </LinearLayout>

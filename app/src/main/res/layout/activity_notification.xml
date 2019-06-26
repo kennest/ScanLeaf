@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:background="@color/colorPrimaryDark"
-        app:subtitleTextColor="#FFB300"
+        app:subtitleTextColor="@color/colorAccent"
         app:titleTextColor="@color/white">
 
     </androidx.appcompat.widget.Toolbar>

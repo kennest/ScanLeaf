@@ -50,12 +50,6 @@
                     app:civ_border_color="@color/colorPrimaryDark"
                     app:civ_border_width="2dp" />
 
-                <ImageButton
-                    android:id="@+id/btnPassReset"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:src="@drawable/key_variant" />
 
 
                 <LinearLayout
