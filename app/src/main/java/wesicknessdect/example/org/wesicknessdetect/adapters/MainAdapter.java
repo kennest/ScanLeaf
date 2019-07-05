@@ -91,12 +91,16 @@ public class MainAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
         ViewGroup layout = (ViewGroup) inflater.inflate(pageObject.getmLayoutResId(), collection, false);
         if (pageObject.getmTitleResId().equals("Camera")) {
+            Log.d("faire_diagnostic",layout.toString());
             layout = (ViewGroup) InitCameraView(layout);
         } else if (pageObject.getmTitleResId().equals("Hist.")) {
+            Log.d("voir_diagnostic",layout.toString());
             layout = (ViewGroup) InitHistoryView(layout);
         } else if (pageObject.getmTitleResId().equals("Doc.")) {
+            Log.d("voir_maladie",layout.toString());
             layout = (ViewGroup) InitMaladieView(layout);
         } else {
+            Log.d("voir_alerte",layout.toString());
             layout = (ViewGroup) InitAlerteView(layout);
         }
         collection.addView(layout);
@@ -533,6 +537,7 @@ public class MainAdapter extends PagerAdapter {
 
             }
         });
+
 
 
 

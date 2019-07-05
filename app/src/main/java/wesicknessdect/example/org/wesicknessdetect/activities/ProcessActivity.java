@@ -127,12 +127,11 @@ public class ProcessActivity extends BaseActivity {
             @SuppressLint("RestrictedApi")
             @Override
             public void onPageSelected(int position) {
-                if (position == 1) {
-                   //mainAdapter.notifyDataSetChanged();
-                } else if (flag) {
-                    translateDown();
-
-                }
+//                if (position == 1) {
+//                   //mainAdapter.notifyDataSetChanged();
+//                } else if (flag) {
+//                    translateDown();
+//                }
 
 //                if (position == 1) {
 //                    toggleView.setVisibility(View.VISIBLE);
