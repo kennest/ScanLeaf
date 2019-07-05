@@ -245,7 +245,6 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             disease_score.put((long) d.getId(), 0);
         }
 
-
             try{
                 for (int i=0;i<=img_symptoms_id.size();i++) {
                     for (DiseaseSymptom ds : diseaseSymptoms) {
@@ -292,7 +291,7 @@ public class PartialResultActivity extends BaseActivity implements CardStackList
             diagnostic.setSended(0);
             DB.diagnosticDao().insertDiagnosticWithPictureAndRect(diagnostic, diagnostic.getPictures());
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> {
                             Log.d("Rx Save Diag", "Completed ->" + diagnostic.getUuid());

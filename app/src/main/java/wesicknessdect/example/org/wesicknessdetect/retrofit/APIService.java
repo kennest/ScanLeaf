@@ -172,4 +172,7 @@ public interface APIService {
     @PUT("api/user/")
     Single<JsonElement> rxUpdateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
+    @POST("api/size")
+    Single<JsonElement> rxGetDataSize(@Header("Authorization") String token);
+
 }

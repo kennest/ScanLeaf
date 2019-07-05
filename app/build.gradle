@@ -3,6 +3,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
 android {
+    signingConfigs {
+        scanleaf {
+            storePassword 'scanleaf'
+            keyAlias = 'scanleaf'
+            keyPassword 'scanleaf'
+            storeFile file('/home/lightbot/.android/scanleaf.jks')
+        }
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "wesicknessdect.example.org.wesicknessdetect"
@@ -11,11 +19,16 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.scanleaf
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+            zipAlignEnabled true
         }
     }
     compileOptions {
@@ -99,7 +112,7 @@ dependencies {
     implementation 'com.applandeo:material-calendar-view:1.5.1'
     debugImplementation 'com.idescout.sql:sqlscout-server:4.1'
     releaseImplementation 'com.idescout.sql:sqlscout-server-noop:4.1'
-    implementation 'androidx.core:core-ktx:1.2.0-alpha01'
+    implementation 'androidx.core:core-ktx:1.2.0-alpha02'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-alpha01'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'io.paperdb:paperdb:2.6'
