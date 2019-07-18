@@ -153,6 +153,7 @@ public class MainAdapter extends PagerAdapter {
     }
 
     private View InitHistoryView(View v) {
+
         CardView card = v.findViewById(R.id.card);
         RelativeLayout container = v.findViewById(R.id.container);
         ImageView image = v.findViewById(R.id.image);
@@ -263,6 +264,7 @@ public class MainAdapter extends PagerAdapter {
                             } else {
                                 counter.setText("Avec " + Integer.toString(header.getPictures().size()) + " partie prise en compte");
                             }
+                            Log.d("voir_histori", counter.getText().toString());
                             //holder.image.setImageBitmap(BitmapFactory.decodeFile(String.valueOf(new File(diagnosticPictures.get(position).pictures.get(0).getImage()))));
                         } else {
                             empty.setVisibility(View.VISIBLE);
@@ -455,6 +457,7 @@ public class MainAdapter extends PagerAdapter {
             @Override
             public void run() {
                 diseases = DB.diseaseDao().getAllSync();
+                Log.d("voir_maladie", diseases.get(1).getName());
                 mContext.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -485,7 +488,9 @@ public class MainAdapter extends PagerAdapter {
         //view.setAnimation(anim);
         LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(mContext, R.anim.layout_animation_fall_down);
         posts=DB.postDao().getAllPost();
+
         if (posts.size()>0){
+            Log.d("voir_postes", posts.get(0).getDiseaseName());
             anim.cancel();
             view.setVisibility(View.GONE);
             recyclerView.setVisibility(View.VISIBLE);
