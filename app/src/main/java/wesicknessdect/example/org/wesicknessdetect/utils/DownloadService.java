@@ -24,6 +24,7 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import wesicknessdect.example.org.wesicknessdetect.events.GetFileProgressEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ModelDownloadEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 
@@ -90,17 +91,19 @@ public class DownloadService extends IntentService {
                     .setOnProgressListener(new OnProgressListener() {
                         @Override
                         public void onProgress(Progress progress) {
-                            Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
+                            Log.d("Download Service", progress.currentBytes + "-" + progress.totalBytes);
                             currentBytes = progress.currentBytes;
                             totalBytes = progress.totalBytes;
-                            EventBus.getDefault().post(new ModelDownloadEvent(progress.currentBytes, progress.totalBytes, part_id));
+                            //EventBus.getDefault().post(new GetFileProgressEvent(progress.totalBytes, progress.currentBytes, downloadId, part_id));
+                            EventBus.getDefault().postSticky(new ModelDownloadEvent(progress.currentBytes, progress.totalBytes, part_id, downloadId));
                         }
                     })
                     .start(new OnDownloadListener() {
                         @Override
                         public void onDownloadComplete() {
                             Log.d(url, "Finished::" + uri.getLastPathSegment());
-                            EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, part_id));
+                            //EventBus.getDefault().post(new GetFileProgressEvent(totalBytes, currentBytes, downloadId, part_id));
+                            //EventBus.getDefault().post(new ModelDownloadEvent(totalBytes, totalBytes, part_id, downloadId));
                         }
 
                         @Override
@@ -111,9 +114,6 @@ public class DownloadService extends IntentService {
                     });
 
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'etes pas connecter a internet", true,0));
         }
     }
 }

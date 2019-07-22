@@ -346,6 +346,8 @@ public class ChooseCulturePartActivity extends BaseActivity {
         File modelfilepath = new File(modelpath);
         File labelfilepath = new File(labelpath);
 
+        Log.d("MODELS PATHS",modelpath+"//"+labelpath);
+
         if (modelfilepath.exists() && labelfilepath.exists()) {
             List<Classifier.Recognition> recognitions = new ArrayList<>();
             ImageRecognitionProcessEvent event = new ImageRecognitionProcessEvent(part_id, false, recognitions);

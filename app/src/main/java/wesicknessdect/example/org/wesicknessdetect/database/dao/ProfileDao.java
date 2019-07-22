@@ -10,6 +10,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 
 @Dao
@@ -22,6 +23,9 @@ public interface ProfileDao {
 
     @Query("SELECT * FROM Profile")
     List<Profile> getAllSync();
+
+    @Query("SELECT * FROM Profile")
+    Single<List<Profile>> rxGetAll();
 
     @Query("SELECT * FROM Profile WHERE updated=0")
     Profile getNotUpdated();

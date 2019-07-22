@@ -37,6 +37,7 @@ import wesicknessdect.example.org.wesicknessdetect.fragments.ChatsFragment;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.R;
 import wesicknessdect.example.org.wesicknessdetect.fragments.MaladiesFragment;
+import wesicknessdect.example.org.wesicknessdetect.utils.AppController;
 import wesicknessdect.example.org.wesicknessdetect.utils.JobSchedulerUtil;
 import wesicknessdect.example.org.wesicknessdetect.utils.OfflineService;
 
@@ -64,6 +65,11 @@ public class ProcessActivity extends BaseActivity {
     boolean flag,sync = false;
     private Menu menu;
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        AppController.getInstance().InitDBFromServer();
+    }
 
     @SuppressLint("StaticFieldLeak")
     @Override

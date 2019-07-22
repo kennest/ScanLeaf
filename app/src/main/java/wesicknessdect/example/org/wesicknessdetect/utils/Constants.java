@@ -48,6 +48,10 @@ public class Constants {
             add(Color.argb(255, 191, 84, 2));
             add(Color.argb(255, 255, 191, 0));
             add(Color.argb(255, 105, 210, 0));
+            add(Color.argb(255, 120, 180, 0));
+            add(Color.argb(255, 25, 25, 255));
+            add(Color.argb(255, 179, 9, 54));
+            add(Color.argb(255, 191, 84, 2));
         }
     };
 

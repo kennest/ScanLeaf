@@ -7,6 +7,7 @@ import android.opengl.GLES10;
 import android.os.AsyncTask;
 
 import android.util.Log;
+
 import com.appizona.yehiahd.fastsave.FastSave;
 import com.downloader.PRDownloader;
 import com.downloader.PRDownloaderConfig;
@@ -65,7 +66,7 @@ public class AppController extends Application {
                 .build();
         PRDownloader.initialize(getApplicationContext(), config);
 
-        remoteTasks=RemoteTasks.getInstance(getApplicationContext());
+        remoteTasks = RemoteTasks.getInstance(getApplicationContext());
 
         //RemoteTasks.getInstance(getApplicationContext()).DownloadFile("https://banner2.kisspng.com/20180409/vgq/kisspng-leaf-logo-brand-plant-stem-folha-5acb0798d686f9.0092563815232551928787.jpg");
 
@@ -75,7 +76,7 @@ public class AppController extends Application {
         //Create the database
         //appDatabase = AppDatabase.getInstance(getApplicationContext());
 
-        //Create data
+        //Init data
         InitDBFromServer();
     }
 
@@ -104,37 +105,15 @@ public class AppController extends Application {
     }
 
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public void InitDBFromServer(){
+    public void InitDBFromServer() {
 
-        Completable.fromAction(()->{
-            remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg");
+        Completable.fromAction(() -> {
+            remoteTasks.DownloadFile("https://banner2.kisspng.com/20180719/kjw/kisspng-cacao-tree-chocolate-polyphenol-cocoa-bean-catechi-wt-5b50795abb1c16.1156862915320006027664.jpg", 0);
 
-            Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
-            Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
-            String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
-
-            String modelpath = destination + model_uri.getLastPathSegment();
-            String label_path = destination + label_uri.getLastPathSegment();
-
-            FastSave.getInstance().saveString("check_model",modelpath);
-            FastSave.getInstance().saveString("check_label",label_path);
-
-
-            File fmodel = new File(modelpath);
-            File flabel = new File(label_path);
-
-            if (!fmodel.exists()) {
-                remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite");
-            }
-
-            if (!flabel.exists()) {
-                remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt");
-            }
 
             //Init all needed data
             remoteTasks.getCultures();
             remoteTasks.getCountries();
-            remoteTasks.getCulturePart(1);
             remoteTasks.getQuestions();
             remoteTasks.getSymptoms();
             remoteTasks.getStruggles();
@@ -142,9 +121,32 @@ public class AppController extends Application {
         })
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(()->{
-                    Log.d("Rx All Data","Initialized");
+                .subscribe(() -> {
+                    Log.d("Rx All Data", "Initialized");
                 }, Throwable::printStackTrace);
+    }
+
+    public void getCheckModel() {
+        Uri model_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.lite");
+        Uri label_uri = Uri.parse("http://178.33.130.202:8000/media/models/check_cacao.txt");
+        String destination = Objects.requireNonNull(getBaseContext().getExternalFilesDir(null)).getPath() + File.separator;
+
+        String modelpath = destination + model_uri.getLastPathSegment();
+        String label_path = destination + label_uri.getLastPathSegment();
+
+        FastSave.getInstance().saveString("check_model", modelpath);
+        FastSave.getInstance().saveString("check_label", label_path);
+
+        File fmodel = new File(modelpath);
+        File flabel = new File(label_path);
+
+        if (!fmodel.exists()) {
+            remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.lite", 0);
+        }
+
+        if (!flabel.exists()) {
+            remoteTasks.DownloadFile("http://178.33.130.202:8000/media/models/check_cacao.txt", 0);
+        }
     }
 
 }

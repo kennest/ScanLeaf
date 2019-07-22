@@ -7,6 +7,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import io.reactivex.Maybe;
 import io.reactivex.Single;
@@ -16,6 +17,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.Model;
 public interface ModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void createModel(Model model);
+
+    @Update()
+    void updateModel(Model model);
 
     @Query("SELECT * FROM Model")
     LiveData<List<Model>> getAll();

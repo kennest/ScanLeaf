@@ -166,7 +166,7 @@ public class BaseActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onUserAuthenticated(UserAuthenticatedEvent event) {
         Log.e("User authenticated", event.token);
-        Intent i = new Intent(BaseActivity.this, RestoreDataActivity.class);
+        Intent i = new Intent(BaseActivity.this, ProcessActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);

@@ -11,6 +11,7 @@ import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
 
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.Picture;
 import wesicknessdect.example.org.wesicknessdetect.models.PictureSymptomRects;
 import wesicknessdect.example.org.wesicknessdetect.models.SymptomRect;
@@ -46,6 +47,9 @@ public abstract class PictureDao {
     public abstract LiveData<List<Picture>> getAll();
 
     @Query("SELECT * FROM Picture")
+    public abstract Single<List<Picture>> rxGetAll();
+
+    @Query("SELECT * FROM Picture")
     public abstract List<Picture> getAllSync();
 
     @Query("SELECT * FROM Picture WHERE sended=0")
@@ -59,7 +63,4 @@ public abstract class PictureDao {
 
     @Query("SELECT * FROM Picture WHERE diagnostic_uuid=:uuid")
     public abstract List<Picture> getByDiagnosticUUIdSync(String uuid);
-
-    @Query("SELECT * FROM Picture WHERE diagnostic_uuid=:uuid")
-    public abstract LiveData<List<Picture>> getByDiagnosticUUId(String uuid);
 }

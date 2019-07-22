@@ -161,8 +161,6 @@ public class LoginActivity extends BaseActivity {
                                 e.printStackTrace();
                             }
                         }
-
-
                     }
                 });
 
@@ -170,7 +168,6 @@ public class LoginActivity extends BaseActivity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
     //To Do if User is authenticated
     @Subscribe(threadMode = ThreadMode.MAIN)

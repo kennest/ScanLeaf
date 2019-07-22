@@ -10,6 +10,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import io.reactivex.Single;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 
 @Dao
@@ -17,11 +18,11 @@ public interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long createUser(User user);
 
-    @Query("SELECT * FROM User WHERE id = :userId")
-    LiveData<User> getUser(long userId);
-
     @Query("SELECT * FROM User")
     List<User> getAll();
+
+    @Query("SELECT * FROM User")
+    Single<List<User>> rxGetAll();
 
 
     @Update
@@ -30,6 +31,4 @@ public interface UserDao {
     @Delete
     void delete(User user);
 
-//    @Query("UPDATE User SET nom=:name, prenom=:surname, username=:pseudo, email=:email WHERE id=:id")
-//    User updateUser(String name, String surname, String pseudo, String email, int id);
 }

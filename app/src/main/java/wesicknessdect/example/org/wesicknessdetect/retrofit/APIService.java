@@ -36,80 +36,9 @@ import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 
 public interface APIService {
-    @GET
-    Call<ResponseBody> downloadModelWithDynamicUrlSync(@Url String fileUrl);
-
-    @Headers({"Content-Type: application/json","Accept:application/json"})
-    @POST("login/")
-    Call<User> doLogin(@Body Credential credential);
-
-    @Headers({"Content-Type:application/json","Accept:application/json"})
-    @POST("api/users/")
-    Call<User> doSignup(@Body User user);
-
-    //@Multipart
-
-    //@Headers({"Content-Type:application/json","Accept:application/json"})
-//    @FormUrlEncoded
-    //@Multipart
-    @POST("api/post/")
-    Call<List<JsonElement>> sendMyLocation(@Header("Authorization")String token, @Body RequestBody body);
-
-
-    @GET("api/country/")
-    Call<List<Country>> getCountries();
-
-    @GET("api/cultures/")
-    Call<List<Culture>> getCultures();
-
-    @GET("api/partcultures/")
-    Call<List<CulturePart>> getCulturePart(@Query("culture") int id);
-
-    @GET("api/models/")
-    Call<List<Model>> getModel(@Query("part") int part_id);
-
-    @Headers({"Content-Type:application/json","Accept:application/json"})
-    @POST("api/userchoices/")
-    Call<JsonElement> sendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
-
-    @POST("api/diagnostic/")
-    Call<JsonElement> sendDiagnostic(@Header("Authorization") String token, @Body Diagnostic diagnostic);
-
-    @POST("api/pixel/")
-    Call<JsonElement> sendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);
-
-
-    @GET("api/pixels")
-    Call<List<JsonElement>> getSymptomRect(@Header("Authorization") String token, @Query("pic") int picture_id);
-
-    @POST("api/picture/")
-    Call<JsonElement> sendDiagnosticPictures(@Header("Authorization") String token, @Body JsonObject json);
-
-    @GET("api/questions")
-    Call<List<Question>> getQuestion();
-
-    @GET("api/symptoms")
-    Call<List<Symptom>> getSymptoms();
-
-    @GET("api/diseases")
-    Call<List<Disease>> getDiseases();
-
-    @GET("api/struggles")
-    Call<StruggleResponse> getStruggles();
-
-    @GET("api/diagnostics/")
-    Call <DiagnosticResponse> getDiagnostics(@Header("Authorization") String token, @Query("lastId") int last_id);
-
-    @GET("api/pictures/")
-    Call <List<Picture>> getDiagnosticPictures(@Query("diagnostic") long diagnostic, @Header("Authorization") String token);
-
-    @PUT("api/user/")
-    Call<JsonElement> updateProfile(@Header("Authorization") String token,@Body JsonObject json);
 
     @POST("api/reset_password/")
     Call<JsonElement> getNewPassword(@Body JsonObject json);
-
-    /***RX JAVA**/
 
     @Headers({"Content-Type: application/json","Accept:application/json"})
     @POST("login/")
@@ -128,7 +57,6 @@ public interface APIService {
     @Headers({"Content-Type:application/json","Accept:application/json"})
     @POST("api/userchoices/")
     Single<JsonElement> rxSendUserChoices(@Header("Authorization") String token,@Body UserChoice choice);
-
 
     @POST("api/pixel/")
     Single<JsonElement> rxSendSymptomRect(@Header("Authorization") String token, @Body JsonObject json);

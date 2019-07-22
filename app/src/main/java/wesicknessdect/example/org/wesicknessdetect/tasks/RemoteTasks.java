@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -35,18 +34,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
-import id.zelory.compressor.Compressor;
 import io.reactivex.Completable;
-import io.reactivex.CompletableObserver;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -58,9 +49,8 @@ import retrofit2.Call;
 import retrofit2.Response;
 import wesicknessdect.example.org.wesicknessdetect.database.AppDatabase;
 import wesicknessdect.example.org.wesicknessdetect.events.DataSizeEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.FailedSignUpEvent;
+import wesicknessdect.example.org.wesicknessdetect.events.GetFileProgressEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
-import wesicknessdect.example.org.wesicknessdetect.events.ShowProcessScreenEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
@@ -203,12 +193,11 @@ public class RemoteTasks {
                             String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                             File f = new File(destination + uri.getLastPathSegment());
                             if (!f.exists()) {
-                                DownloadFile(Constants.base_url + p.getAvatar());
+                                DownloadFile(Constants.base_url + p.getAvatar(),0);
                             }
                             p.setAvatar(destination + uri.getLastPathSegment());
 
                             Completable.fromAction(() -> {
-                                AppController.getInstance().InitDBFromServer();
 
                                 //Do other Stuffs
                                 profiles = DB.profileDao().getAllSync();
@@ -224,6 +213,10 @@ public class RemoteTasks {
 
                                 u.setProfile_id(profile_id);
                                 DB.userDao().createUser(u);
+
+                                getCulturePart(1);
+
+                                AppController.getInstance().getCheckModel();
 
                                 getDataSize();
 
@@ -384,7 +377,8 @@ public class RemoteTasks {
             String token = FastSave.getInstance().getString("token", "");
             service.rxGetSymptomRect("Token " + token, (int) p.getRemote_id())
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<JsonElement>>() {
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<List<JsonElement>>() {
                 @Override
                 public void onSuccess(List<JsonElement> symptomRectList) {
                     List<SymptomRect> rectList = new ArrayList<>();
@@ -478,7 +472,8 @@ public class RemoteTasks {
             String token = FastSave.getInstance().getString("token", "");
             service.rxGetDiagnosticPictures(d.getRemote_id(), "Token " + token)
                     .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread()).subscribeWith(new DisposableSingleObserver<List<Picture>>() {
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableSingleObserver<List<Picture>>() {
                 @Override
                 public void onSuccess(List<Picture> pictureList) {
                     for (Picture p : pictureList) {
@@ -487,7 +482,7 @@ public class RemoteTasks {
                             String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                             File f = new File(destination + uri.getLastPathSegment());
                             if (!f.exists()) {
-                                DownloadFile(p.getImage());
+                                DownloadFile(p.getImage(), (int) p.getCulture_part_id());
                             }
                             Log.d("Rx Remote image Exist:", p.getDiagnostic_id() + "//" + p.getX() + "//" + p.getImage());
                             p.setImage(destination + uri.getLastPathSegment());
@@ -528,8 +523,118 @@ public class RemoteTasks {
 
     //Send Diagnostic to Server
     @SuppressLint({"StaticFieldLeak", "CheckResult"})
-    public void sendDiagnostic(Diagnostic d, @Nullable boolean sync) {
-//
+    public void doRestoreData() {
+        DB.profileDao()
+                .rxGetAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Profile>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(List<Profile> profiles) {
+                        for (Profile u : profiles) {
+                            Uri uri = Uri.parse(u.getAvatar());
+                            String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                            File f = new File(destination + uri.getLastPathSegment());
+                            mContext.startService(DownloadService.getDownloadService(mContext, u.getAvatar(), 40000));
+                            Completable.fromAction(()->{
+                                u.setAvatar(destination + uri.getLastPathSegment());
+                                DB.profileDao().update(u);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(()->{},throwable -> {});
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+
+        DB.pictureDao()
+                .rxGetAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SingleObserver<List<Picture>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onSuccess(List<Picture> pictureList) {
+                        for (Picture p : pictureList) {
+                            Uri uri = Uri.parse(p.getImage());
+                            String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
+                            File f = new File(destination + uri.getLastPathSegment());
+                            if(!f.exists()){
+                                mContext.startService(DownloadService.getDownloadService(mContext, p.getImage(), 40000));
+                            }
+                            Completable.fromAction(()->{
+                                p.setImage(destination + uri.getLastPathSegment());
+                                DB.pictureDao().updatePicture(p);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(()->{},throwable -> {});
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
+
+        DB.modelDao().rxGetAll()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<List<Model>>() {
+                    @Override
+                    public void onSuccess(List<Model> modelList) {
+                        for (Model m : modelList) {
+                            Uri model_uri = Uri.parse(modelList.get(0).getPb());
+                            Uri label_uri = Uri.parse(modelList.get(0).getLabel());
+
+                            String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
+
+                            String modelpath = destination + model_uri.getLastPathSegment();
+                            String label_path = destination + label_uri.getLastPathSegment();
+
+                            File fmodel = new File(modelpath);
+                            File flabel = new File(label_path);
+
+                            if(!flabel.exists()){
+                                mContext.startService(DownloadService.getDownloadService(mContext, m.getLabel(), 40000));
+                            }
+
+                            if(!fmodel.exists()){
+                                mContext.startService(DownloadService.getDownloadService(mContext, m.getPb(), 40000));
+                            }
+
+                            Completable.fromAction(()->{
+                                m.setPb(fmodel.getAbsolutePath());
+                                m.setLabel(flabel.getAbsolutePath());
+                                DB.modelDao().updateModel(m);
+                            })
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(()->{},throwable -> {});
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+                });
     }
 
 
@@ -804,7 +909,7 @@ public class RemoteTasks {
                     for (Culture c : cultures) {
                         Completable.fromAction(() -> {
                             Uri uri = Uri.parse(c.getImage());
-                            DownloadFile(c.getImage());
+                            DownloadFile(c.getImage(),0);
                             String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
                             c.setImage(destination + uri.getLastPathSegment());
                             DB.cultureDao().createCulture(c);
@@ -907,7 +1012,7 @@ public class RemoteTasks {
                                     if (c.getImage() != null) {
                                         File f = new File(c.getImage());
                                         if (!f.exists()) {
-                                            DownloadFile(c.getImage());
+                                            DownloadFile(c.getImage(),0);
                                         }
                                         Uri uri = Uri.parse(c.getImage());
                                         String destination = mContext.getExternalFilesDir(null).getPath() + File.separator;
@@ -915,6 +1020,7 @@ public class RemoteTasks {
                                     }
                                     c.setCulture_id(id);
                                     DB.culturePartsDao().createCulturePart(c);
+
                                     //get the model
                                     getModel(c);
                                 })
@@ -988,7 +1094,7 @@ public class RemoteTasks {
                             String size = json.getAsJsonObject().get("size").getAsString();
                             EventBus.getDefault().post(new DataSizeEvent(size));
                             FastSave.getInstance().saveString("size", size);
-                            Log.d("Data Size",size);
+                            Log.d("Data Size", size);
                         }
 
                         @Override
@@ -1037,7 +1143,7 @@ public class RemoteTasks {
         if (Constants.isOnline(mContext)) {
             APIService service = APIClient.getClient().create(APIService.class);
             service.rxGetModel((int) c.getId())
-                    .subscribeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.trampoline())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableSingleObserver<List<Model>>() {
                         @Override
@@ -1057,14 +1163,18 @@ public class RemoteTasks {
                                 //DownloadFile(model.getPb(), part_id);
                                 mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), modelList.get(0).getPb(), (int) c.getId()));
                             }
+
                             modelList.get(0).setPb(fmodel.getAbsolutePath());
 
                             if (!flabel.exists()) {
                                 //DownloadFile(model.getLabel(), part_id);
                                 mContext.startService(DownloadService.getDownloadService(mContext.getApplicationContext(), modelList.get(0).getLabel(), (int) c.getId()));
                             }
+
                             modelList.get(0).setLabel(flabel.getAbsolutePath());
+
                             modelList.get(0).setPart_id((int) c.getId());
+
 
                             Completable.fromAction(() -> {
                                 DB.modelDao().createModel(modelList.get(0));
@@ -1084,13 +1194,12 @@ public class RemoteTasks {
                         }
                     });
         }
-
     }
 
 
     //Download the model
     @SuppressLint("StaticFieldLeak")
-    public void DownloadFile(String url) {
+    public int DownloadFile(String url,int partId) {
         if (Constants.isOnline(mContext)) {
             Uri uri = Uri.parse(url);
             String destination = Objects.requireNonNull(mContext.getExternalFilesDir(null)).getPath() + File.separator;
@@ -1120,6 +1229,7 @@ public class RemoteTasks {
                         @Override
                         public void onProgress(Progress progress) {
                             Log.d(url, progress.currentBytes + "/" + progress.totalBytes);
+                            //EventBus.getDefault().post(new GetFileProgressEvent(progress.totalBytes, progress.currentBytes, downloadId, partId));
                         }
                     })
                     .start(new OnDownloadListener() {
@@ -1136,11 +1246,8 @@ public class RemoteTasks {
                     });
 
 //            FastSave.getInstance().saveObjectsList(Constants.DOWNLOAD_IDS, downloadID);
-        } else {
-            //Dispatch show loading event
-            EventBus.getDefault().post(new ShowLoadingEvent("Erreur", "Vous n'êtes pas connecté(e) à internet...", true, 0));
         }
-
+        return downloadId;
     }
 
     //Send My Location to server

@@ -245,7 +245,6 @@ public class QuizActivity extends BaseActivity {
     private void sendDiagnosticAndChoices(Diagnostic d, List<UserChoice> choices) {
         Completable.fromAction(() -> {
             d.setPictures(AppController.getInstance().getPictures());
-            RemoteTasks.getInstance(this).sendDiagnostic(d, false);
             AppController.getInstance().setRecognitions_by_part(recognitions_by_part);
             d.setSended(0);
             DB.diagnosticDao().insertDiagnosticWithPictureAndRect(d, d.getPictures());
