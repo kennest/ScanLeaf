@@ -9,6 +9,7 @@ import androidx.room.RoomDatabase;
 
 import java.io.File;
 
+import wesicknessdect.example.org.wesicknessdetect.database.dao.AlertDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CountryDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CultureDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.CulturePartsDao;
@@ -21,6 +22,7 @@ import wesicknessdect.example.org.wesicknessdetect.database.dao.QuestionDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.StruggleDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.SymptomRectDao;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.UserChoiceDao;
+import wesicknessdect.example.org.wesicknessdetect.models.Alert;
 import wesicknessdect.example.org.wesicknessdetect.models.Profile;
 import wesicknessdect.example.org.wesicknessdetect.models.User;
 import wesicknessdect.example.org.wesicknessdetect.database.dao.PictureDao;
@@ -54,6 +56,7 @@ import wesicknessdect.example.org.wesicknessdetect.models.UserChoice;
 import wesicknessdect.example.org.wesicknessdetect.models.UserParcel;
 
 @Database(entities = {
+        Alert.class,
         Profile.class,
         Country.class,
         User.class,
@@ -97,6 +100,7 @@ public abstract class AppDatabase extends RoomDatabase{
     public abstract DiseaseDao diseaseDao();
     public abstract DiseaseSymptomsDao diseaseSymptomsDao();
     public abstract PostDao postDao();
+    public abstract AlertDao alertDao();
     public abstract StruggleDao struggleDao();
     public abstract PictureDao pictureDao();
     public abstract UserChoiceDao userChoiceDao();

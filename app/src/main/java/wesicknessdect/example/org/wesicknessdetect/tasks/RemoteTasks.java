@@ -21,6 +21,7 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -52,6 +53,7 @@ import wesicknessdect.example.org.wesicknessdetect.events.DataSizeEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.GetFileProgressEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.ShowLoadingEvent;
 import wesicknessdect.example.org.wesicknessdetect.events.UserAuthenticatedEvent;
+import wesicknessdect.example.org.wesicknessdetect.models.Alert;
 import wesicknessdect.example.org.wesicknessdetect.models.Country;
 import wesicknessdect.example.org.wesicknessdetect.models.Credential;
 import wesicknessdect.example.org.wesicknessdetect.models.Culture;
@@ -1289,6 +1291,19 @@ public class RemoteTasks {
                                         p.setIdServeur(json.getAsJsonObject().get("id").getAsString());
                                         p.setTime(t);
                                         DB.postDao().createPost(p);
+                                        //cenregistrements de ses alertes;
+                                        JsonArray positionJson = json.getAsJsonObject().get("positions").getAsJsonArray();
+                                        //List<JsonElement> jsonAlertsList= (List<JsonElement>) jsonElements.get(5);
+                                        Log.d("alerts_list", positionJson.toString());
+                                        for (JsonElement jsonAlerts:positionJson){
+                                            Log.d("nb_alertes",positionJson.size()+"");
+                                            Alert a= new Alert();
+                                            a.setIdPost(p.getId());
+                                            a.setLatitude(jsonAlerts.getAsJsonObject().get("lat").getAsDouble());
+                                            a.setLongitude(jsonAlerts.getAsJsonObject().get("longi").getAsDouble());
+                                            Log.d("alerte de post"+p.getId(),"lat: "+a.getLatitude()+", long: "+a.getLongitude());
+                                            DB.alertDao().createAlert(a);
+                                        }
                                         Calendar cal = Calendar.getInstance();
                                         cal.add(Calendar.SECOND, 5);
                                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), broadcast);

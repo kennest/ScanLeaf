@@ -119,39 +119,7 @@ public class ProcessActivity extends BaseActivity {
         }else{
             viewPager.setCurrentItem(1, true);
         }
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                //Code to implement AppBar transition acc. to Viewpager
-                /*Log.d("Position", String.valueOf(position));
-                Log.d("Offset", String.valueOf(positionOffset));
-                Log.d("Pixels", String.valueOf(positionOffsetPixels));
-                if(position == 0)
-                    appBarLayout.setTranslationY((-positionOffsetPixels/4) - 19.5f);*/
-            }
 
-            @SuppressLint("RestrictedApi")
-            @Override
-            public void onPageSelected(int position) {
-                if (position == 1) {
-                   //mainAdapter.notifyDataSetChanged();
-                } else if (flag) {
-                    translateDown();
-
-                }
-
-//                if (position == 1) {
-//                    toggleView.setVisibility(View.VISIBLE);
-//                } else {
-//                    toggleView.setVisibility(View.GONE);
-//                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
         tabLayout.setupWithViewPager(viewPager);
         setupTabLayout();
     }
@@ -273,7 +241,7 @@ public class ProcessActivity extends BaseActivity {
 
             case R.id.menu_quit:
                 AlertDialog.Builder builder=new AlertDialog.Builder(this);
-                builder.setTitle("Attention!!");
+                builder.setTitle("ScanLeaf");
                 builder.setMessage("Voulez-vous quitter l'application?");
                 builder.setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                     @Override
